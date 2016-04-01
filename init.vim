@@ -14,8 +14,10 @@ set ttyfast
 set encoding=utf8
 set background=dark
 set omnifunc=syntaxcomplete#Complete
-set wrap
+set nowrap
 set linebreak
+set copyindent
+set noswapfile
 
 "set t_Co=256
 set laststatus=2
@@ -49,13 +51,13 @@ if !exists('g:airline_symbols')
 endif
 
 " symbols
-let g:airline_left_sep = ' '
-let g:airline_left_alt_sep = ' '
-let g:airline_right_sep= ' '
-let g:airline_right_alt_sep = ' '
-let g:airline_symbols.branch = ' '
-let g:airline_symbols.readonly = ' '
-let g:airline_symbols.linenr = ' '
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep= ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
 "let g:airline_theme='lucius'
 
 " Turn highlighted string backgrounds for nofrils theme
@@ -110,6 +112,7 @@ let mapleader = ","
 
 ",w opens new vertical window
 nnoremap <leader>w <C-w>v<C-w>l
+nnoremap <leader>W <C-W>S<C-W>l
 
 "Strip all trailing whitespaces in current file
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
@@ -134,3 +137,14 @@ inoremap <left> <nop>
 inoremap <right> <nop>
 nnoremap k gk
 nnoremap j gj
+
+" NERDTREE
+map <leader>t :NERDTreeToggle<CR>
+
+" Window Focus
+nmap <silent> <leader>h :wincmd h<CR>
+nmap <silent> <leader>j :wincmd j<CR>
+nmap <silent> <leader>k :wincmd k<CR>
+nmap <silent> <leader>l :wincmd l<CR>
+
+nmap <silent> <leader>q <C-w>o
