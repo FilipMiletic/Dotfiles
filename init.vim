@@ -112,7 +112,6 @@ let mapleader = ","
 
 ",w opens new vertical window
 nnoremap <leader>w <C-w>v<C-w>l
-nnoremap <leader>W <C-W>S<C-W>l
 
 "Strip all trailing whitespaces in current file
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
@@ -123,8 +122,6 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-
-
 
 "unbind arrow keys
 nnoremap <up> <nop>
@@ -147,4 +144,5 @@ nmap <silent> <leader>j :wincmd j<CR>
 nmap <silent> <leader>k :wincmd k<CR>
 nmap <silent> <leader>l :wincmd l<CR>
 
+" ,q to close focused window
 nmap <silent> <leader>q <C-w>o
