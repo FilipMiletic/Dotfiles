@@ -146,3 +146,7 @@ nmap <silent> <leader>l :wincmd l<CR>
 
 " ,q to close focused window
 nmap <silent> <leader>q <C-w>o
+
+" Reformat/reindent whole file that is currently open
+map <leader>f mzgg=G`z
+
