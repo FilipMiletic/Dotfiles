@@ -44,6 +44,7 @@ Plug 'cocopon/iceberg.vim'
 Plug 'easysid/mod8.vim'
 Plug 'sjl/badwolf'
 Plug 'joshdick/onedark.vim'
+Plug 'shirataki/lightline-onedark'
 Plug 'ternjs/tern_for_vim'
 Plug 'jelera/vim-javascript-syntax'
 Plug 'pangloss/vim-javascript'
@@ -55,7 +56,7 @@ call plug#end()
 " let g:nofrils_strbackgrounds=0
 
 "let g:gruvbox_contrast_dark='hard'
-colorscheme hybrid
+colorscheme onedark
 
 " This path is needed for YCM
 let g:ycm_global_ycm_extra_conf='~/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
@@ -143,7 +144,7 @@ map <leader>f mzgg=G`z
 
 " =============| Lightline |===============
 let g:lightline = {
-      \ 'colorscheme': 'Tomorrow_Night',
+      \ 'colorscheme': 'onedark',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste'],
       \             [ 'fugitive', 'filename', 'modified', 'ctrlpmark' ],
