@@ -1,8 +1,8 @@
-" Default and basic settings
+"=========| Default and basic settings |===========
+
 set nocompatible
 filetype plugin on
 
-" Always using dark background
 syntax enable
 set ruler
 set ignorecase
@@ -21,12 +21,12 @@ set noswapfile
 " Set for Rails development
 " Using ctrl-t and ctrl-d for indent. while in insert
 set shiftwidth=4
-
 set laststatus=2
 
 " Better colors in iTerm2. In terminal.app need to turn this off
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
+" =========| Plugged settings and plugins |========= 
 call plug#begin('~/.config/nvim/plugged')
 " Keep Plug commands between plug#begin/end.
 Plug 'https://github.com/Valloric/YouCompleteMe'
@@ -51,21 +51,22 @@ Plug 'pangloss/vim-javascript'
 Plug 'junegunn/vim-easy-align'
 call plug#end()
 
-
+" =========| Color settings and schemes |========= 
 " Turn highlighted string backgrounds for nofrils theme
 " let g:nofrils_strbackgrounds=0
-
-"let g:gruvbox_contrast_dark='hard'
+" let g:gruvbox_contrast_dark='hard'
 colorscheme onedark
 
+" =========| Some configured paths for |=========
+" =========| Clang-complete and YCM    |=========
 " This path is needed for YCM
 let g:ycm_global_ycm_extra_conf='~/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
-
 let s:clang_library_path='/Library/Developer/CommandLineTools/usr/lib'
 if isdirectory(s:clang_library_path)
 	let g:clang_library_path=s:clang_library_path
 endif
 
+" =========| Some of my keybindings |=========  
 " My Numbering implementation that gets
 " activated on C-n, in Insert mode it
 " is set to Relative/hybrid, in Normal
@@ -141,6 +142,11 @@ nmap <silent> <leader>q <C-w>o
 
 " Reformat/reindent whole file that is currently open
 map <leader>f mzgg=G`z
+"#######################################################
+"#		end of my keybindings		       #
+"#######################################################
+
+
 
 " =============| Lightline |===============
 let g:lightline = {
