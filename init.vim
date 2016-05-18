@@ -45,6 +45,7 @@ Plug 'easysid/mod8.vim'
 Plug 'sjl/badwolf'
 Plug 'joshdick/onedark.vim'
 Plug 'shirataki/lightline-onedark'
+Plug '844196/lightline-badwolf.vim'
 Plug 'ternjs/tern_for_vim'
 Plug 'jelera/vim-javascript-syntax'
 Plug 'pangloss/vim-javascript'
@@ -55,7 +56,7 @@ call plug#end()
 " Turn highlighted string backgrounds for nofrils theme
 " let g:nofrils_strbackgrounds=0
 " let g:gruvbox_contrast_dark='hard'
-colorscheme onedark
+colorscheme badwolf
 
 " =========| Some configured paths for |=========
 " =========| Clang-complete and YCM    |=========
@@ -150,7 +151,7 @@ map <leader>f mzgg=G`z
 
 " =============| Lightline |===============
 let g:lightline = {
-      \ 'colorscheme': 'onedark',
+      \ 'colorscheme': 'badwolf',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste'],
       \             [ 'fugitive', 'filename', 'modified', 'ctrlpmark' ],
