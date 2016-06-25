@@ -319,8 +319,8 @@
 			  :map alchemist-mode-map
 			  ("M-w" . alchemist-goto-list-symbol-definitions))
   :config (progn
-										;			(setq alchemist-goto-elixir-source-dir "~/Developer/elixir/")
-										;			(setq alchemist-goto-erlang-source-dir "~/Developer/otp/")
+ ;			(setq alchemist-goto-elixir-source-dir "~/Developer/elixir/")
+ ;			(setq alchemist-goto-erlang-source-dir "~/Developer/otp/")
 			(defun phil-alchemist-mode-hook ()
 			  (tester-init-test-run #'alchemist-mix-test-file "_test.exs$")
 			  (tester-init-test-suite-run #'alchemist-mix-test))
