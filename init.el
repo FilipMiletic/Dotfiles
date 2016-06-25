@@ -116,7 +116,7 @@
 	  (eval-buffer)))))
 
 ;; Allow this emacs process to be a server for client processes.
-										;(server-start)
+;(server-start)
 
 (use-package powerline
   :ensure t
