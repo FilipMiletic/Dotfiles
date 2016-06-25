@@ -145,9 +145,9 @@
   :init
   (smartparens-global-mode)
   (show-smartparens-global-mode)
-										; (dolist (hook '(inferior-emacs-lisp-mode-hook
-										;				  emacs-lisp-mode-hook))
-										;	(add-hook hook #'smartparens-strict-mode))
+	 ; (dolist (hook '(inferior-emacs-lisp-mode-hook
+	 ;				  emacs-lisp-mode-hook))
+	 ;	(add-hook hook #'smartparens-strict-mode))
   :config
   (require 'smartparens-config)
   (setq sp-autoskip-closing-pair 'always)
