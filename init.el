@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;; My personal Emacs setup.
 
+(setq user-full-name "Filip Miletic"
+	  user-mail-address "filip.miletic@me.com")
+
 ;;; Code:
 ;; Don't load outdated byte code
 (setq load-prefer-newer t)
@@ -64,6 +67,7 @@
 	  inhibit-startup-screen t
 	  echo-keystrokes 0.1
 	  linum-format " %d")
+(setq initial-scratch-message "")
 (fset 'yes-or-no-p #'y-or-n-p)
 ;; Opt out startup message in echo area
 
@@ -90,8 +94,8 @@
 (setq make-backup-files nil)
 (setq create-lockfiles nil)
 
-(defun copy-from-osx ())
-(shell-command-to-string "pbpaste")
+(defun copy-from-osx ()
+  (shell-command-to-string "pbpaste"))
 
 (defun paste-to-osx (text &optional push)
   (let ((process-connection-type nil))
@@ -153,9 +157,9 @@
   :init
   (smartparens-global-mode)
   (show-smartparens-global-mode)
-	 ; (dolist (hook '(inferior-emacs-lisp-mode-hook
-	 ;				  emacs-lisp-mode-hook))
-	 ;	(add-hook hook #'smartparens-strict-mode))
+  ;; (dolist (hook '(inferior-emacs-lisp-mode-hook
+  ;;				  emacs-lisp-mode-hook))
+  ;;	(add-hook hook #'smartparens-strict-mode))
   :config
   (require 'smartparens-config)
   (setq sp-autoskip-closing-pair 'always)
@@ -182,7 +186,7 @@
 	  indent-tabs-mode t)
 
 ;; Prettify
-(global-prettify-symbols-mode 1)
+(global-prettify-symbols-mode t)
 
 ;; Smooth Scroll
 (use-package smooth-scrolling
@@ -191,11 +195,13 @@
   :init (smooth-scrolling-mode 1))
 (setq mouse-wheel-scroll-amount '(1 ((shift) .1) ((control) . nil)))
 (setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-follow-mouse 1)
+(setq scroll-step 1)
 
 ;; If a file is changed outside emacs, load those changes in buffers
 (global-auto-revert-mode t)
 
-(use-package company                    ; Graphical (auto-)completion
+(use-package company                    ;; Graphical (auto-)completion
   :ensure t
   :init (global-company-mode)
   :config
@@ -327,8 +333,8 @@
 			  :map alchemist-mode-map
 			  ("M-w" . alchemist-goto-list-symbol-definitions))
   :config (progn
- ;			(setq alchemist-goto-elixir-source-dir "~/Developer/elixir/")
- ;			(setq alchemist-goto-erlang-source-dir "~/Developer/otp/")
+			;;			(setq alchemist-goto-elixir-source-dir "~/Developer/elixir/")
+			;;			(setq alchemist-goto-erlang-source-dir "~/Developer/otp/")
 			(defun phil-alchemist-mode-hook ()
 			  (tester-init-test-run #'alchemist-mix-test-file "_test.exs$")
 			  (tester-init-test-suite-run #'alchemist-mix-test))
@@ -421,6 +427,12 @@
 ;; yaml
 (use-package yaml-mode
   :mode "\\.ya?ml\'")
+
+(add-hook 'org-mode-hook
+		  (lambda ()
+			(org-bullets-mode t)))
+
+(setq org-ellipsis "⤵")
 
 ;;; provide init package
 (provide 'init)
