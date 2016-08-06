@@ -11,12 +11,11 @@ set noerrorbells
 set novisualbell
 set ttyfast
 set encoding=utf8
-set background=dark
-set linebreak
 set nowrap
 set cursorline
 set copyindent
 set noswapfile
+set showmatch
 set mouse=a
 if has("mouse_sgr")
 	set ttymouse=sgr
@@ -49,10 +48,12 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'fatih/vim-go'
 Plug 'sjl/badwolf'
 Plug 'joshdick/onedark.vim'
-Plug 'owickstrom/vim-colors-paramount'
+Plug 'tyrannicaltoucan/vim-deep-space'
 Plug 'shirataki/lightline-onedark'
 Plug '844196/lightline-badwolf.vim'
+Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'slashmili/alchemist.vim'
 Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
@@ -62,15 +63,13 @@ Plug 'aliou/moriarty.vim'
 Plug 'tpope/vim-surround'
 Plug 'zchee/deoplete-jedi'
 Plug 'tpope/vim-rails/'
+Plug 'vim-ruby/vim-ruby'
 call plug#end()
 
 " =========| Color settings and schemes |========= 
 " Turn highlighted string backgrounds for nofrils theme
-" let g:nofrils_strbackgrounds=0
-" let g:gruvbox_contrast_dark='hard'
-colorscheme badwolf
-" colorscheme molokai
-" let g:rehash256=1
+set background=dark
+colorscheme solarized
 
 " =========| Some of my keybindings |=========	
 " My Numbering implementation that gets
@@ -150,7 +149,7 @@ map <leader>f mzgg=G`z
 
 " Lightline settings
 let g:lightline = {
-			\ 'colorscheme': 'badwolf',
+			\ 'colorscheme': 'solarized',
 			\ 'active': {
 			\	'left': [ [ 'mode', 'paste'],
 			\			  [ 'fugitive', 'filename', 'modified', 'ctrlpmark' ],
@@ -295,3 +294,5 @@ let g:deoplete#sources#jedi#show_docstring = 1
 
 let g:clang_use_library = 1
 let g:clang_library_path ='/Library/Developer/CommandLineTools/usr/lib'
+
+let g:vim_tags_auto_generate = 0
