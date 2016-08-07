@@ -11,7 +11,5 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # Customize to your needs...
-export TERM=screen-256color
-# alias tmux="TERM=xterm-256color tmux"
-alias tmux="TERM=screen-256color tmux"
+alias tmux="TERM=xterm-256color tmux"
 
