@@ -57,7 +57,7 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (setq create-lockfiles nil)
-(setq sentence-end-doulbe-space nil)
+(setq sentence-end-double-space nil)
 (add-to-list 'load-path "~/.emacs.d/themes/emacs-doom-theme/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-doom-theme/")
 
@@ -156,4 +156,3 @@
 (provide 'init)
 
 ;;; init.el ends here
-
