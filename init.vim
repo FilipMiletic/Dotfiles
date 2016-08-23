@@ -20,7 +20,7 @@ set mouse=a
 if has("mouse_sgr")
 	set ttymouse=sgr
 end
-
+set autochdir
 " indentation settings (and format)
 set laststatus=2
 set tabstop=4
@@ -29,6 +29,7 @@ set expandtab
 set softtabstop=4
 set noexpandtab
 set fileformat=unix
+set showtabline=2
 
 " Better colors in iTerm2. In terminal.app need to turn this off
 set termguicolors
@@ -45,17 +46,19 @@ Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'rip-rip/clang_complete'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'critiqjo/vim-bufferline'
 Plug 'fatih/vim-go'
 Plug 'sjl/badwolf'
 Plug 'joshdick/onedark.vim'
-Plug 'tyrannicaltoucan/vim-deep-space'
+Plug 'w0ng/vim-hybrid'
+Plug 'cocopon/lightline-hybrid.vim'
 Plug 'shirataki/lightline-onedark'
+Plug 'kristijanhusak/vim-hybrid-material'
 Plug '844196/lightline-badwolf.vim'
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'scrooloose/syntastic'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
-Plug 'slashmili/alchemist.vim'
 Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
 Plug 'elixir-lang/vim-elixir'
 Plug 'jaromero/vim-monokai-refined'
@@ -69,7 +72,7 @@ call plug#end()
 " =========| Color settings and schemes |========= 
 " Turn highlighted string backgrounds for nofrils theme
 set background=dark
-colorscheme solarized
+colorscheme hybrid
 
 " =========| Some of my keybindings |=========	
 " My Numbering implementation that gets
@@ -147,11 +150,19 @@ nmap <silent> <leader>q <C-w>o
 " Reformat/reindent whole file that is currently open
 map <leader>f mzgg=G`z
 
+" BufferLine settings
+let g:bufferline_active_buffer_left = ''
+let g:bufferline_active_buffer_right = ''
+let g:bufferline_show_bufnr = 0
+let g:bufferline_fname_mod = ':~:.'
+let g:bufferline_pathshorten = 1
+
 " Lightline settings
 let g:lightline = {
-			\ 'colorscheme': 'solarized',
+			\ 'colorscheme': 'hybrid',
 			\ 'active': {
 			\	'left': [ [ 'mode', 'paste'],
+			\			  [ 'tabnum' ],
 			\			  [ 'fugitive', 'filename', 'modified', 'ctrlpmark' ],
 			\			  [ 'go'] ],
 			\	'right': [ [ 'lineinfo' ], 
@@ -159,7 +170,8 @@ let g:lightline = {
 			\			   [ 'fileformat', 'fileencoding', 'filetype' ] ]
 			\ },
 			\ 'inactive': {
-			\	'left': [ [ 'go'] ],
+			\	'left': [ [ 'go'],
+			\			  [ 'tabnum' ] ]
 			\ },
 			\ 'component_function': {
 			\	'lineinfo': 'LightLineInfo',
@@ -174,7 +186,21 @@ let g:lightline = {
 			\	'fugitive': 'LightLineFugitive',
 			\	'ctrlpmark': 'CtrlPMark',
 			\ },
+			\ 'tabline': {
+			\	'left': [ ['tabs'], ['bufferline'] ],
+			\	'right': [ ['fileencoding'] ]
+			\ },
+			\ 'component': {
+			\	'bufferline': '%{MyBufferlineRefresh()}' . bufferline#get_status_string('TabLineSel', 'LightLineLeft_tabline_tabsel_1'),
+			\ },
 			\ }
+
+function! MyBufferlineRefresh()
+  call bufferline#refresh_status()
+  let rlen = 4*tabpagenr('$') + len(&fenc) + 8
+  call bufferline#trim_status_info(&columns - rlen)
+  return ''
+endfunction
 
 function! LightLineModified()
 	if &filetype == "help"
