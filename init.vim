@@ -10,7 +10,6 @@ set nolazyredraw
 set noerrorbells
 set novisualbell
 set ttyfast
-set encoding=utf8
 set nowrap
 set cursorline
 set copyindent
@@ -23,13 +22,18 @@ end
 set autochdir
 " indentation settings (and format)
 set laststatus=2
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set expandtab
-set softtabstop=4
+set softtabstop=2
 set noexpandtab
 set fileformat=unix
 set showtabline=2
+
+augroup reload_vimrc " {
+	autocmd!
+	autocmd BufWritePost $MYVIMRC source $MYVIMRC
+augroup END " }
 
 " Better colors in iTerm2. In terminal.app need to turn this off
 set termguicolors
@@ -49,20 +53,19 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'critiqjo/vim-bufferline'
 Plug 'fatih/vim-go'
 Plug 'sjl/badwolf'
-Plug 'joshdick/onedark.vim'
+Plug 'whatyouhide/vim-gotham'
 Plug 'w0ng/vim-hybrid'
+Plug 'rakr/vim-one'
+Plug 'rakr/vim-two-firewatch'
+Plug 'chriskempson/vim-tomorrow-theme'
 Plug 'cocopon/lightline-hybrid.vim'
-Plug 'shirataki/lightline-onedark'
-Plug 'kristijanhusak/vim-hybrid-material'
 Plug '844196/lightline-badwolf.vim'
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
-Plug 'scrooloose/syntastic'
+Plug 'neomake/neomake'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
 Plug 'elixir-lang/vim-elixir'
-Plug 'jaromero/vim-monokai-refined'
-Plug 'aliou/moriarty.vim'
 Plug 'tpope/vim-surround'
 Plug 'zchee/deoplete-jedi'
 Plug 'tpope/vim-rails/'
@@ -72,26 +75,10 @@ call plug#end()
 " =========| Color settings and schemes |========= 
 " Turn highlighted string backgrounds for nofrils theme
 set background=dark
-colorscheme hybrid
+let g:two_firewatch_italics= 1
+colorscheme	two-firewatch
 
-" =========| Some of my keybindings |=========	
-" My Numbering implementation that gets
-" activated on C-n, in Insert mode it
-" is set to Relative/hybrid, in Normal
-" mode it is set to static, in default
-" it is hidden.
-function! NumberToggle()
-	if(&relativenumber == 1)
-		set relativenumber
-	else
-		set norelativenumber
-		set number
-	endif
-endfunc
-
-nnoremap <C-n> :call NumberToggle()<cr>
-
-function ResetNumbering()
+function! ResetNumbering()
 	if (&relativenumber == 1)
 		set norelativenumber
 		set number
@@ -147,6 +134,10 @@ nmap <silent> <leader>l :wincmd l<CR>
 " ,q to close focused window
 nmap <silent> <leader>q <C-w>o
 
+" ,p for previous or ,n for next buffer
+nnoremap <leader>n :bnext<CR>
+nnoremap <leader>p :bprevious<CR>
+
 " Reformat/reindent whole file that is currently open
 map <leader>f mzgg=G`z
 
@@ -159,9 +150,9 @@ let g:bufferline_pathshorten = 1
 
 " Lightline settings
 let g:lightline = {
-			\ 'colorscheme': 'hybrid',
+			\ 'colorscheme': 'Tomorrow_Night',
 			\ 'active': {
-			\	'left': [ [ 'mode', 'paste'],
+			\	'left': [ [ 'paste'],
 			\			  [ 'tabnum' ],
 			\			  [ 'fugitive', 'filename', 'modified', 'ctrlpmark' ],
 			\			  [ 'go'] ],
@@ -187,7 +178,7 @@ let g:lightline = {
 			\	'ctrlpmark': 'CtrlPMark',
 			\ },
 			\ 'tabline': {
-			\	'left': [ ['tabs'], ['bufferline'] ],
+			\	'left': [ ['bufferline'] ],
 			\	'right': [ ['fileencoding'] ]
 			\ },
 			\ 'component': {
@@ -196,10 +187,10 @@ let g:lightline = {
 			\ }
 
 function! MyBufferlineRefresh()
-  call bufferline#refresh_status()
-  let rlen = 4*tabpagenr('$') + len(&fenc) + 8
-  call bufferline#trim_status_info(&columns - rlen)
-  return ''
+	call bufferline#refresh_status()
+	let rlen = 4*tabpagenr('$') + len(&fenc) + 8
+	call bufferline#trim_status_info(&columns - rlen)
+	return ''
 endfunction
 
 function! LightLineModified()
@@ -307,18 +298,11 @@ function! s:my_cr_function()
 endfunction
 inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
 let g:deoplete#sources#jedi#show_docstring = 1
 
 let g:clang_use_library = 1
 let g:clang_library_path ='/Library/Developer/CommandLineTools/usr/lib'
 
 let g:vim_tags_auto_generate = 0
+
+autocmd! BufWritePost * Neomake
