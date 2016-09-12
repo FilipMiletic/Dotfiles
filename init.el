@@ -14,7 +14,9 @@
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/"))
 
+
 (package-initialize)
+(elpy-enable)
 
 ;; Bootstrap use-package
 (unless (package-installed-p 'use-package)
@@ -30,6 +32,7 @@
 
 (add-to-list 'load-path "~/.emacs.d/themes/doom-theme/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 
 ;; Modes
