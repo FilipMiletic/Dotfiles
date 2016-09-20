@@ -29,6 +29,7 @@ prompt pure
 
 # Some old habits
 alias vim="nvim"
-# alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
+alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
+bindkey -e
 # Use Ctrl-T for opening FZF, and Ctrl-R for history
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
