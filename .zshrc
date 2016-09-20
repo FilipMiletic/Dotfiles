@@ -18,6 +18,7 @@ export GOPATH=$HOME/.go
 export PATH=$PATH:$GOPATH/bin:$GOPATH/bin
 export JAVA_HOME="$(/usr/libexec/java_home)"
 export HOMEBREW_NO_ANALYTICS=1
+export TERM=xterm-256color
 
 # PURE prompt setup
 fpath=("$HOME/.zfunctions" $fpath)
@@ -28,6 +29,6 @@ prompt pure
 
 # Some old habits
 alias vim="nvim"
-
+# alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
 # Use Ctrl-T for opening FZF, and Ctrl-R for history
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
