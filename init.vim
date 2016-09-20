@@ -17,22 +17,24 @@ set noswapfile
 set showmatch
 set mouse=a
 if has("mouse_sgr")
-	set ttymouse=sgr
+  set ttymouse=sgr
 end
 set autochdir
+
 " indentation settings (and format)
 set laststatus=2
+set expandtab
 set tabstop=2
 set shiftwidth=2
-set expandtab
 set softtabstop=2
-set noexpandtab
 set fileformat=unix
 set showtabline=2
+set colorcolumn=80
 
+" Reload vimrc file after saving
 augroup reload_vimrc " {
-	autocmd!
-	autocmd BufWritePost $MYVIMRC source $MYVIMRC
+  autocmd!
+  autocmd BufWritePost $MYVIMRC source $MYVIMRC
 augroup END " }
 
 " Better colors in iTerm2. In terminal.app need to turn this off
@@ -44,24 +46,18 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 call plug#begin('~/.config/nvim/plugged')
 " Keep Plug commands between plug#begin/end.
 function! DoRemote(arg)
-	UpdateRemotePlugins
+  UpdateRemotePlugins
 endfunction
 Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'rip-rip/clang_complete'
-Plug 'ctrlpvim/ctrlp.vim'
+Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'critiqjo/vim-bufferline'
 Plug 'fatih/vim-go'
 Plug 'sjl/badwolf'
-Plug 'whatyouhide/vim-gotham'
-Plug 'w0ng/vim-hybrid'
 Plug 'rakr/vim-one'
-Plug 'rakr/vim-two-firewatch'
-Plug 'chriskempson/vim-tomorrow-theme'
-Plug 'cocopon/lightline-hybrid.vim'
+Plug 'reedes/vim-colors-pencil'
 Plug '844196/lightline-badwolf.vim'
-Plug 'frankier/neovim-colors-solarized-truecolor-only'
-Plug 'neomake/neomake'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
@@ -72,17 +68,20 @@ Plug 'tpope/vim-rails/'
 Plug 'vim-ruby/vim-ruby'
 call plug#end()
 
-" =========| Color settings and schemes |========= 
-" Turn highlighted string backgrounds for nofrils theme
+" Themes that I use in combination with iTerm2:
+" pencil vim + pencil iTerm2
+" one vim + one iTerm2
+" badwolf vim + one iTerm2
 set background=dark
-let g:two_firewatch_italics= 1
-colorscheme	two-firewatch
+colorscheme pencil
 
+" When in insert mode set relative and when in 
+" normal set standard numbering
 function! ResetNumbering()
-	if (&relativenumber == 1)
-		set norelativenumber
-		set number
-	endif
+  if (&relativenumber == 1)
+    set norelativenumber
+    set number
+  endif
 endfunc
 
 autocmd InsertEnter * :set relativenumber
@@ -90,21 +89,20 @@ autocmd InsertLeave * call ResetNumbering()
 
 " set buffers accordingly (for C)
 augroup project
-	autocmd!
-	autocmd BufRead, BufNewFile *.h,*.c set filetype = c.doxygen
+  autocmd!
+  autocmd BufRead, BufNewFile *.h,*.c set filetype = c.doxygen
 augroup END
 
 " remap leader key
 let mapleader = ","
 
-",w opens new vertical window
+" ,w opens new vertical window
 nnoremap <leader>w <C-w>v<C-w>l
 
-"Strip all trailing whitespaces in current file
+" Strip all trailing whitespaces in current file
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
-"Mappings for split positioning
-"Ccapslock remapped to Ctrl
+" Mappings for split positioning
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -149,144 +147,125 @@ let g:bufferline_fname_mod = ':~:.'
 let g:bufferline_pathshorten = 1
 
 " Lightline settings
+" -----------------------------------------------------------------------------
 let g:lightline = {
-			\ 'colorscheme': 'Tomorrow_Night',
-			\ 'active': {
-			\	'left': [ [ 'paste'],
-			\			  [ 'tabnum' ],
-			\			  [ 'fugitive', 'filename', 'modified', 'ctrlpmark' ],
-			\			  [ 'go'] ],
-			\	'right': [ [ 'lineinfo' ], 
-			\			   [ 'percent' ], 
-			\			   [ 'fileformat', 'fileencoding', 'filetype' ] ]
-			\ },
-			\ 'inactive': {
-			\	'left': [ [ 'go'],
-			\			  [ 'tabnum' ] ]
-			\ },
-			\ 'component_function': {
-			\	'lineinfo': 'LightLineInfo',
-			\	'percent': 'LightLinePercent',
-			\	'modified': 'LightLineModified',
-			\	'filename': 'LightLineFilename',
-			\	'go': 'LightLineGo',
-			\	'fileformat': 'LightLineFileformat',
-			\	'filetype': 'LightLineFiletype',
-			\	'fileencoding': 'LightLineFileencoding',
-			\	'mode': 'LightLineMode',
-			\	'fugitive': 'LightLineFugitive',
-			\	'ctrlpmark': 'CtrlPMark',
-			\ },
-			\ 'tabline': {
-			\	'left': [ ['bufferline'] ],
-			\	'right': [ ['fileencoding'] ]
-			\ },
-			\ 'component': {
-			\	'bufferline': '%{MyBufferlineRefresh()}' . bufferline#get_status_string('TabLineSel', 'LightLineLeft_tabline_tabsel_1'),
-			\ },
-			\ }
+      \ 'colorscheme': 'badwolf',
+      \ 'active': {
+      \ 'left': [ ['paste'],
+      \       [ 'tabnum' ],
+      \       [ 'fugitive', 'filename', 'modified', 'ctrlpmark' ],
+      \       [ 'go'] ],
+      \ 'right': [ [ 'lineinfo' ],
+      \        [ 'percent' ],
+      \        [ 'fileformat', 'fileencoding', 'filetype' ] ]
+      \ },
+      \ 'inactive': {
+      \ 'left': [ [ 'go'],
+      \       [ 'tabnum' ] ]
+      \ },
+      \ 'component_function': {
+      \ 'lineinfo': 'LightLineInfo',
+      \ 'percent': 'LightLinePercent',
+      \ 'modified': 'LightLineModified',
+      \ 'filename': 'LightLineFilename',
+      \ 'go': 'LightLineGo',
+      \ 'fileformat': 'LightLineFileformat',
+      \ 'filetype': 'LightLineFiletype',
+      \ 'fileencoding': 'LightLineFileencoding',
+      \ 'mode': 'LightLineMode',
+      \ 'fugitive': 'LightLineFugitive',
+      \ 'ctrlpmark': 'CtrlPMark',
+      \ },
+      \ 'tabline': {
+      \ 'left': [ ['bufferline'] ],
+      \ 'right': [ ['fileencoding'] ]
+      \ },
+      \ 'component': {
+      \ 'bufferline': '%{MyBufferlineRefresh()}' . bufferline#get_status_string('TabLineSel', 'LightLineLeft_tabline_tabsel_1'),
+      \ },
+      \ }
 
 function! MyBufferlineRefresh()
-	call bufferline#refresh_status()
-	let rlen = 4*tabpagenr('$') + len(&fenc) + 8
-	call bufferline#trim_status_info(&columns - rlen)
-	return ''
+  call bufferline#refresh_status()
+  let rlen = 4*tabpagenr('$') + len(&fenc) + 8
+  call bufferline#trim_status_info(&columns - rlen)
+  return ''
 endfunction
 
 function! LightLineModified()
-	if &filetype == "help"
-		return ""
-	elseif &modified
-		return "+"
-	elseif &modifiable
-		return ""
-	else
-		return ""
-	endif
+  if &filetype == "help"
+    return ""
+  elseif &modified
+    return "+"
+  elseif &modifiable
+    return ""
+  else
+    return ""
+  endif
 endfunction
 
 function! LightLineFileformat()
-	return winwidth(0) > 70 ? &fileformat : ''
+  return winwidth(0) > 70 ? &fileformat : ''
 endfunction
 
 function! LightLineFiletype()
-	return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
 endfunction
 
 function! LightLineFileencoding()
-	return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+  return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
 endfunction
 
 function! LightLineInfo()
-	return winwidth(0) > 60 ? printf("%3d:%-2d", line('.'), col('.')) : ''
+  return winwidth(0) > 60 ? printf("%3d:%-2d", line('.'), col('.')) : ''
 endfunction
 
 function! LightLinePercent()
-	return &ft =~? 'vimfiler' ? '' : (100 * line('.') / line('$')) . '%'
+  return &ft =~? 'vimfiler' ? '' : (100 * line('.') / line('$')) . '%'
 endfunction
 
 function! LightLineFugitive()
-	return exists('*fugitive#head') ? fugitive#head() : ''
+  return exists('*fugitive#head') ? fugitive#head() : ''
 endfunction
 
 function! LightLineGo()
-	" return ''
-	return exists('*go#jobcontrol#Statusline') ? go#jobcontrol#Statusline() : ''
+  " return ''
+  return exists('*go#jobcontrol#Statusline') ? go#jobcontrol#Statusline() : ''
 endfunction
 
 function! LightLineMode()
-	let fname = expand('%:t')
-	return fname == 'ControlP' ? 'CtrlP' :
-				\ &ft == 'vimfiler' ? 'VimFiler' :
-				\ winwidth(0) > 60 ? lightline#mode() : ''
+  let fname = expand('%:t')
+  return fname == 'ControlP' ? 'CtrlP' :
+        \ &ft == 'vimfiler' ? 'VimFiler' :
+        \ winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
 
 function! LightLineFilename()
-	let fname = expand('%:t')
-	if mode() == 't'
-		return ''
-	endif
+  let fname = expand('%:t')
+  if mode() == 't'
+    return ''
+  endif
 
-	return fname == 'ControlP' ? g:lightline.ctrlp_item :
-				\ &ft == 'vimfiler' ? vimfiler#get_status_string() :
-				\ ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
-				\ ('' != fname ? fname : '[No Name]')
+  return fname == 'ControlP' ? g:lightline.ctrlp_item :
+        \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \ ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
+        \ ('' != fname ? fname : '[No Name]')
 endfunction
 
 function! LightLineReadonly()
-	return &ft !~? 'help' && &readonly ? 'RO' : ''
+  return &ft !~? 'help' && &readonly ? 'RO' : ''
 endfunction
 
 function! CtrlPMark()
-	if expand('%:t') =~ 'ControlP'
-		call lightline#link('iR'[g:lightline.ctrlp_regex])
-		return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
-					\ , g:lightline.ctrlp_next], 0)
-	else
-		return ''
-	endif
+  if expand('%:t') =~ 'ControlP'
+    call lightline#link('iR'[g:lightline.ctrlp_regex])
+    return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
+          \ , g:lightline.ctrlp_next], 0)
+  else
+    return ''
+  endif
 endfunction
-
-let g:ctrlp_status_func = {
-			\ 'main': 'CtrlPStatusFunc_1',
-			\ 'prog': 'CtrlPStatusFunc_2',
-			\ }
-
-function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
-	let g:lightline.ctrlp_regex = a:regex
-	let g:lightline.ctrlp_prev = a:prev
-	let g:lightline.ctrlp_item = a:item
-	let g:lightline.ctrlp_next = a:next
-	return lightline#statusline(0)
-endfunction
-
-function! CtrlPStatusFunc_2(str)
-	return lightline#statusline(0)
-endfunction
-
-let g:ctrlp_cmd = 'CtrlPMRU'
-let g:ctrlp_use_caching = 1
-let g:clear_cache_on_exit = 1
+"------------------------------------------------------------------------------
 
 " configure deoplete to run to startup, and
 " TAB to cycle through suggestions
@@ -294,7 +273,7 @@ let g:deoplete#enable_at_startup=1
 
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function()
-	return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
 endfunction
 inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 
@@ -305,4 +284,3 @@ let g:clang_library_path ='/Library/Developer/CommandLineTools/usr/lib'
 
 let g:vim_tags_auto_generate = 0
 
-autocmd! BufWritePost * Neomake

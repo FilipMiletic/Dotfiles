@@ -45,6 +45,7 @@
 (global-auto-revert-mode 1)
 (global-prettify-symbols-mode 1)
 (global-hl-line-mode 1)
+(blink-cursor-mode 0)
 
 ;; Global configuration
 
@@ -68,7 +69,8 @@
       backup-inhibited nil
       auto-save-default nil
       create-lockfiles nil
-      sentence-end-double-space nil)
+      sentence-end-double-space nil
+      cursor-type 'box)
 
 
 ;; Indentation
@@ -77,7 +79,7 @@
 	      tab-width 2
 	      c-basic-offset 4
         fill-column 80)
-	      
+
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Don't close Emacs via GUI command
@@ -91,8 +93,15 @@
 
 ;; Theme
 (setq custom-safe-themes t)
-(require 'doom-theme)
-(load-theme 'doom-one t)
+;; Base16 Themes
+(load-theme 'noctilux t)
+
+
+(set-face-attribute 'default nil
+                    :font "SF Mono"
+                    :height 120
+                    :weight 'regular)
+
 
 (use-package exec-path-from-shell
   :ensure t
