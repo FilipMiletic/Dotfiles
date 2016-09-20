@@ -149,7 +149,5 @@
   :bind (("C->" . mc/mark-next-like-this)
          ("C-<" . mc/mark-previous-like-this)))
 
-(drag-stuff-global-mode t)
-
 (provide 'init)
 ;;; init.el ends here
