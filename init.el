@@ -8,7 +8,6 @@
 ;;; Commentary:
 
 ;;; Code:
-
 ;; Setup package system
 (require 'package)
 (add-to-list 'package-archives
@@ -36,7 +35,6 @@
 
 
 ;; Modes
-
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -48,14 +46,14 @@
 (blink-cursor-mode 0)
 
 ;; Global configuration
-
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       load-prefer-newer t
-      gc-cons-threshold 25000000
+      gc-cons-threshold 100000000
       ring-bell-function 'ignore
       inhibit-splash-screen t
       initial-scratch-message nil
+      inhibit-startup-message t
       require-final-newline t
       mouse-wheel-scroll-amount '(1 ((shift) .1))
       mouse-wheel-progressive-speed nil
@@ -66,7 +64,6 @@
       fringes-outside-margins t
       ns-pop-up-frames nil
       make-backup-files nil
-      backup-inhibited nil
       auto-save-default nil
       create-lockfiles nil
       sentence-end-double-space nil
@@ -74,13 +71,15 @@
 
 
 ;; Indentation
-
 (setq-default indent-tabs-mode nil
-	      tab-width 2
-	      c-basic-offset 4
-        fill-column 80)
+              tab-width 2
+              c-basic-offset 4
+              fill-column 80)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+(defun display-startup-echo-area-message ()
+  (message "Hello, Dave. You're looking well today."))
 
 ;; Don't close Emacs via GUI command
 (defadvice handle-delete-frame (around my-handle-delete-frame-advice activate)
@@ -93,7 +92,6 @@
 
 ;; Theme
 (setq custom-safe-themes t)
-;; Base16 Themes
 (load-theme 'noctilux t)
 
 
@@ -101,7 +99,6 @@
                     :font "SF Mono"
                     :height 120
                     :weight 'regular)
-
 
 (use-package exec-path-from-shell
   :ensure t
@@ -113,6 +110,15 @@
   :ensure t
   :defer 2
   :config (global-flycheck-mode 1))
+
+(use-package magit
+  :ensure t
+  :commands (magit-status magit-checkout)
+  :bind (("C-x g" . magit-status))
+  :init
+  (setq magit-revert-buffers 'silent
+        magit-push-always-verify nil
+        git-commit-summary-max-length 70))
 
 (use-package ido-ubiquitous
   :ensure t
