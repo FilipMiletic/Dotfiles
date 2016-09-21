@@ -1,11 +1,19 @@
-;;; package --- Summary
-;; exec-path-from-shell
-;; flycheck
-;; ido: flx + uqiuitus + vertical
-;; company
-;; agressive indent
+;;; package -- Summary:
+;;  exec-path-from-shell
+;;  flycheck
+;;  magit
+;;  ido-ubiquitous
+;;  flx-ido
+;;  ido
+;;  ido-vertical
+;;  clojure-mode
+;;  paredit
+;;  cider
+;;  company
+;;  tramp
 
 ;;; Commentary:
+;; I will call him Hal-3000!
 
 ;;; Code:
 ;; Setup package system
@@ -32,7 +40,6 @@
 (add-to-list 'load-path "~/.emacs.d/themes/doom-theme/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
 
 ;; Modes
 (menu-bar-mode -1)
@@ -69,7 +76,6 @@
       sentence-end-double-space nil
       cursor-type 'box)
 
-
 ;; Indentation
 (setq-default indent-tabs-mode nil
               tab-width 2
@@ -79,6 +85,7 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (defun display-startup-echo-area-message ()
+  "Just say hello Hal!"
   (message "Hello, Dave. You're looking well today."))
 
 ;; Don't close Emacs via GUI command
@@ -94,11 +101,11 @@
 (setq custom-safe-themes t)
 (load-theme 'noctilux t)
 
-
 (set-face-attribute 'default nil
                     :font "SF Mono"
                     :height 120
                     :weight 'regular)
+
 
 (use-package exec-path-from-shell
   :ensure t
@@ -116,7 +123,7 @@
   :commands (magit-status magit-checkout)
   :bind (("C-x g" . magit-status))
   :init
-  (setq magit-revert-buffers 'silent
+  (setq magit-auto-revert-buffers 'silent
         magit-push-always-verify nil
         git-commit-summary-max-length 70))
 
@@ -141,6 +148,20 @@
   :ensure t
   :config (ido-vertical-mode 1))
 
+(use-package clojure-mode)
+
+(use-package smartparens
+  :ensure t
+  :config
+  (add-hook 'emacs-lisp-mode-hook #'smartparens-mode)
+  (add-hook 'lisp-mpde-hook #'smartparens-mode)
+  (add-hook 'clojure-mode-hook #'smartparens-mode))
+
+(use-package cider
+  :ensure t
+  :config
+  (add-hook 'clojure-mode-hook #'smartparens-mode))
+
 (use-package company
   :ensure t
   :diminish company-mode
@@ -154,6 +175,9 @@
 (use-package multiple-cursors
   :bind (("C->" . mc/mark-next-like-this)
          ("C-<" . mc/mark-previous-like-this)))
+
+(require 'tramp)
+(setq tramp-default-method "ssh")
 
 (provide 'init)
 ;;; init.el ends here
