@@ -97,6 +97,10 @@
 		ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
+;; Key bindings
+(setq mac-command-modifier 'control)
+(setq mac-right-command-modifier 'meta)
+
 ;; Theme
 (setq custom-safe-themes t)
 (load-theme 'noctilux t)
@@ -106,12 +110,25 @@
                     :height 120
                     :weight 'regular)
 
+(global-set-key [remap goto-line] 'goto-line-with-feedback)
+(defun goto-line-with-feedback ()
+  "Show line numbers temporarily, while prompting for line number."
+  (interactive)
+  (with-no-warnings
+    (unwind-protect
+        (progn
+          (linum-mode t)
+          (goto-line (read-number "Goto line: ")))
+      (linum-mode -1))))
 
 (use-package exec-path-from-shell
   :ensure t
   :config
-  (exec-path-from-shell-initialize)
-  (setq exec-path-from-shell-check-startup-files nil))
+  (exec-path-from-shell-initialize))
+
+(use-package server
+  :config
+  (unless (server-running-p) (server-start)))
 
 (use-package flycheck
   :ensure t
@@ -121,7 +138,7 @@
 (use-package magit
   :ensure t
   :commands (magit-status magit-checkout)
-  :bind (("C-x g" . magit-status))
+  :bind (("C-c g" . magit-status))
   :init
   (setq magit-auto-revert-buffers 'silent
         magit-push-always-verify nil
@@ -148,19 +165,22 @@
   :ensure t
   :config (ido-vertical-mode 1))
 
-(use-package clojure-mode)
+(use-package clojure-mode
+  :ensure t
+  :config (setq clojure-indent-style t))
 
 (use-package smartparens
   :ensure t
-  :config
-  (add-hook 'emacs-lisp-mode-hook #'smartparens-mode)
-  (add-hook 'lisp-mpde-hook #'smartparens-mode)
-  (add-hook 'clojure-mode-hook #'smartparens-mode))
+  :init
+  (add-hook 'clojure-mode-hook 'smartparens-mode)
+  (add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
+  (add-hook 'cider-repl-mode-hook 'smartparens-mode)
+  (add-hook 'lisp-mode-hook 'smartparens-mode))
 
 (use-package cider
   :ensure t
-  :config
-  (add-hook 'clojure-mode-hook #'smartparens-mode))
+  :init
+  (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode))
 
 (use-package company
   :ensure t
@@ -178,6 +198,8 @@
 
 (require 'tramp)
 (setq tramp-default-method "ssh")
+(smartparens-global-mode t)
+
 
 (provide 'init)
 ;;; init.el ends here

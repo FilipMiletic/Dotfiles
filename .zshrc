@@ -1,35 +1,27 @@
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
 HISTSIZE=100
-SAVEHIST=1000
-unsetopt beep
+SAVEHIST=100
+unsetopt appendhistory autocd beep
 bindkey -e
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
-zstyle :compinstall filename '/Users/Filip/.zshrc'
+zstyle :compinstall filename '/Users/phil/.zshrc'
 
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
-export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/bin:/usr/sbin:/sbin:$PATH
-export GOROOT="/usr/local/opt/go/libexec"
-export GOPATH=$HOME/.go
-export PATH=$PATH:$GOPATH/bin:$GOPATH/bin
-export JAVA_HOME="$(/usr/libexec/java_home)"
-export HOMEBREW_NO_ANALYTICS=1
-export TERM=xterm-256color
+# Pure ZSH prompt
 
-# PURE prompt setup
-fpath=("$HOME/.zfunctions" $fpath)
 autoload -U promptinit && promptinit
 prompt pure
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
-# Some old habits
-alias vim="nvim"
+# Alias
 alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
-bindkey -e
-# Use Ctrl-T for opening FZF, and Ctrl-R for history
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+e() {
+    emacsclient $1
+}
+
+# Set emacs as default editor
+export EDITOR="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
