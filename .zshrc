@@ -2,11 +2,13 @@
 HISTFILE=~/.histfile
 HISTSIZE=100
 SAVEHIST=100
-unsetopt appendhistory autocd beep
+MENU_COMPLETE="true"
+unsetopt appendhistory autocd beep menu_complete
 bindkey -e
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
 zstyle :compinstall filename '/Users/phil/.zshrc'
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 
 autoload -Uz compinit
 compinit
