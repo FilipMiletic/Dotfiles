@@ -42,7 +42,7 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; Modes
-(menu-bar-mode -1)
+(menu-bar-mode t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (column-number-mode t)
@@ -51,6 +51,7 @@
 (global-prettify-symbols-mode 1)
 (global-hl-line-mode 1)
 (blink-cursor-mode 0)
+
 
 ;; Global configuration
 (setq mac-option-modifier nil
@@ -97,17 +98,17 @@
 		ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
-;; Key bindings
-(setq mac-command-modifier 'control)
-(setq mac-right-command-modifier 'meta)
-
 ;; Theme
 (setq custom-safe-themes t)
-(load-theme 'noctilux t)
+;;(load-theme 'monotropic t)
+(setq darkokai-mode-line-padding 1)
+(load-theme 'eby t)
+
+;;(load-theme 'monotropic t)
 
 (set-face-attribute 'default nil
                     :font "SF Mono"
-                    :height 120
+                    :height 110
                     :weight 'regular)
 
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
@@ -135,6 +136,8 @@
   :defer 2
   :config (global-flycheck-mode 1))
 
+(defvar magit-auto-revert-buffers)
+(defvar magit-push-always-verify)
 (use-package magit
   :ensure t
   :commands (magit-status magit-checkout)
@@ -161,6 +164,19 @@
     (flx-ido-mode t)
     (setq ido-enable-flex-matching t)))
 
+(use-package company
+  :ensure t
+  :defer t
+  :init (global-company-mode)
+  :config
+  (progn
+    ;; Use Company for completion
+    (bind-key [remap completion-at-point] #'company-complete company-mode-map)
+    (setq company-tooltip-align-annotations t
+          ;; Easy navigation to candidates with M-<n>
+          company-show-numbers t))
+  :diminish company-mode)
+
 (use-package ido-vertical-mode
   :ensure t
   :config (ido-vertical-mode 1))
@@ -177,24 +193,25 @@
   (add-hook 'cider-repl-mode-hook 'smartparens-mode)
   (add-hook 'lisp-mode-hook 'smartparens-mode))
 
+;; Irony
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+    'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+    'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
 (use-package cider
   :ensure t
   :init
   (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode))
-
-(use-package company
-  :ensure t
-  :diminish company-mode
-  :config
-  (setq company-auto-complete nil
-        company-tooltip-flip-when-above t
-        company-minimum-prefix-length 2
-        company-tooltip-limit 10)
-  (global-company-mode 1))
-
-(use-package multiple-cursors
-  :bind (("C->" . mc/mark-next-like-this)
-         ("C-<" . mc/mark-previous-like-this)))
 
 (require 'tramp)
 (setq tramp-default-method "ssh")
