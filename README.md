@@ -4,7 +4,6 @@ Not to be confused with Arch Linux ones that are in different
 repository.
 
 Here are configurations for:
-- vim (basic configuration, minimal completition for C/C++)
+- vim (basic configuration, minimal completition for C/C++/Python, evenutaly Go and JS)
 - tmux
-- emacs (light configuration, with my own theme)
 - bash/zsh (PATH, pure prompt)
