@@ -5,17 +5,26 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-clang'
 Plug 'zchee/deoplete-jedi'
 Plug 'scrooloose/nerdtree'
-Plug 'rakr/vim-one'
+Plug 'w0ng/vim-hybrid'
+Plug 'taohex/lightline-buffer'
 
 call plug#end()
 
 let g:lightline = {
-      \ 'colorscheme': 'onedark',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'readonly', 'filename', 'modified' ] ]
-      \ }
-      \ }
+    \ 'colorscheme': "neodark",
+    \ 'tabline': {
+        \ 'left': [ [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+        \ 'right': [ [ 'close' ], ],
+        \ },
+    \ 'component_expand': {
+        \ 'buffercurrent': 'lightline#buffer#buffercurrent2',
+        \ },
+    \ 'component_function': {
+        \ 'bufferbefore': 'lightline#buffer#bufferbefore',
+        \ 'bufferafter': 'lightline#buffer#bufferafter',
+        \ 'bufferinfo': 'lightline#buffer#bufferinfo',
+        \ },
+    \ }
 
 let g:lightline.mode_map = {
 		    \ 'n' : 'N',
@@ -26,11 +35,31 @@ let g:lightline.mode_map = {
 		    \ "\<C-v>": 'V-BLOCK',
 	        \ }
 
+" remap arrow key
+nnoremap <Left> :bprev<CR>
+nnoremap <Right> :bnext<CR>
+
+" lightline-buffer settings
+let g:lightline_buffer_logo = '⇥  '
+let g:lightline_buffer_readonly_icon = '⌫' 
+
+let g:lightline_buffer_show_bufnr = 1
+let g:lightline_buffer_rotate = 0
+let g:lightline_buffer_fname_mod = ':t'
+let g:lightline_buffer_excludes = ['vimfiler']
+
+let g:lightline_buffer_maxflen = 30
+let g:lightline_buffer_maxfextlen = 3
+let g:lightline_buffer_minflen = 16
+let g:lightline_buffer_minfextlen = 3
+let g:lightline_buffer_reservelen = 20
+
 augroup reload_vimrc
     autocmd!
     autocmd bufwritepost $MYVIMRC nested source $MYVIMRC
 augroup END
 
+set showtabline=2
 set hidden
 set autoread
 set showcmd
@@ -73,8 +102,6 @@ set ignorecase                                                                  
 set smartcase                                                                   " do case-sensitive if there's a capital letter
 
 set cursorline
-"autocmd WinLeave * setlocal nocursorline
-"autocmd WinEnter * setlocal cursorline
 set colorcolumn=80
 
 let g:mapleader = ","
@@ -86,10 +113,6 @@ nnoremap <leader><leader> <C-w><C-w>
 nnoremap <leader>t :NERDTreeToggle<CR>
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 1
-let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-
-let &t_SR = "\<Esc>]50;CursorShape=2\x7"
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#sources#clang#libclang_path="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/libclang.dylib"
@@ -98,4 +121,4 @@ let g:deoplete#sources#clang#clang_header="/Applications/Xcode.app/Contents/Deve
 syntax on
 set termguicolors
 set background=dark
-colorscheme one
+colorscheme hybrid
