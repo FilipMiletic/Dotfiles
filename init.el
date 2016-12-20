@@ -1,34 +1,29 @@
+;;; package -- Summary:
+;;  flycheck
+;;  ido-ubiquitous
+;;  flx-ido
+;;  ido
+;;  ido-vertical
+;;  clojure-mode
+;;  paredit
+;;  cider
+;;  company
+;;  tramp
+;;; Commentary:
+;;; Code:
 (require 'package)
-(setq package-user-dir "~/.emacs.d/elpa/")
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+             '("melpa" . "http://melpa.milkbox.net/packages/"))
+
 (package-initialize)
 
-(defvar mf-packages
-  '(
-    exec-path-from-shell
-    flycheck
-    company
-    clojure-mode
-    smartparens
-    browse-kill-ring
-    ido-ubiquitous
-    ido-vertical-mode
-    flx-ido
-    noctilux-theme
-    magit
-    tramp
-    undo-tree
-    ))
-
-(defun mf-install-packages ()
-  "Install only the sweetest of packages."
-  (interactive)
+;; Bootstrap use-package
+(unless (package-installed-p 'use-package)
   (package-refresh-contents)
-  (mapc #'(lambda (package)
-            (unless (package-installed-p package)
-              (package-install package)))
-        mf-packages))
+  (package-install 'use-package))
+
+(unless package-archive-contents
+  (package-refresh-contents))
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
@@ -64,10 +59,7 @@
       auto-save-default nil
       create-lockfiles nil
       sentence-end-double-space nil
-      cursor-type 'box
-      ido-use-faces nil
-      ido-enable-flex-matching 1
-      tramp-default-method "ssh")
+      cursor-type 'box)
 
 (setq-default indent-tabs-mode nil
               tab-width 4
@@ -86,15 +78,49 @@
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
 (setq custom-safe-themes t)
-(load-theme 'noctilux t)
+(use-package doom-themes
+  :ensure t
+  :config (load-theme 'doom-one t))
 
 
-(ido-ubiquitous-mode 1)
-(ido-mode 1)
-(ido-everywhere 1)
-(global-company-mode 1)
-(smartparens-global-mode 1)
+(use-package flycheck
+  :ensure t
+  :defer 2
+  :config (global-flycheck-mode 1))
 
-(add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
+(use-package ido-ubiquitous
+  :ensure t
+  :config (ido-ubiquitous-mode t))
 
+(use-package flx-ido
+  :ensure t
+  :config (setq ido-use-faces nil))
 
+(use-package ido
+  :ensure t
+  :config
+  (progn
+    (ido-mode t)
+;;  (ido-everywhere t)
+    (flx-ido-mode t)
+    (setq ido-enable-flex-matching t)))
+
+(use-package ido-vertical-mode
+  :ensure t
+  :config (ido-vertical-mode 1))
+
+(use-package company
+  :ensure t
+  :diminish company-mode
+  :config
+  (setq company-auto-complete nil
+        company-tooltip-flip-when-above t
+        company-minimum-prefix-length 2
+        company-tooltip-limit 10)
+  (global-company-mode 1))
+
+(require 'tramp)
+(setq tramp-default-method "ssh")
+
+(provide 'init)
+;;; init.el ends here
