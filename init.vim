@@ -4,13 +4,11 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-clang'
 Plug 'zchee/deoplete-jedi'
 Plug 'scrooloose/nerdtree'
-Plug 'ap/vim-buftabline'
 Plug 'w0ng/vim-hybrid'
-Plug 'ajh17/Spacegray.vim'
-Plug 'sjl/badwolf'
-Plug '844196/lightline-badwolf.vim'
-Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'ap/vim-buftabline'
+Plug 'tpope/vim-surround'
+Plug 'fatih/molokai'
 
 call plug#end()
 
@@ -38,6 +36,7 @@ set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.idea/*,*/.DS_Store
 set noswapfile
 set splitbelow
 set splitright
+set ruler
 set mouse=a
 map <ScrollWheelUp> <C-Y>
 map <ScrollWheelDown> <C-E>
@@ -46,7 +45,7 @@ set matchtime=1                                                                 
 set number
 set lazyredraw
 set laststatus=2
-set noshowmode
+set showmode
 set nowrap                                                                      " disable folds by default
 set fillchars=vert:│
 set noerrorbells
@@ -96,98 +95,11 @@ endfunc
 autocmd InsertEnter * :set relativenumber
 autocmd InsertLeave * call ResetNumbering()
 
-let g:lightline = {
-      \ 'colorscheme': 'badwolf',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste'],
-      \             [ 'fugitive', 'filename', 'modified'],
-      \             [ 'go'] ],
-      \   'right': [ [ 'lineinfo' ], 
-      \              [ 'percent' ], 
-      \              [ 'fileformat', 'fileencoding', 'filetype' ] ]
-      \ },
-      \ 'inactive': {
-      \   'left': [ [ 'go'] ],
-      \ },
-      \ 'component_function': {
-      \   'lineinfo': 'LightLineInfo',
-      \   'percent': 'LightLinePercent',
-      \   'modified': 'LightLineModified',
-      \   'filename': 'LightLineFilename',
-      \   'go': 'LightLineGo',
-      \   'fileformat': 'LightLineFileformat',
-      \   'filetype': 'LightLineFiletype',
-      \   'fileencoding': 'LightLineFileencoding',
-      \   'mode': 'LightLineMode',
-      \   'fugitive': 'LightLineFugitive',
-      \ },
-      \ }
-
-function! LightLineModified()
-  if &filetype == "help"
-    return ""
-  elseif &modified
-    return "+"
-  elseif &modifiable
-    return ""
-  else
-    return ""
-  endif
-endfunction
-
-function! LightLineFileformat()
-  return winwidth(0) > 70 ? &fileformat : ''
-endfunction
-
-function! LightLineFiletype()
-  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
-endfunction
-
-function! LightLineFileencoding()
-  return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
-endfunction
-
-function! LightLineInfo()
-  return winwidth(0) > 60 ? printf("%3d:%-2d", line('.'), col('.')) : ''
-endfunction
-
-function! LightLinePercent()
-  return &ft =~? 'vimfiler' ? '' : (100 * line('.') / line('$')) . '%'
-endfunction
-
-function! LightLineFugitive()
-  return exists('*fugitive#head') ? fugitive#head() : ''
-endfunction
-
-function! LightLineGo()
-  " return ''
-  return exists('*go#jobcontrol#Statusline') ? go#jobcontrol#Statusline() : ''
-endfunction
-
-function! LightLineMode()
-  let fname = expand('%:t')
-  return fname == 'ControlP' ? 'CtrlP' :
-        \ &ft == 'vimfiler' ? 'VimFiler' :
-        \ winwidth(0) > 60 ? lightline#mode() : ''
-endfunction
-
-function! LightLineFilename()
-  let fname = expand('%:t')
-  if mode() == 't'
-    return ''
-  endif
-
-  return fname == 'ControlP' ? g:lightline.ctrlp_item :
-        \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
-        \ ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
-        \ ('' != fname ? fname : '[No Name]')
-endfunction
-
-function! LightLineReadonly()
-  return &ft !~? 'help' && &readonly ? 'RO' : ''
-endfunction
-
 syntax on
 set termguicolors
 set background=dark
-colorscheme badwolf
+colorscheme molokai
+" set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:.
+" set list
+
+set statusline=%F%m%r%h%w%=\ [%L][%{&ff}]%y[%p%%][%04l,%04v]
