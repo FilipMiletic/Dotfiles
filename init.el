@@ -16,6 +16,7 @@
              '("melpa" . "http://melpa.milkbox.net/packages/"))
 
 (package-initialize)
+(elpy-enable)
 
 ;; Bootstrap use-package
 (unless (package-installed-p 'use-package)
@@ -25,6 +26,7 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
@@ -77,11 +79,23 @@
 		  ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
-(setq custom-safe-themes t)
-(use-package doom-themes
-  :ensure t
-  :config (load-theme 'doom-one t))
+(defun toggle-transparency ()
+   (interactive)
+   (let ((alpha (frame-parameter nil 'alpha)))
+     (set-frame-parameter
+      nil 'alpha
+      (if (eql (cond ((numberp alpha) alpha)
+                     ((numberp (cdr alpha)) (cdr alpha))
+                     ;; Also handle undocumented (<active> <inactive>) form.
+                     ((numberp (cadr alpha)) (cadr alpha)))
+               100)
+          '(92 . 100) '(100 . 100)))))
+ (global-set-key (kbd "C-c t") 'toggle-transparency)
 
+(setq custom-safe-themes t)
+(use-package jbeans-theme
+   :ensure t
+   :config (load-theme 'jbeans t))
 
 (use-package flycheck
   :ensure t
@@ -95,6 +109,26 @@
 (use-package flx-ido
   :ensure t
   :config (setq ido-use-faces nil))
+
+(use-package paredit
+  :ensure t
+  :diminish paredit-mode
+  :config
+  (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+  (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+  (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+  :bind (("C-c d" . paredit-forward-down))
+  )
+
+;; Ensure paredit is used EVERYWHERE!
+(use-package paredit-everywhere
+  :ensure t
+  :diminish paredit-everywhere-mode
+  :config
+  (add-hook 'prog-mode-hook #'paredit-everywhere-mode))
 
 (use-package ido
   :ensure t
