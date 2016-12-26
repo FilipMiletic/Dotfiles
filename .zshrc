@@ -71,7 +71,7 @@ export LANG=en_US.UTF-8
 
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
-export EDITOR='vim'
+export EDITOR='emacs'
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
@@ -84,3 +84,4 @@ export EDITOR='vim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias emacs='emacs -nw'
