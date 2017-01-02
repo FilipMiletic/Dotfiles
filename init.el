@@ -79,23 +79,26 @@
 		  ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
-(defun toggle-transparency ()
-   (interactive)
-   (let ((alpha (frame-parameter nil 'alpha)))
-     (set-frame-parameter
-      nil 'alpha
-      (if (eql (cond ((numberp alpha) alpha)
-                     ((numberp (cdr alpha)) (cdr alpha))
-                     ;; Also handle undocumented (<active> <inactive>) form.
-                     ((numberp (cadr alpha)) (cadr alpha)))
-               100)
-          '(92 . 100) '(100 . 100)))))
- (global-set-key (kbd "C-c t") 'toggle-transparency)
+(set-frame-parameter (selected-frame) 'alpha '(98 . 100))
+(add-to-list 'default-frame-alist '(alpha . (98 . 100)))
+
+;; (defun toggle-transparency ()
+;;    (interactive)
+;;    (let ((alpha (frame-parameter nil 'alpha)))
+;;      (set-frame-parameter
+;;       nil 'alpha
+;;       (if (eql (cond ((numberp alpha) alpha)
+;;                      ((numberp (cdr alpha)) (cdr alpha))
+;;                      ;; Also handle undocumented (<active> <inactive>) form.
+;;                      ((numberp (cadr alpha)) (cadr alpha)))
+;;                100)
+;;           '(92 . 100) '(100 . 100)))))
+;; (global-set-key (kbd "C-c t") 'toggle-transparency)
 
 (setq custom-safe-themes t)
-(use-package jbeans-theme
+(use-package noctilux-theme
    :ensure t
-   :config (load-theme 'jbeans t))
+   :config (load-theme 'noctilux t))
 
 (use-package flycheck
   :ensure t
@@ -151,7 +154,23 @@
         company-tooltip-flip-when-above t
         company-minimum-prefix-length 2
         company-tooltip-limit 10)
-  (global-company-mode 1))
+  (global-company-mode 1)
+  (eval-after-load 'company
+  '(add-to-list 'company-backends 'company-irony)))
+
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+    'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+    'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 (require 'tramp)
 (setq tramp-default-method "ssh")
