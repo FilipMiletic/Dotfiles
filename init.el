@@ -6,9 +6,10 @@
 ;;  ido-vertical
 ;;  clojure-mode
 ;;  paredit
-;;  cider
 ;;  company
 ;;  tramp
+;;  evil
+;;  evil-leader
 ;;; Commentary:
 ;;; Code:
 (require 'package)
@@ -162,9 +163,11 @@
 (add-hook 'c-mode-hook 'irony-mode)
 (add-hook 'objc-mode-hook 'irony-mode)
 
+(defvar irony-mode-map)
 ;; replace the `completion-at-point' and `complete-symbol' bindings in
 ;; irony-mode's buffers by irony-mode's function
 (defun my-irony-mode-hook ()
+  "Needed hack for irony mode map key."
   (define-key irony-mode-map [remap completion-at-point]
     'irony-completion-at-point-async)
   (define-key irony-mode-map [remap complete-symbol]
@@ -174,6 +177,32 @@
 
 (require 'tramp)
 (setq tramp-default-method "ssh")
+
+(use-package evil
+  :init
+  (progn
+    (setq evil-default-cursor t)
+    (use-package evil-leader
+      :init (global-evil-leader-mode t)
+      :config
+      (progn
+        (setq evil-leader/leader ",")
+        (setq evil-leader/in-all-states t)
+        (evil-leader/set-key
+         "b" 'ido-switch-buffer
+         "f" 'ido-find-file
+         ;;"g" 'magit-status
+         "k" 'kill-buffer
+         "K" 'kill-this-buffer
+         "o" 'occur
+         "t" 'eshell
+         "w" 'save-buffer)))
+    (evil-mode 1))
+  :config
+  (progn
+    ;; use ido to open files
+    (define-key evil-ex-map "e " 'ido-find-file)
+    (define-key evil-ex-map "b " 'ido-switch-buffer)))
 
 (provide 'init)
 ;;; init.el ends here
