@@ -2,7 +2,9 @@ call plug#begin('~/.config/nvim/plugged')
 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-jedi'
+Plug 'rhysd/vim-clang-format'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+Plug 'airblade/vim-gitgutter'
 Plug 'easymotion/vim-easymotion'
 Plug 'ajh17/Spacegray.vim'
 
@@ -52,13 +54,16 @@ let g:deoplete#enable_at_startup=1
 let g:mapleader = ","
 nnoremap <expr> j v:count ? 'j' : 'gj'
 nnoremap <expr> k v:count ? 'k' : 'gk'
-nnoremap <leader>w <C-w>
 nnoremap <silent> <leader>W :call <SID>StripTrailingWhitespaces()<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>f :Files<CR>
 map <leader>z mzgg=G`z
 nmap <C-n> :bnext<CR>
 nmap <C-p> :bprev<CR>
+
+" map to <Leader>cf in C/C++ code
+autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
 function! <SID>StripTrailingWhitespaces()
     " Preparation: save last search, and cursor position.
@@ -72,7 +77,11 @@ function! <SID>StripTrailingWhitespaces()
     call cursor(l, c)
 endfunction
 
+let g:clang_format#style_options = {
+            \ "BasedOnStyle": 'llvm',
+            \ "IndentWidth": 4,
+            \ "Standard": "C++11"}
+
 syntax on
-" set termguicolors
 set background=dark
 colorscheme spacegray
