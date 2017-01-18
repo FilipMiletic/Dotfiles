@@ -1,10 +1,12 @@
 # Dotfiles
-My dotfiles of OS X on my current MacBook.
-Not to be confused with Arch Linux ones that are in different
-repository.
+My dotfiles of OS X on my current MacBook. 
+Using both vim and Emacs.
 
 Here are configurations for:
-- vim (basic configuration, minimal completition for C/C++/Python, evenutaly Go and JS)
-- emacs (just in case, I missed it, and I am proud of my minimal under 100l config. /s)
+- vim (basic configuration, minimal completition for C/C++/Python, 
+       I use it when I am working some sysadmin work in terminal)
+- emacs
+
 - tmux
+
 - bash/zsh (PATH, pure prompt)
