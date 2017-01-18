@@ -2,7 +2,9 @@ call plug#begin('~/.config/nvim/plugged')
 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-jedi'
+Plug 'Rip-Rip/clang_complete'
 Plug 'rhysd/vim-clang-format'
+Plug 'benmills/vimux'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'easymotion/vim-easymotion'
@@ -14,12 +16,11 @@ set hidden
 set autoread
 set showcmd
 set backspace=indent,eol,start
+set smarttab
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set autoindent
-set expandtab
-set smarttab
 set scrolloff=1
 set scrolljump=1
 set display+=lastline
@@ -31,8 +32,6 @@ set splitbelow
 set splitright
 set ruler
 set mouse=a
-map <ScrollWheelUp> <C-Y>
-map <ScrollWheelDown> <C-E>
 set showmatch
 set matchtime=1
 set number
@@ -49,6 +48,7 @@ set ignorecase
 set smartcase
 set cursorline
 set colorcolumn=80
+set clipboard=unnamed
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 let g:deoplete#enable_at_startup=1
 let g:mapleader = ","
@@ -60,8 +60,13 @@ nnoremap <leader>f :Files<CR>
 map <leader>z mzgg=G`z
 nmap <C-n> :bnext<CR>
 nmap <C-p> :bprev<CR>
+" <Leader><Leader>w is for easy motion
+" Run terminal command in new tmux pane
+map <Leader>vp :VimuxPromptCommand<CR>
+" Run last command executed by VimuxRunCommand
+map <Leader>vl :VimuxRunLastCommand<CR>
 
-" map to <Leader>cf in C/C++ code
+" Map to <Leader>cf in C/C++ code
 autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
@@ -81,6 +86,9 @@ let g:clang_format#style_options = {
             \ "BasedOnStyle": 'llvm',
             \ "IndentWidth": 4,
             \ "Standard": "C++11"}
+
+let g:clang_library_path="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/"
+let g:clang_close_preview = 1
 
 syntax on
 set background=dark
