@@ -1,39 +1,28 @@
-;;; package -- Summary:
-;;  flycheck
-;;  ido-ubiquitous
-;;  flx-ido
-;;  ido
-;;  ido-vertical
-;;  clojure-mode
-;;  paredit
-;;  company
-;;  tramp
-;;  evil
-;;  evil-leader
+;;; package -- Summary
 ;;; Commentary:
 ;;; Code:
 (require 'package)
+(setq package-enable-at-startup nil)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/"))
-
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
-(elpy-enable)
-
 ;; Bootstrap use-package
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 
+
 (unless package-archive-contents
   (package-refresh-contents))
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
-
-(menu-bar-mode t)
+(menu-bar-mode 1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+(line-number-mode 1)
 (column-number-mode t)
 (show-paren-mode 1)
 (global-auto-revert-mode 1)
@@ -52,22 +41,31 @@
       require-final-newline t
       mouse-wheel-scroll-amount '(1 ((shift) .1))
       mouse-wheel-progressive-speed nil
-      mouse-wheel-follow-mouse 't
       scroll-step 1
-      scroll-conservatively 10000
-      scroll-margin 3
+      scroll-conservatively 100000
+      scroll-margin 8
       fringes-outside-margins 1
       ns-pop-up-frames nil
       make-backup-files nil
       auto-save-default nil
       create-lockfiles nil
       sentence-end-double-space nil
-      cursor-type 'box)
+      cursor-type 'box
+      mac-allow-anti-aliasing t
+      frame-resize-pixelwise t)
+;; initial window
+(setq initial-frame-alist
+      '(
+        (width . 102) ; character
+        (height . 54) ; lines
+        ))
 
 (setq-default indent-tabs-mode nil
-              tab-width 4
+              indent-line-function 2
+              tab-width 2
               c-basic-offset 4
-              fill-column 80)
+              fill-column 80
+              left-fringe-width 8)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -80,26 +78,11 @@
 		  ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
-(set-frame-parameter (selected-frame) 'alpha '(98 . 100))
-(add-to-list 'default-frame-alist '(alpha . (98 . 100)))
+(set-frame-font "Fira Code 11")
 
-;; (defun toggle-transparency ()
-;;    (interactive)
-;;    (let ((alpha (frame-parameter nil 'alpha)))
-;;      (set-frame-parameter
-;;       nil 'alpha
-;;       (if (eql (cond ((numberp alpha) alpha)
-;;                      ((numberp (cdr alpha)) (cdr alpha))
-;;                      ;; Also handle undocumented (<active> <inactive>) form.
-;;                      ((numberp (cadr alpha)) (cadr alpha)))
-;;                100)
-;;           '(92 . 100) '(100 . 100)))))
-;; (global-set-key (kbd "C-c t") 'toggle-transparency)
-
-(setq custom-safe-themes t)
-(use-package noctilux-theme
-   :ensure t
-   :config (load-theme 'noctilux t))
+(use-package monokai-theme
+  :ensure
+  :config (load-theme 'monokai t))
 
 (use-package flycheck
   :ensure t
@@ -118,28 +101,65 @@
   :ensure t
   :diminish paredit-mode
   :config
-  (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+  (add-hook 'emacs-lisp-mode-hook                  #'enable-paredit-mode)
   (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-  (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-  (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-  (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-  :bind (("C-c d" . paredit-forward-down))
-  )
+  (add-hook 'ielm-mode-hook                        #'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook                        #'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook            #'enable-paredit-mode)
+  (add-hook 'scheme-mode-hook                      #'enable-paredit-mode))
 
-;; Ensure paredit is used EVERYWHERE!
 (use-package paredit-everywhere
   :ensure t
   :diminish paredit-everywhere-mode
   :config
   (add-hook 'prog-mode-hook #'paredit-everywhere-mode))
 
+(use-package avy
+  :ensure t
+  :bind ("C-x ;" . avy-goto-char))
+
+(use-package ace-window
+  :ensure t
+  :bind ("M-p" . ace-window))
+
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+(use-package ibuffer
+  :config (setq ibuffer-expert t)
+  :bind ("C-x C-b" . ibuffer))
+
+(use-package ivy
+  :ensure t
+  :diminish (ivy-mode . "")
+  :bind
+  (:map ivy-mode-map ("C-'" . ivy-avy))
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-height 10)
+  (setq ivy-count-format "")
+  (setq ivy-initial-inputs-alist nil)
+  (setq ivy-re-builders-alist
+        '((t . ivy--regex-ignore-order))))
+(global-set-key (kbd "M-x") 'counsel-M-x)
+(global-set-key (kbd "C-s") 'swiper)
+
+(use-package magit
+  :ensure t
+  :config
+  (progn
+    (setq magit-push-always-verify nil)
+    (setq magit-diff-refine-hunk t))
+  :bind
+  ("C-c g" . magit-status)
+  ("C-c C-a" . magit-commit-amend))
+
 (use-package ido
   :ensure t
   :config
   (progn
     (ido-mode t)
-;;  (ido-everywhere t)
     (flx-ido-mode t)
     (setq ido-enable-flex-matching t)))
 
@@ -152,57 +172,53 @@
   :diminish company-mode
   :config
   (setq company-auto-complete nil
+        company-idle-delay .1
+        company-echo-delay 0
         company-tooltip-flip-when-above t
         company-minimum-prefix-length 2
-        company-tooltip-limit 10)
-  (global-company-mode 1)
-  (eval-after-load 'company
-  '(add-to-list 'company-backends 'company-irony)))
+        company-tooltip-limit 12)
+  (global-company-mode 1))
 
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
+(use-package markdown-mode
+  :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
+  :config)
 
-(defvar irony-mode-map)
-;; replace the `completion-at-point' and `complete-symbol' bindings in
-;; irony-mode's buffers by irony-mode's function
-(defun my-irony-mode-hook ()
-  "Needed hack for irony mode map key."
-  (define-key irony-mode-map [remap completion-at-point]
-    'irony-completion-at-point-async)
-  (define-key irony-mode-map [remap complete-symbol]
-    'irony-completion-at-point-async))
-(add-hook 'irony-mode-hook 'my-irony-mode-hook)
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
-(require 'tramp)
-(setq tramp-default-method "ssh")
-
-(use-package evil
-  :init
-  (progn
-    (setq evil-default-cursor t)
-    (use-package evil-leader
-      :init (global-evil-leader-mode t)
-      :config
-      (progn
-        (setq evil-leader/leader ",")
-        (setq evil-leader/in-all-states t)
-        (evil-leader/set-key
-         "b" 'ido-switch-buffer
-         "f" 'ido-find-file
-         ;;"g" 'magit-status
-         "k" 'kill-buffer
-         "K" 'kill-this-buffer
-         "o" 'occur
-         "t" 'eshell
-         "w" 'save-buffer)))
-    (evil-mode 1))
+(use-package lisp-mode
   :config
-  (progn
-    ;; use ido to open files
-    (define-key evil-ex-map "e " 'ido-find-file)
-    (define-key evil-ex-map "b " 'ido-switch-buffer)))
+  (use-package slime
+    :ensure t
+    :commands (slime slime-lisp-mode-hook)
+    :config
+    (add-to-list 'slime-contribs 'slime-fancy)
+
+    (slime-setup)
+    (add-hook 'slime-repl-mode-hook #'enable-paredit-mode))
+
+  (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
+  (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+  (add-hook 'ielm-mode-hook #'eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
+  (add-hook 'lisp-mode-hook #'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook #'slime-lisp-mode-hook)
+
+  (setq inferior-lisp-program "/usr/local/bin/sbcl"))
+
+(use-package diminish
+  :ensure t)
+
+;; Enable mouse support
+(unless window-system
+  (require 'mouse)
+  (xterm-mouse-mode t)
+  (global-set-key [mouse-4] '(lambda ()
+                              (interactive)
+                              (scroll-down 1)))
+  (global-set-key [mouse-5] '(lambda ()
+                              (interactive)
+                              (scroll-up 1)))
+  (defun track-mouse (e)))
+
+(global-set-key (kbd "C-x a t")  'ansi-term)
 
 (provide 'init)
 ;;; init.el ends here
