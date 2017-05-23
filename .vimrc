@@ -1,20 +1,21 @@
 call plug#begin('~/.vim/plugged')
 Plug 'neomake/neomake'                                  " linter
-Plug 'reedes/vim-colors-pencil'                          " colorscheme
-Plug 'gosukiwi/vim-atom-dark'
-Plug 'ajh17/VimCompletesMe'                             " completion
+Plug 'xero/blaquemagick.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'maralla/completor.vim'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'     " fuzzy file navigation
-Plug 'benmills/vimux'
 call plug#end()
 
 
 "------------------------------------------------------------------------------
 " EDITOR CONFIGURATIONS
 "------------------------------------------------------------------------------
+set ttyfast
 set hidden
 set viminfo=
-set backspace=indent,eol,start
+set backspace=2
 set expandtab
+set numberwidth=5
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
@@ -33,8 +34,7 @@ set mouse=a
 set showmatch
 set hlsearch
 set number
-set laststatus=2
-set showtabline=2
+set showtabline=1
 set fillchars=|
 set ignorecase
 set lazyredraw
@@ -42,9 +42,11 @@ set smartcase
 set colorcolumn=80
 set cursorline
 set shortmess+=I
-set clipboard=unnamed
-set statusline=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
-
+set clipboard+=unnamed
+"set statusline=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
+set statusline=\ \%f%m%r%h%w\ ::\ %y\ [%{&ff}]\%=\ [%p%%:\ %l/%L]\ 
+set laststatus=2
+set cmdheight=1
 
 "------------------------------------------------------------------------------
 "  LINTING CODE
@@ -80,6 +82,8 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 autocmd CompleteDone * pclose
 " or disable previews completely
 " set completeopt-=preview
+let NERDTreeMinimalUI=1
+
 
 "------------------------------------------------------------------------------
 "  MAPPINGS
@@ -90,10 +94,10 @@ nnoremap <expr> j v:count ? 'j' : 'gj'
 nnoremap <expr> k v:count ? 'k' : 'gk'
 
 " Vertical split
-nnoremap ,w <C-w>v
+nnoremap <leader>w <C-w>v
 
 " Choose other split
-nnoremap ,, <C-w><C-w>
+nnoremap <leader><leader> <C-w><C-w>
 
 " Format current buffer
 map <leader>z mzgg=G`z
@@ -103,14 +107,14 @@ map <leader>f :FZF ~<CR>
 map <leader>b :Buffers<CR>
 
 " Cycle next/previous tab
-nnoremap <C-P> :tabprev<CR>
-nnoremap <C-N> :tabnext<CR>
+nnoremap <leader>p :tabprev<CR>
+nnoremap <leader>n :tabnext<CR>
 
-" Prompt for command in external pane inside tmux
-nnoremap <leader>c :VimuxPromptCommand<CR>
+" Open Nerdtree
+nnoremap <leader>q :NERDTreeToggle<CR>
 
 " Create new tab
-nnoremap <leader>nt :tabnew<CR>
+nnoremap <leader>t :tabnew<CR>
 
 " Ctrl-L clears the highlight from the last search
 noremap <C-l> :nohlsearch<CR><C-l>
@@ -128,14 +132,6 @@ endfunction
 inoremap <expr> <tab> InsertTabWrapper()
 inoremap <s-tab> <c-n>
 
-set termguicolors
-
-" Use bright, light theme during the day, kick off dark after 18h.
-" Too bad my eyes are fucked up, so I can't go full dark all the time.
-if strftime("%H") < 18
-    set background=light
-    colorscheme pencil
-else
-    set background=dark
-    colorscheme molokai-losh
-endif
+"set termguicolors
+set background=dark
+colorscheme blaquemagick

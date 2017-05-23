@@ -56,8 +56,8 @@
 ;; initial window
 (setq initial-frame-alist
       '(
-        (width . 102) ; character
-        (height . 54) ; lines
+        (width . 102)
+        (height . 54)
         ))
 
 (setq-default indent-tabs-mode nil
@@ -78,10 +78,13 @@
 		  ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
-(set-frame-font "Fira Code 11")
+(set-frame-font "Fira Code Retina 11")
+;; Available themes are:
+;;     monokai
+;;     white
 
 (use-package monokai-theme
-  :ensure
+  :ensure t
   :config (load-theme 'monokai t))
 
 (use-package flycheck
@@ -155,6 +158,9 @@
   ("C-c g" . magit-status)
   ("C-c C-a" . magit-commit-amend))
 
+(use-package powerline
+  :ensure t)
+
 (use-package ido
   :ensure t
   :config
@@ -221,4 +227,4 @@
 (global-set-key (kbd "C-x a t")  'ansi-term)
 
 (provide 'init)
-;;; init.el ends here
+;; init.el ends here
