@@ -37,5 +37,6 @@ unset CASE_SENSITIVE HYPHEN_INSENSITIVE
 alias 'trans'='env TR_CURL_SSL_VERIFY=1 /Applications/Transmission.app/Contents/MacOS/Transmission'
 alias 'ls'='ls -GFp'
 
-source /usr/share/zsh/share/prompt.zsh
 source '/usr/local/bin/virtualenvwrapper.sh'
+
+prompt='%n:%F{blue}%~/%f $ '
