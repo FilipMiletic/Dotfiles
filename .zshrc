@@ -10,9 +10,26 @@ bindkey -e
 zstyle :compinstall filename '/Users/phil/.zshrc'
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+
 autoload -Uz compinit
 compinit
 
+setopt prompt_subst
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' stagedstr 'M'
+zstyle ':vcs_info:*' unstagedstr 'M'
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' actionformats '%F{5}[%F{2}%b%F{3}|%F{1}%a%F{5}]%f '
+zstyle ':vcs_info:*' formats \
+  '%F{5}[%F{2}%b%F{5}] %F{2}%c%F{3}%u%f'
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
+zstyle ':vcs_info:*' enable git
++vi-git-untracked() {
+  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+  [[ $(git ls-files --other --directory --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ; then
+  hook_com[unstaged]+='%F{1}??%f'
+fi
+}
 # do not autoselect first completion entry
 unsetopt menu_complete
 unsetopt flowcontrol
@@ -34,9 +51,10 @@ fi
 unset CASE_SENSITIVE HYPHEN_INSENSITIVE
 
 
+
 alias 'trans'='env TR_CURL_SSL_VERIFY=1 /Applications/Transmission.app/Contents/MacOS/Transmission'
 alias 'ls'='ls -GFp'
 
 source '/usr/local/bin/virtualenvwrapper.sh'
-
-prompt='%n:%F{blue}%~/%f $ '
+precmd () { vcs_info }
+PROMPT='%n:%F{blue}%~/%f ${vcs_info_msg_0_}%f%# '
