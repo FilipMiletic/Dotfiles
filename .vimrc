@@ -37,7 +37,8 @@ set colorcolumn=80
 set cursorline
 set shortmess+=I
 set clipboard+=unnamed
-set statusline=\ \%f%m%r%h%w\ \ %y\ [%{&ff}]\%=\ [%p%%:\ %l/%L]
+set statusline=%<%f\ (%{&ft})\%=\ [%p%%:\ %l/%L]
+
 set laststatus=2
 set cmdheight=1
 
