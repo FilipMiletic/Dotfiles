@@ -2,6 +2,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 Plug 'w0rp/ale'
 Plug 'sjl/badwolf'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'majutsushi/tagbar'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 call plug#end()
 
@@ -222,5 +224,13 @@ augroup fzf_config
   imap <c-x><c-f> <plug>(fzf-complete-path)
   imap <c-x><c-j> <plug>(fzf-complete-file-ag)
   imap <c-x><c-l> <plug>(fzf-complete-line)
+augroup END
+" }}}
+
+
+" Tags {{{
+augroup tags_config
+  let g:gutentags_cache_dir = '~/.vim/tags/'
+  let g:gutentags_exclude_project_root = ['~/', '/usr/local']
 augroup END
 " }}}
