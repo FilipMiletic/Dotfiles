@@ -2,6 +2,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 Plug 'w0rp/ale'
 Plug 'sjl/badwolf'
+Plug 'tomasr/molokai'
+Plug 'crusoexia/vim-monokai'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -30,23 +32,21 @@ set ruler
 set mouse=a
 set showmatch
 set hlsearch
+" set cursorline
 set number
 set showtabline=1
 set ignorecase
 set lazyredraw
 set smartcase
 set colorcolumn=80
-set cursorline
 set shortmess+=I
 set clipboard+=unnamed
 set statusline=%<%f\ (%{&ft})\%=\ [%p%%:\ %l/%L]
-
 set laststatus=2
 set cmdheight=1
 
-set termguicolors
 set background=dark
-colorscheme badwolf
+colorscheme jcs
 
 let mapleader=","
 let NERDTreeMinimalUI=1
@@ -72,6 +72,11 @@ augroup general_config
 	nnoremap <C-e> 3<C-e>
 	nnoremap <C-y> 3<C-y>
 	" }}}
+ 
+  " Make mouse scroll smoother {{{
+  nnoremap <ScrollWheelUp> <C-y>
+  nnoremap <ScrollWheelDown> <C-e>
+  " }}}
 
 	" Faster split resizing (+,-) {{{
 	if bufwinnr(1)
@@ -80,6 +85,12 @@ augroup general_config
 	endif
 	" }}}
 
+  " Make . work with visual selection in Visual mode
+  xnoremap . :norm.<CR>
+
+  " Easier vertical & horizontal splitting
+  nnoremap <C-\> :vsp<CR>
+  
 	" Better split switching (Ctrl-j, Ctrl-k, Ctrl-h, Ctrl-l) {{{
 	nnoremap <C-j> <C-W>j
 	nnoremap <C-k> <C-W>k
@@ -90,6 +101,9 @@ augroup general_config
 	" Sudo write (,W) {{{
 	noremap <leader>W :w !sudo tee %<CR>
 	" }}}
+
+  " NERDTree Open
+  nnoremap <C-?> :NERDTree<CR>
 
 	" Remap :W to :w {{{
 	command! W w
@@ -209,7 +223,7 @@ augroup fzf_config
   set rtp+=/usr/local/opt/fzf
 
   let g:fzf_layout = { 'up': '~40%' }
-  let g:fzf_history_dir = '~/.config/nvim/fzf-history'
+  let g:fzf_history_dir = '~/.vim/fzf-history'
   let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
 
   nnoremap <C-p> :Files<CR>
