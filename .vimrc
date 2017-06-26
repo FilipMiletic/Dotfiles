@@ -1,9 +1,7 @@
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 Plug 'w0rp/ale'
-Plug 'sjl/badwolf'
-Plug 'tomasr/molokai'
-Plug 'crusoexia/vim-monokai'
+Plug 'andbar-ru/vim-unicon'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -32,7 +30,7 @@ set ruler
 set mouse=a
 set showmatch
 set hlsearch
-" set cursorline
+set cursorline
 set number
 set showtabline=1
 set ignorecase
@@ -46,7 +44,7 @@ set laststatus=2
 set cmdheight=1
 
 set background=dark
-colorscheme jcs
+colorscheme plain
 
 let mapleader=","
 let NERDTreeMinimalUI=1
@@ -72,7 +70,7 @@ augroup general_config
 	nnoremap <C-e> 3<C-e>
 	nnoremap <C-y> 3<C-y>
 	" }}}
- 
+
   " Make mouse scroll smoother {{{
   nnoremap <ScrollWheelUp> <C-y>
   nnoremap <ScrollWheelDown> <C-e>
@@ -90,7 +88,7 @@ augroup general_config
 
   " Easier vertical & horizontal splitting
   nnoremap <C-\> :vsp<CR>
-  
+
 	" Better split switching (Ctrl-j, Ctrl-k, Ctrl-h, Ctrl-l) {{{
 	nnoremap <C-j> <C-W>j
 	nnoremap <C-k> <C-W>k
@@ -103,7 +101,7 @@ augroup general_config
 	" }}}
 
   " NERDTree Open
-  nnoremap <C-?> :NERDTree<CR>
+  "nnoremap <C-?> :NERDTree<CR>
 
 	" Remap :W to :w {{{
 	command! W w
