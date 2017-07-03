@@ -1,7 +1,6 @@
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
-Plug 'w0rp/ale'
-Plug 'andbar-ru/vim-unicon'
+Plug 'whatyouhide/vim-gotham'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -11,11 +10,11 @@ set ttyfast
 set hidden
 set viminfo=
 set backspace=2
-set expandtab
+set noexpandtab
 set numberwidth=5
-set tabstop=2
-set shiftwidth=2
-set softtabstop=2
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
 set autoindent
 set scrolloff=3
 set wildmenu
@@ -30,7 +29,7 @@ set ruler
 set mouse=a
 set showmatch
 set hlsearch
-set cursorline
+"set cursorline
 set number
 set showtabline=1
 set ignorecase
@@ -40,27 +39,15 @@ set colorcolumn=80
 set shortmess+=I
 set clipboard+=unnamed
 set statusline=%<%f\ (%{&ft})\%=\ [%p%%:\ %l/%L]
+set statusline+=%{&paste?'[paste]\ ':''}
 set laststatus=2
 set cmdheight=1
-
-set background=dark
-colorscheme plain
 
 let mapleader=","
 let NERDTreeMinimalUI=1
 
-
-" Ale Settings {{{
-augroup ale_config
-  autocmd!
-
-  let g:ale_linters = {'python': ['flake8',]}
-  let g:ale_python_flake8_executable = 'python3'
-  let g:ale_python_flake8_args = '-m flake8'
-
-augroup END
-"}}}
-
+set background=dark
+colorscheme jcs
 
 " General {{{
 augroup general_config
@@ -71,10 +58,10 @@ augroup general_config
 	nnoremap <C-y> 3<C-y>
 	" }}}
 
-  " Make mouse scroll smoother {{{
-  nnoremap <ScrollWheelUp> <C-y>
-  nnoremap <ScrollWheelDown> <C-e>
-  " }}}
+	" Make mouse scroll smoother {{{
+	nnoremap <ScrollWheelUp> <C-y>
+	nnoremap <ScrollWheelDown> <C-e>
+	" }}}
 
 	" Faster split resizing (+,-) {{{
 	if bufwinnr(1)
@@ -83,11 +70,11 @@ augroup general_config
 	endif
 	" }}}
 
-  " Make . work with visual selection in Visual mode
-  xnoremap . :norm.<CR>
+	" Make . work with visual selection in Visual mode
+	xnoremap . :norm.<CR>
 
-  " Easier vertical & horizontal splitting
-  nnoremap <C-\> :vsp<CR>
+	" Easier vertical & horizontal splitting
+	nnoremap <C-\> :vsp<CR>
 
 	" Better split switching (Ctrl-j, Ctrl-k, Ctrl-h, Ctrl-l) {{{
 	nnoremap <C-j> <C-W>j
@@ -100,8 +87,8 @@ augroup general_config
 	noremap <leader>W :w !sudo tee %<CR>
 	" }}}
 
-  " NERDTree Open
-  "nnoremap <C-?> :NERDTree<CR>
+	" NERDTree Open
+	nnoremap <C-x> :NERDTree<CR>
 
 	" Remap :W to :w {{{
 	command! W w
@@ -179,70 +166,70 @@ augroup END
 
 " Buffers {{{
 augroup buffer_control
-  autocmd!
+	autocmd!
 
-  " Buffer navigation (,,) (gb) (gB) (,ls) {{{
-  map <Leader>, <C-^>
-  map <Leader>ls :buffers<CR>
-  map gb :bnext<CR>
-  map gB :bprev<CR>
-  " }}}
+	" Buffer navigation (,,) (gb) (gB) (,ls) {{{
+	map <Leader>, <C-^>
+	map <Leader>ls :buffers<CR>
+	map gb :bnext<CR>
+	map gB :bprev<CR>
+	" }}}
 
-  " Jump to buffer number (<N>gb) {{{
-  let c = 1
-  while c <= 99
-    execute "nnoremap " . c . "gb :" . c . "b\<CR>"
-    let c += 1
-  endwhile
-  " }}}
+	" Jump to buffer number (<N>gb) {{{
+	let c = 1
+	while c <= 99
+		execute "nnoremap " . c . "gb :" . c . "b\<CR>"
+		let c += 1
+	endwhile
+	" }}}
 
-  " Close Quickfix window (,qq) {{{
-  map <leader>qq :cclose<CR>
-  " }}}
+	" Close Quickfix window (,qq) {{{
+	map <leader>qq :cclose<CR>
+	" }}}
 
-  " Rename buffer (:Rename) {{{
-  function! s:RenameBuffer(name)
-    silent! execute 'saveas! ' . a:name
-    let l:old_buffer = bufnr("#")
-    let l:old_filename = expand("#:t")
-    let l:new_buffer = bufnr("%")
-    let l:new_filename = expand("%:t")
-    silent! execute '!rm ' . shellescape(expand("#"), 1)
-    silent! execute 'bd' l:old_buffer
-    echom 'Renamed `' . l:old_filename . '` to `' . l:new_filename . '`'
-  endfunction
-  command! -nargs=1 Rename call s:RenameBuffer(<f-args>)
-  " }}}
+	" Rename buffer (:Rename) {{{
+	function! s:RenameBuffer(name)
+		silent! execute 'saveas! ' . a:name
+		let l:old_buffer = bufnr("#")
+		let l:old_filename = expand("#:t")
+		let l:new_buffer = bufnr("%")
+		let l:new_filename = expand("%:t")
+		silent! execute '!rm ' . shellescape(expand("#"), 1)
+		silent! execute 'bd' l:old_buffer
+		echom 'Renamed `' . l:old_filename . '` to `' . l:new_filename . '`'
+	endfunction
+	command! -nargs=1 Rename call s:RenameBuffer(<f-args>)
+	" }}}
 augroup END
 " }}}
 
 " fzf {{{
 augroup fzf_config
-  set rtp+=/usr/local/opt/fzf
+	set rtp+=/usr/local/opt/fzf
 
-  let g:fzf_layout = { 'up': '~40%' }
-  let g:fzf_history_dir = '~/.vim/fzf-history'
-  let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
+	let g:fzf_layout = { 'up': '~40%' }
+	let g:fzf_history_dir = '~/.vim/fzf-history'
+	let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
 
-  nnoremap <C-p> :Files<CR>
-  nnoremap <C-g> :GFiles?<CR>
-  nnoremap <C-b> :Buffers<CR>
-  nnoremap <C-t> :Tags<CR>
-  nnoremap <C-m> :Marks<CR>
-  nnoremap <leader>l :Lines<CR>
+	nnoremap <C-p> :Files<CR>
+	nnoremap <C-g> :GFiles?<CR>
+	nnoremap <C-b> :Buffers<CR>
+	nnoremap <C-t> :Tags<CR>
+	nnoremap <C-m> :Marks<CR>
+	nnoremap <leader>l :Lines<CR>
 
-  " Insert mode completion
-  imap <c-x><c-k> <plug>(fzf-complete-word)
-  imap <c-x><c-f> <plug>(fzf-complete-path)
-  imap <c-x><c-j> <plug>(fzf-complete-file-ag)
-  imap <c-x><c-l> <plug>(fzf-complete-line)
+	" Insert mode completion
+	imap <c-x><c-k> <plug>(fzf-complete-word)
+	imap <c-x><c-f> <plug>(fzf-complete-path)
+	imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+	imap <c-x><c-l> <plug>(fzf-complete-line)
 augroup END
 " }}}
 
 
 " Tags {{{
 augroup tags_config
-  let g:gutentags_cache_dir = '~/.vim/tags/'
-  let g:gutentags_exclude_project_root = ['~/', '/usr/local']
+	let g:gutentags_cache_dir = '~/.vim/tags/'
+	let g:gutentags_exclude_project_root = ['~/', '/usr/local']
 augroup END
 " }}}
