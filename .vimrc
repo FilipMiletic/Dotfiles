@@ -1,8 +1,8 @@
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
-Plug 'whatyouhide/vim-gotham'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
+Plug 'nanotech/jellybeans.vim'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 call plug#end()
 
@@ -29,11 +29,9 @@ set ruler
 set mouse=a
 set showmatch
 set hlsearch
-"set cursorline
 set number
 set showtabline=1
 set ignorecase
-set lazyredraw
 set smartcase
 set colorcolumn=80
 set shortmess+=I
@@ -47,12 +45,17 @@ let mapleader=","
 let NERDTreeMinimalUI=1
 
 set background=dark
-colorscheme jcs
+colorscheme jellybeans
 
 " General {{{
 augroup general_config
 	autocmd!
-
+	
+	" Itallic comments {{{
+	let &t_ZH="\e[3m"
+	let &t_ZR="\e[23m"
+	" }}}
+	
 	" Speed up viewport scrolling {{{
 	nnoremap <C-e> 3<C-e>
 	nnoremap <C-y> 3<C-y>
