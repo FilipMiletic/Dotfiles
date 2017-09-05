@@ -2,7 +2,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
-Plug 'nanotech/jellybeans.vim'
+Plug 'xero/blaquemagick.vim'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 call plug#end()
 
@@ -21,6 +21,7 @@ set wildmenu
 set wildmode=list,longest,full
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.idea/*,*/.DS_Store
 set timeout timeoutlen=1000 ttimeoutlen=100
+set autochdir
 set noswapfile
 set nowrap
 set splitbelow
@@ -29,6 +30,7 @@ set ruler
 set mouse=a
 set showmatch
 set hlsearch
+set incsearch
 set number
 set showtabline=1
 set ignorecase
@@ -39,13 +41,13 @@ set clipboard+=unnamed
 set statusline=%<%f\ (%{&ft})\%=\ [%p%%:\ %l/%L]
 set statusline+=%{&paste?'[paste]\ ':''}
 set laststatus=2
-set cmdheight=1
+set background=dark
 
 let mapleader=","
 let NERDTreeMinimalUI=1
+let g:molotov=1
 
-set background=dark
-colorscheme jellybeans
+colorscheme molotov
 
 " General {{{
 augroup general_config
@@ -155,8 +157,9 @@ augroup general_config
 	" }}}
 
 	" Relative numbers {{{
-	set relativenumber " Use relative line numbers. Current line is still in status bar.
-	au BufReadPost,BufNewFile * set relativenumber
+	"set relativenumber " Use relative line numbers. Current line is still in status bar.
+	set number
+	au BufReadPost,BufNewFile * set number
 	" }}}
 
 	" Better vertical moving {{{
