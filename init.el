@@ -15,6 +15,7 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/custom"))
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 
 (setq custom-file "~/.emacs.d/custom.el")
@@ -56,13 +57,13 @@
 ;; initial window
 (setq initial-frame-alist
       '(
-        (width . 102)
-        (height . 54)
+        (width . 115)
+        (height . 65)
         ))
 
-(setq-default indent-tabs-mode nil
-              indent-line-function 2
-              tab-width 2
+(setq-default indent-tabs-mode t
+              indent-line-function 4
+              tab-width 4
               c-basic-offset 4
               fill-column 80
               left-fringe-width 8)
@@ -78,23 +79,18 @@
 		  ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
-(set-frame-font "Fira Code Retina 11")
-;; Available themes are:
-;;     monokai
-;;     white
+(set-frame-font "Fira Code 11")
 
-(use-package monokai-theme
-  :ensure t
-  :config (load-theme 'monokai t))
+;; Theme changer for changing theme depending on time
+;; (setq calendar-location-name "Belgrade")
+;; (setq calendar-latitude 44.78)
+;; (setq calendar-longitude 20.44)
+;; (require 'theme-changer)
+;; (change-theme 'tao-yang 'tao-yin)
 
-(use-package flycheck
+(use-package kaolin-theme
   :ensure t
-  :defer 2
-  :config (global-flycheck-mode 1))
-
-(use-package ido-ubiquitous
-  :ensure t
-  :config (ido-ubiquitous-mode t))
+  :config (load-theme 'kaolin t))
 
 (use-package flx-ido
   :ensure t
@@ -110,6 +106,21 @@
   (add-hook 'lisp-mode-hook                        #'enable-paredit-mode)
   (add-hook 'lisp-interaction-mode-hook            #'enable-paredit-mode)
   (add-hook 'scheme-mode-hook                      #'enable-paredit-mode))
+
+(use-package highlight-numbers
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook 'highlight-numbers-mode))
+
+(use-package highlight-quoted
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook 'highlight-quoted-mode))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 (use-package paredit-everywhere
   :ensure t
@@ -132,21 +143,90 @@
   :config (setq ibuffer-expert t)
   :bind ("C-x C-b" . ibuffer))
 
-(use-package ivy
-  :ensure t
-  :diminish (ivy-mode . "")
-  :bind
-  (:map ivy-mode-map ("C-'" . ivy-avy))
+(use-package swiper
+  :demand
+  :bind (("C-s"     . swiper)
+         ("C-r"     . swiper)
+         ("C-c u"   . swiper-all)
+         ("C-c C-r" . ivy-resume)
+         ("C-c C-o" . ivy-occur)
+         ("C-c C-b" . ivy-switch-buffer)
+         ("C-c C-k" . kill-buffer))
   :config
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-height 10)
-  (setq ivy-count-format "")
-  (setq ivy-initial-inputs-alist nil)
-  (setq ivy-re-builders-alist
-        '((t . ivy--regex-ignore-order))))
-(global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "C-s") 'swiper)
+  (progn (ivy-mode 1)
+         (setq ivy-height 6)
+         (setq enable-recursive-minibuffers t)
+         (setq swiper-include-line-number-in-search t)
+         (setq ivy-re-builders-alist
+               '((counsel-M-x . ivy--regex-fuzzy)
+                 (t . ivy--regex-plus)))
+
+         (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-partial-or-done)))
+
+(use-package counsel
+  :after (ivy)
+  :demand
+  :bind (("M-x"     . counsel-M-x)
+         ("C-x C-f" . counsel-find-file)
+         ("C-h f"   . counsel-describe-function)
+         ("C-h v"   . counsel-describe-variable)
+         ("C-c f r" . counsel-recentf)
+         ("C-c g"   . counsel-git)
+         ("C-c /"   . counsel-git-grep)
+         ;; ("C-c k"   . counsel-ag)
+         ("M-y"     . counsel-yank-pop))
+  :config
+  (progn (defun counsel-major-mode-commands (&optional initial-input)
+           "Ivy version of `smex-major-mode-commands'.
+Optional INITIAL-INPUT is the initial input in the minibuffer."
+           (interactive)
+           (unless initial-input
+             (setq initial-input (cdr (assoc this-command
+                                             ivy-initial-inputs-alist))))
+           (let* ((cands obarray)
+                  (pred 'commandp)
+                  (sort t))
+             (when (require 'smex nil 'noerror)
+               (unless smex-initialized-p
+                 (smex-initialize))
+               (smex-detect-new-commands)
+               (smex-update)
+               (setq cands (delete-dups (append (smex-extract-commands-from-keymap (current-local-map))
+                                                (smex-extract-commands-from-features major-mode))))
+               (setq cands (smex-sort-according-to-cache cands))
+               (setq cands (mapcar #'symbol-name cands))
+               (setq pred nil)
+               (setq sort nil))
+             (ivy-read (counsel--M-x-prompt) cands
+                       :predicate pred
+                       :require-match t
+                       :history 'extended-command-history
+                       :action
+                       (lambda (cmd)
+                         (when (featurep 'smex)
+                           (smex-rank (intern cmd)))
+                         (let ((prefix-arg current-prefix-arg)
+                               (this-command (intern cmd)))
+                           (command-execute (intern cmd) 'record)))
+                       :sort sort
+                       :keymap counsel-describe-map
+                       :initial-input initial-input
+                       :caller 'counsel-major-mode-commands)))
+
+         (defun counsel-describe-package ()
+           "Forward to `describe-package'."
+           (interactive)
+           (ivy-read "Describe package: "
+                     (let ((packages (append (mapcar 'car package-alist)
+                                             (mapcar 'car package-archive-contents)
+                                             (mapcar 'car package--builtins))))
+                       (delq nil
+                             (mapcar (lambda (elt)
+                                       (symbol-name elt))
+                                     packages)))
+                     :action (lambda (x)
+                               (describe-package (intern x)))
+                     :caller 'counsel-describe-package))))
 
 (use-package magit
   :ensure t
@@ -157,9 +237,6 @@
   :bind
   ("C-c g" . magit-status)
   ("C-c C-a" . magit-commit-amend))
-
-(use-package powerline
-  :ensure t)
 
 (use-package ido
   :ensure t
@@ -189,26 +266,6 @@
   :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
   :config)
 
-(use-package lisp-mode
-  :config
-  (use-package slime
-    :ensure t
-    :commands (slime slime-lisp-mode-hook)
-    :config
-    (add-to-list 'slime-contribs 'slime-fancy)
-
-    (slime-setup)
-    (add-hook 'slime-repl-mode-hook #'enable-paredit-mode))
-
-  (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
-  (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
-  (add-hook 'ielm-mode-hook #'eldoc-mode)
-  (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
-  (add-hook 'lisp-mode-hook #'enable-paredit-mode)
-  (add-hook 'lisp-mode-hook #'slime-lisp-mode-hook)
-
-  (setq inferior-lisp-program "/usr/local/bin/sbcl"))
-
 (use-package diminish
   :ensure t)
 
@@ -223,8 +280,6 @@
                               (interactive)
                               (scroll-up 1)))
   (defun track-mouse (e)))
-
-(global-set-key (kbd "C-x a t")  'ansi-term)
 
 (provide 'init)
 ;; init.el ends here
