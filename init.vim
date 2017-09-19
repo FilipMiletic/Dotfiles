@@ -1,4 +1,4 @@
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.local/share/nvim/plugged')
 Plug 'scrooloose/nerdtree'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
@@ -6,9 +6,8 @@ Plug 'xero/blaquemagick.vim'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 call plug#end()
 
-set ttyfast
 set hidden
-set viminfo=
+set viminfo='20,\"90,h,%  
 set backspace=2
 set noexpandtab
 set numberwidth=5
@@ -41,13 +40,12 @@ set clipboard+=unnamed
 set statusline=%<%f\ (%{&ft})\%=\ [%p%%:\ %l/%L]
 set statusline+=%{&paste?'[paste]\ ':''}
 set laststatus=2
-set background=dark
+set background=light
 
 let mapleader=","
 let NERDTreeMinimalUI=1
 let g:molotov=1
-
-colorscheme molotov
+colorscheme blaquemagick
 
 " General {{{
 augroup general_config
@@ -213,8 +211,8 @@ augroup END
 augroup fzf_config
 	set rtp+=/usr/local/opt/fzf
 
-	let g:fzf_layout = { 'up': '~40%' }
-	let g:fzf_history_dir = '~/.vim/fzf-history'
+	let g:fzf_layout = { 'up': '~30%' }
+	let g:fzf_history_dir = '~/.config/nvim/fzf-history'
 	let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
 
 	nnoremap <C-p> :Files<CR>
@@ -235,7 +233,7 @@ augroup END
 
 " Tags {{{
 augroup tags_config
-	let g:gutentags_cache_dir = '~/.vim/tags/'
+	let g:gutentags_cache_dir = '~/.config/nvim/tags/'
 	let g:gutentags_exclude_project_root = ['~/', '/usr/local']
 augroup END
 " }}}
