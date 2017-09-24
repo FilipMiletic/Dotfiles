@@ -79,14 +79,7 @@
 		  ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
-(set-frame-font "Fira Code 11")
-
-;; Theme changer for changing theme depending on time
-;; (setq calendar-location-name "Belgrade")
-;; (setq calendar-latitude 44.78)
-;; (setq calendar-longitude 20.44)
-;; (require 'theme-changer)
-;; (change-theme 'tao-yang 'tao-yin)
+(set-frame-font "Fira Mono 11")
 
 (use-package kaolin-theme
   :ensure t
