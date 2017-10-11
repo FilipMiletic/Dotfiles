@@ -1,8 +1,8 @@
-call plug#begin('~/.local/share/nvim/plugged')
+call plug#begin('~/.vim/plugged')
+Plug 'xero/blaquemagick.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
-Plug 'xero/blaquemagick.vim'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 call plug#end()
 
@@ -40,12 +40,12 @@ set clipboard+=unnamed
 set statusline=%<%f\ (%{&ft})\%=\ [%p%%:\ %l/%L]
 set statusline+=%{&paste?'[paste]\ ':''}
 set laststatus=2
-set background=light
+set background=dark
 
 let mapleader=","
 let NERDTreeMinimalUI=1
-let g:molotov=1
-colorscheme blaquemagick
+let g:gruvbox_termcolors=16
+colorscheme bm
 
 " General {{{
 augroup general_config
@@ -55,6 +55,16 @@ augroup general_config
 	let &t_ZH="\e[3m"
 	let &t_ZR="\e[23m"
 	" }}}
+	
+	" Change cursor when in insert mode
+	" both in tmux and Terminal.app
+    if exists('$TMUX')
+		let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+		let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+	else
+		let &t_SI="\033[4 q" " start insert mode
+		let &t_EI="\033[1 q" " end insert mode
+	endif	
 	
 	" Speed up viewport scrolling {{{
 	nnoremap <C-e> 3<C-e>
@@ -212,7 +222,7 @@ augroup fzf_config
 	set rtp+=/usr/local/opt/fzf
 
 	let g:fzf_layout = { 'up': '~30%' }
-	let g:fzf_history_dir = '~/.config/nvim/fzf-history'
+	let g:fzf_history_dir = '~/.vim/fzf-history'
 	let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
 
 	nnoremap <C-p> :Files<CR>
@@ -233,7 +243,7 @@ augroup END
 
 " Tags {{{
 augroup tags_config
-	let g:gutentags_cache_dir = '~/.config/nvim/tags/'
+	let g:gutentags_cache_dir = '~/.vim/tags/'
 	let g:gutentags_exclude_project_root = ['~/', '/usr/local']
 augroup END
 " }}}
