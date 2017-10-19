@@ -1,9 +1,13 @@
+" Just keeping it minimal.
 call plug#begin('~/.vim/plugged')
-Plug 'xero/blaquemagick.vim'
+" Source code organization
 Plug 'scrooloose/nerdtree'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
+Plug 'tpope/vim-surround'
+" Fast file and content searching
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+Plug 'rking/ag.vim'
 call plug#end()
 
 set hidden
@@ -44,8 +48,7 @@ set background=dark
 
 let mapleader=","
 let NERDTreeMinimalUI=1
-let g:gruvbox_termcolors=16
-colorscheme bm
+colorscheme hal
 
 " General {{{
 augroup general_config
@@ -62,7 +65,7 @@ augroup general_config
 		let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
 		let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
 	else
-		let &t_SI="\033[4 q" " start insert mode
+		let &t_SI="\033[5 q" " start insert mode
 		let &t_EI="\033[1 q" " end insert mode
 	endif	
 	
@@ -124,9 +127,10 @@ augroup general_config
 	inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
 	" }}}
 
-	" Paste toggle (,p) {{{
-	set pastetoggle=<leader>p
-	map <leader>p :set invpaste paste?<CR>
+	" Paste from universal clipboard,
+	" instead of going to insert mode and
+	" doing it as an input (,p) {{{
+	map <leader>p :.!pbpaste<CR>
 	" }}}
 
 	" Yank from cursor to end of line {{{
@@ -217,7 +221,7 @@ augroup buffer_control
 augroup END
 " }}}
 
-" fzf {{{
+" fzf & ag {{{
 augroup fzf_config
 	set rtp+=/usr/local/opt/fzf
 
@@ -225,6 +229,7 @@ augroup fzf_config
 	let g:fzf_history_dir = '~/.vim/fzf-history'
 	let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
 
+	nnoremap <leader>ag :Ag -i 
 	nnoremap <C-p> :Files<CR>
 	nnoremap <C-g> :GFiles?<CR>
 	nnoremap <C-b> :Buffers<CR>
