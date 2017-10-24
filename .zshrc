@@ -2,7 +2,7 @@
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
-
+export KEYTIMEOUT=1
 unsetopt beep
 bindkey -e
 # End of lines configured by zsh-newuser-install
@@ -37,7 +37,7 @@ unset CASE_SENSITIVE HYPHEN_INSENSITIVE
 alias 'trans'='env TR_CURL_SSL_VERIFY=1 /Applications/Transmission.app/Contents/MacOS/Transmission'
 alias 'ls'='ls -GFp'
 
-source '/usr/local/bin/virtualenvwrapper.sh'
+#source '/usr/local/bin/virtualenvwrapper.sh'
 
 # prompt style and colors based on Steve Losh's Prose theme:
 # http://github.com/sjl/oh-my-zsh/blob/master/themes/prose.zsh-theme
@@ -47,8 +47,6 @@ source '/usr/local/bin/virtualenvwrapper.sh'
 #
 # git untracked files modification from Brian Carper:
 # http://briancarper.net/blog/570/git-info-in-your-zsh-prompt
-
-export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 function virtualenv_info {
     [ $VIRTUAL_ENV ] && echo '('%F{blue}`basename $VIRTUAL_ENV`%f') '
@@ -83,7 +81,7 @@ zstyle ':vcs_info:*:prompt:*' check-for-changes true
 PR_RST="%f"
 FMT_BRANCH="(%{$turquoise%}%b%u%c${PR_RST})"
 FMT_ACTION="(%{$limegreen%}%a${PR_RST})"
-FMT_UNSTAGED="%{$orange%}●"
+FMT_UNSTAGED="%{$purple%}●"
 FMT_STAGED="%{$limegreen%}●"
 
 zstyle ':vcs_info:*:prompt:*' unstagedstr   "${FMT_UNSTAGED}"
@@ -115,9 +113,9 @@ function steeef_precmd {
         # check for untracked files or updated submodules, since vcs_info doesn't
         if git ls-files --other --exclude-standard 2> /dev/null | grep -q "."; then
             PR_GIT_UPDATE=1
-            FMT_BRANCH="(%{$turquoise%}%b%u%c%{$hotpink%}●${PR_RST})"
+            FMT_BRANCH="(%{$limegreen%}%b%u%c%{$hotpink%}●${PR_RST})"
         else
-            FMT_BRANCH="(%{$turquoise%}%b%u%c${PR_RST})"
+            FMT_BRANCH="(%{$limegreen%}%b%u%c${PR_RST})"
         fi
         zstyle ':vcs_info:*:prompt:*' formats "${FMT_BRANCH} "
 
@@ -126,7 +124,5 @@ function steeef_precmd {
     fi
 }
 add-zsh-hook precmd steeef_precmd
-
-PROMPT=$'
-%{$purple%}%n${PR_RST} at %{$orange%}%m${PR_RST} in %{$limegreen%}%~${PR_RST} $vcs_info_msg_0_$(virtualenv_info)
-$ '
+#													%(!.#.>)
+PROMPT='%n@%m:%~ $vcs_info_msg_0_$(virtualenv_info)%(!.#.>) '
