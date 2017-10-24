@@ -27,6 +27,7 @@ set timeout timeoutlen=1000 ttimeoutlen=100
 set autochdir
 set noswapfile
 set nowrap
+"set wrap linebreak nolist
 set splitbelow
 set splitright
 set ruler
