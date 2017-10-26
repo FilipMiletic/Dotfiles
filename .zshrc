@@ -126,3 +126,7 @@ function steeef_precmd {
 add-zsh-hook precmd steeef_precmd
 #													%(!.#.>)
 PROMPT='%n@%m:%~ $vcs_info_msg_0_$(virtualenv_info)%(!.#.>) '
+
+# FZF Settings
+export FZF_DEFAULT_OPTS="--height 40% --reverse --border --inline-info"
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
