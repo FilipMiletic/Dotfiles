@@ -30,6 +30,7 @@ set nowrap
 "set wrap linebreak nolist
 set splitbelow
 set splitright
+set cursorline
 set ruler
 set mouse=a
 set showmatch
@@ -243,6 +244,28 @@ augroup fzf_config
 	imap <c-x><c-f> <plug>(fzf-complete-path)
 	imap <c-x><c-j> <plug>(fzf-complete-file-ag)
 	imap <c-x><c-l> <plug>(fzf-complete-line)
+
+	nnoremap <silent> <leader>v :call fzf#run({
+	\   'right': winwidth('.') / 2,
+	\   'sink':  'vertical botright split' })<CR> 
+
+	function! s:buflist()
+	  redir => ls
+	  silent ls
+	  redir END
+	  return split(ls, '\n')
+	endfunction
+
+	function! s:bufopen(e)
+	  execute 'buffer' matchstr(a:e, '^[ 0-9]*')
+	endfunction
+
+	nnoremap <silent> <Leader><Enter> :call fzf#run({
+	\   'source':  reverse(<sid>buflist()),
+	\   'sink':    function('<sid>bufopen'),
+	\   'options': '+m',
+	\   'down':    len(<sid>buflist()) + 5
+	\ })<CR>
 augroup END
 " }}}
 
