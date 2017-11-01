@@ -1,5 +1,8 @@
 " Just keeping it minimal.
 call plug#begin('~/.vim/plugged')
+" Themes
+Plug 'pbrisbin/vim-colors-off'
+Plug 'noahfrederick/vim-noctu'
 " Source code organization
 Plug 'scrooloose/nerdtree'
 Plug 'ludovicchabant/vim-gutentags'
@@ -27,10 +30,8 @@ set timeout timeoutlen=1000 ttimeoutlen=100
 set autochdir
 set noswapfile
 set nowrap
-"set wrap linebreak nolist
 set splitbelow
 set splitright
-set cursorline
 set ruler
 set mouse=a
 set showmatch
@@ -55,6 +56,13 @@ colorscheme hal
 " General {{{
 augroup general_config
 	autocmd!
+	" If has GUI
+	"set guioptions=	
+	"set guifont=Office\ Code\ Pro:h11
+	"if has("gui_running")
+	"	colorscheme styx
+	"	set antialias
+	"endif
 	
 	" Itallic comments {{{
 	let &t_ZH="\e[3m"
