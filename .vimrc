@@ -2,7 +2,6 @@
 call plug#begin('~/.vim/plugged')
 " Themes
 Plug 'pbrisbin/vim-colors-off'
-Plug 'noahfrederick/vim-noctu'
 " Source code organization
 Plug 'scrooloose/nerdtree'
 Plug 'ludovicchabant/vim-gutentags'
@@ -48,7 +47,6 @@ set statusline=%<%f\ (%{&ft})\%=\ [%p%%:\ %l/%L]
 set statusline+=%{&paste?'[paste]\ ':''}
 set laststatus=2
 set background=dark
-
 let mapleader=","
 let NERDTreeMinimalUI=1
 colorscheme hal
