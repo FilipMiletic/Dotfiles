@@ -14,6 +14,7 @@
 (require 'diminish)
 (require 'bind-key)
 
+
 (defadvice handle-delete-frame (around my-handle-delete-frame-advice activate)
   "Hide Emacs instead of closing the last frame."
   (let ((frame (posn-window (event-start event)))
@@ -62,13 +63,14 @@
       frame-resize-pixelwise t)
 (setq make-backup-files nil)
 (setq initial-frame-alist
-      '((width . 100)
-        (height . 60)))
+      '((width . 120)
+        (height . 68)))
 (defalias 'yes-or-no-p 'y-or-n-p)
-
-(use-package kaolin-themes
-  :ensure t
-  :config (load-theme 'kaolin-dark t))
+(load-theme 'sanityinc-tomorrow-day t)
+;; (use-package zenburn-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'zenburn t))
 
 (use-package paredit
   :ensure t
@@ -102,6 +104,12 @@
   (add-hook 'scheme-mode-hook                      'rainbow-delimiters-mode)
   (add-hook 'clojure-mode-hook                     'rainbow-delimiters-mode))
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (setq exec-path-from-shell-check-startup-files nil)
+  (exec-path-from-shell-initialize))
+
 (use-package company
   :ensure t
   :diminish company-mode
@@ -113,3 +121,92 @@
         company-minimum-prefix-length 2
         company-tooltip-limit 12)
   (global-company-mode 1))
+
+(use-package swiper
+  :demand
+  :bind (("C-s"     . swiper)
+         ("C-r"     . swiper)
+         ("C-c u"   . swiper-all)
+         ("C-c C-r" . ivy-resume)
+         ("C-c C-o" . ivy-occur)
+         ("C-c C-b" . ivy-switch-buffer)
+         ("C-c C-k" . kill-buffer))
+  :config
+  (progn (ivy-mode 1)
+         (setq ivy-height 10)
+         (setq enable-recursive-minibuffers t)
+         (setq swiper-include-line-number-in-search t)
+         (setq ivy-re-builders-alist
+               '((counsel-M-x . ivy--regex-fuzzy)
+                 (t . ivy--regex-plus)))
+
+         (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-partial-or-done)))
+
+(use-package smex
+  :ensure t
+  :config (smex-initialize))
+
+(use-package counsel
+  :ensure t
+  :bind (("M-x"     . counsel-M-x)
+         ("C-x C-f" . counsel-find-file)
+		 ("C-c p"   . counsel-file-jump)
+         ("C-h f"   . counsel-describe-function)
+         ("C-h v"   . counsel-describe-variable)
+         ("C-c f r" . counsel-recentf)
+         ("C-c g"   . counsel-git)
+         ("C-c /"   . counsel-git-grep)
+         ("C-c k"   . counsel-ag)
+         ("M-y"     . counsel-yank-pop))
+  :config
+  (progn (defun counsel-major-mode-commands (&optional initial-input)
+           "Ivy version of `smex-major-mode-commands'.
+Optional INITIAL-INPUT is the initial input in the minibuffer."
+           (interactive)
+           (unless initial-input
+             (setq initial-input (cdr (assoc this-command
+                                             ivy-initial-inputs-alist))))
+           (let* ((cands obarray)
+                  (pred 'commandp)
+                  (sort t))
+             (when (require 'smex nil 'noerror)
+               (unless smex-initialized-p
+                 (smex-initialize))
+               (smex-detect-new-commands)
+               (smex-update)
+               (setq cands (delete-dups (append (smex-extract-commands-from-keymap (current-local-map))
+                                                (smex-extract-commands-from-features major-mode))))
+               (setq cands (smex-sort-according-to-cache cands))
+               (setq cands (mapcar #'symbol-name cands))
+               (setq pred nil)
+               (setq sort nil))
+             (ivy-read (counsel--M-x-prompt) cands
+                       :predicate pred
+                       :require-match t
+                       :history 'extended-command-history
+                       :action
+                       (lambda (cmd)
+                         (when (featurep 'smex)
+                           (smex-rank (intern cmd)))
+                         (let ((prefix-arg current-prefix-arg)
+                               (this-command (intern cmd)))
+                           (command-execute (intern cmd) 'record)))
+                       :sort sort
+                       :keymap counsel-describe-map
+                       :initial-input initial-input
+                       :caller 'counsel-major-mode-commands)))
+		 
+         (defun counsel-describe-package ()
+           "Forward to `describe-package'."
+           (interactive)
+           (ivy-read "Describe package: "
+                     (let ((packages (append (mapcar 'car package-alist)
+                                             (mapcar 'car package-archive-contents)
+                                             (mapcar 'car package--builtins))))
+                       (delq nil
+                             (mapcar (lambda (elt)
+                                       (symbol-name elt))
+                                     packages)))
+                     :action (lambda (x)
+                               (describe-package (intern x)))
+                     :caller 'counsel-describe-package))))
