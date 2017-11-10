@@ -155,9 +155,6 @@
 		 ("C-c p"   . counsel-file-jump)
          ("C-h f"   . counsel-describe-function)
          ("C-h v"   . counsel-describe-variable)
-         ("C-c f r" . counsel-recentf)
-         ("C-c g"   . counsel-git)
-         ("C-c /"   . counsel-git-grep)
          ("C-c k"   . counsel-ag)
          ("M-y"     . counsel-yank-pop))
   :config
@@ -221,8 +218,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		 ("C-c f" . magit-grep))
   :init
   (progn
-	(use-package magit-blame
-	  :bind ("C-c C-g b" . magit-blame-mode))
 	(delete 'Git vc-handled-backends)
 
 	(defadvice magit-status (around magit-fullscreen activate)
@@ -265,5 +260,72 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	 magit-rewrite-incluseive 'ask
 	 magit-set-upstream-on-push 'askifnotset
 	 )))
+
+(use-package evil
+  :init
+  (progn
+    ;; if we don't have this evil overwrites the cursor color
+    (setq evil-default-cursor t)
+
+    ;; leader shortcuts
+
+    ;; This has to be before we invoke evil-mode due to:
+    ;; https://github.com/cofi/evil-leader/issues/10
+    (use-package evil-leader
+      :init (global-evil-leader-mode)
+      :config
+      (progn
+        ;; (setq evil-leader/in-all-states t)
+		(setq evil-leader/leader ",")
+        ;; keyboard shortcuts
+        (evil-leader/set-key
+          "a" 'ag-project
+          "A" 'ag
+          "b" 'ivy-switch-buffer
+          "f" 'counsel-find-file
+          "g" 'magit-status
+          "k" 'kill-buffer
+          "K" 'kill-this-buffer
+          "o" 'occur
+          "p" 'magit-find-file-completing-read
+          "t" 'bw-open-term
+          "T" 'eshell
+          "w" 'save-buffer
+          "x" 'smex
+          )))
+
+    ;; boot evil by default
+    (evil-mode 1))
+  :config
+  (progn
+    ;; use ido to open files
+    (define-key evil-ex-map "e " 'counsel-find-file)
+    (define-key evil-ex-map "b " 'ivy-switch-buffer)
+
+    ;; jj escapes to normal mode
+    (define-key evil-insert-state-map (kbd "j") 'bw-evil-escape-if-next-char-is-j)
+    (setq
+     ;; h/l wrap around to next lines
+     evil-cross-lines t
+
+)
+
+    ;; esc should always quit: http://stackoverflow.com/a/10166400/61435
+    (define-key evil-normal-state-map [escape] 'keyboard-quit)
+    (define-key evil-visual-state-map [escape] 'keyboard-quit)
+    (define-key minibuffer-local-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-ns-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
+
+    ;; modes to map to different default states
+    (dolist (mode-map '((comint-mode . emacs)
+                        (term-mode . emacs)
+                        (eshell-mode . emacs)
+                        (help-mode . emacs)
+                        (fundamental-mode . emacs)))
+      (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))))
+
 
 (require 'tramp)
