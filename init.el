@@ -31,6 +31,7 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
+(hl-line-mode       1)
 (menu-bar-mode     -1)
 (tool-bar-mode     -1)
 (scroll-bar-mode   -1)
@@ -39,7 +40,7 @@
 (column-number-mode 1)
 (blink-cursor-mode  0)
 (global-auto-revert-mode 1)
-(set-frame-font "Iosevka Term 12")
+(set-frame-font "Source Code Pro Medium 12")
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       load-prefer-newer t
@@ -61,16 +62,17 @@
       cursor-type 'box
       mac-allow-anti-aliasing t
       frame-resize-pixelwise t)
+
 (setq make-backup-files nil)
 (setq initial-frame-alist
       '((width . 120)
         (height . 68)))
 (defalias 'yes-or-no-p 'y-or-n-p)
-(load-theme 'sanityinc-tomorrow-day t)
-;; (use-package zenburn-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'zenburn t))
+
+(use-package doom-themes
+  :ensure t
+  :config
+  (load-theme 'doom-one t))
 
 (use-package paredit
   :ensure t
@@ -210,3 +212,58 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
                      :action (lambda (x)
                                (describe-package (intern x)))
                      :caller 'counsel-describe-package))))
+
+(use-package magit
+  :ensure t
+  :commands magit-get-top-dir
+  :bind (("C-c g" . magit-status)
+		 ("C-c C-g" . magit-file-log)
+		 ("C-c f" . magit-grep))
+  :init
+  (progn
+	(use-package magit-blame
+	  :bind ("C-c C-g b" . magit-blame-mode))
+	(delete 'Git vc-handled-backends)
+
+	(defadvice magit-status (around magit-fullscreen activate)
+	  (window-configuration-to-register :magit-fullscreen)
+	  ad-do-it
+	  (delete-other-windows))
+	
+	(defadvice git-commit-commit (after delete-window activate)
+	  (delete-window))
+
+	(defadvice git-commit-abort  (after delete-window activate)
+	  (delete-window))
+
+	(defun magit-commit-mode-init ()
+	  (when (looking-at "\n")
+		(open-line 1)))
+
+	(add-hook 'git-commit-mode-hook 'magit-commit-mode-init))
+  :config
+  (progn
+	(defadvice magit-quit-window (around magit-restore-screen activate)
+	  (let ((current-mode major-mode))
+		ad-do-it
+		(when (eq 'magit-status-mode current-mode)
+		  (jump-to-register :magit-fullscreen))))
+
+	(defun magit-maybe-commit (&optional show-options)
+	  "Runs magit-commit unless prefix is passed"
+	  (interactive "P")
+	  (if show-options
+		  (magit-key-mode-popup-comitting)
+		(magit-commit)))
+	
+	(define-key magit-mode-map "c" 'magit-maybe-commit)
+
+	(use-package rebase-mode)
+
+	(setq
+	 magit-diff-refine-hunk t
+	 magit-rewrite-incluseive 'ask
+	 magit-set-upstream-on-push 'askifnotset
+	 )))
+
+(require 'tramp)
