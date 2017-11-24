@@ -14,7 +14,8 @@
 (require 'diminish)
 (require 'bind-key)
 
-
+(defalias 'display-startup-echo-area-message #'ignore)
+(defalias 'yes-or-no-p 'y-or-n-p)
 (defadvice handle-delete-frame (around my-handle-delete-frame-advice activate)
   "Hide Emacs instead of closing the last frame."
   (let ((frame (posn-window (event-start event)))
@@ -22,17 +23,21 @@
 	(if (> numfrs 1)
 		  ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
+
 (setq-default indent-tabs-mode t
               indent-line-function 4
               tab-width 4
               c-basic-offset 4
               fill-column 80
-              left-fringe-width 8)
+              left-fringe-width 8
+	      right-fringe-width 6)
+
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+(add-to-list 'load-path "~/.emacs.d/custom")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 (hl-line-mode       1)
-(menu-bar-mode     -1)
+(menu-bar-mode      1)
 (tool-bar-mode     -1)
 (scroll-bar-mode   -1)
 (show-paren-mode    1)
@@ -40,7 +45,9 @@
 (column-number-mode 1)
 (blink-cursor-mode  0)
 (global-auto-revert-mode 1)
-(set-frame-font "Source Code Pro Medium 12")
+
+(set-frame-font "Source Code Pro 11")
+
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       load-prefer-newer t
@@ -60,19 +67,22 @@
       auto-save-default nil
       create-lockfiles nil
       cursor-type 'box
-      mac-allow-anti-aliasing t
-      frame-resize-pixelwise t)
-
-(setq make-backup-files nil)
+      frame-resize-pixelwise t
+      make-backup-files nil)
 (setq initial-frame-alist
       '((width . 120)
-        (height . 68)))
-(defalias 'yes-or-no-p 'y-or-n-p)
-
+        (height . 65)))
+;; Themes:
+;; kaolin-dark
+;; doom-one
+;; hemingway-dark
+(setq doom-themes-enable-bold t)
+(setq doom-themes-enable-italic t)
+(setq doom-one-brighter-modeline nil)
+(setq ns-use-srgb-colorspace t)
 (use-package doom-themes
   :ensure t
-  :config
-  (load-theme 'doom-one t))
+  :config (load-theme 'doom-one t))
 
 (use-package paredit
   :ensure t
@@ -115,14 +125,17 @@
 (use-package company
   :ensure t
   :diminish company-mode
+  :init
+  (add-hook 'after-init-hook 'global-company-mode)
   :config
+  ;; List of company backends
+  ;; (add-to-list 'company-backends 'company-irony)
   (setq company-auto-complete nil
         company-idle-delay .1
         company-echo-delay 0
         company-tooltip-flip-when-above t
         company-minimum-prefix-length 2
-        company-tooltip-limit 12)
-  (global-company-mode 1))
+        company-tooltip-limit 12))
 
 (use-package swiper
   :demand
@@ -155,7 +168,7 @@
 		 ("C-c p"   . counsel-file-jump)
          ("C-h f"   . counsel-describe-function)
          ("C-h v"   . counsel-describe-variable)
-         ("C-c k"   . counsel-ag)
+         ("C-c k"   . counsel-rg)
          ("M-y"     . counsel-yank-pop))
   :config
   (progn (defun counsel-major-mode-commands (&optional initial-input)
@@ -179,21 +192,22 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
                (setq cands (mapcar #'symbol-name cands))
                (setq pred nil)
                (setq sort nil))
-             (ivy-read (counsel--M-x-prompt) cands
-                       :predicate pred
-                       :require-match t
-                       :history 'extended-command-history
-                       :action
-                       (lambda (cmd)
-                         (when (featurep 'smex)
-                           (smex-rank (intern cmd)))
-                         (let ((prefix-arg current-prefix-arg)
-                               (this-command (intern cmd)))
-                           (command-execute (intern cmd) 'record)))
-                       :sort sort
-                       :keymap counsel-describe-map
-                       :initial-input initial-input
-                       :caller 'counsel-major-mode-commands)))
+              (ivy-read (counsel--M-x-prompt) cands
+                        :predicate pred
+                        :require-match t
+                        :history 'extended-command-history
+                        :action
+                        (lambda (cmd)
+                          (when (featurep 'smex)
+                            (smex-rank (intern cmd)))
+                          (let ((prefix-arg current-prefix-arg)
+                                (this-command (intern cmd)))
+                            (command-execute (intern cmd) 'record)))
+                        :sort sort
+                        :keymap counsel-describe-map
+                        :initial-input initial-input
+                        :caller 'counsel-major-mode-commands)
+			 ))
 		 
          (defun counsel-describe-package ()
            "Forward to `describe-package'."
@@ -258,74 +272,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	(setq
 	 magit-diff-refine-hunk t
 	 magit-rewrite-incluseive 'ask
-	 magit-set-upstream-on-push 'askifnotset
-	 )))
-
-(use-package evil
-  :init
-  (progn
-    ;; if we don't have this evil overwrites the cursor color
-    (setq evil-default-cursor t)
-
-    ;; leader shortcuts
-
-    ;; This has to be before we invoke evil-mode due to:
-    ;; https://github.com/cofi/evil-leader/issues/10
-    (use-package evil-leader
-      :init (global-evil-leader-mode)
-      :config
-      (progn
-        ;; (setq evil-leader/in-all-states t)
-		(setq evil-leader/leader ",")
-        ;; keyboard shortcuts
-        (evil-leader/set-key
-          "a" 'ag-project
-          "A" 'ag
-          "b" 'ivy-switch-buffer
-          "f" 'counsel-find-file
-          "g" 'magit-status
-          "k" 'kill-buffer
-          "K" 'kill-this-buffer
-          "o" 'occur
-          "p" 'magit-find-file-completing-read
-          "t" 'bw-open-term
-          "T" 'eshell
-          "w" 'save-buffer
-          "x" 'smex
-          )))
-
-    ;; boot evil by default
-    (evil-mode 1))
-  :config
-  (progn
-    ;; use ido to open files
-    (define-key evil-ex-map "e " 'counsel-find-file)
-    (define-key evil-ex-map "b " 'ivy-switch-buffer)
-
-    ;; jj escapes to normal mode
-    (define-key evil-insert-state-map (kbd "j") 'bw-evil-escape-if-next-char-is-j)
-    (setq
-     ;; h/l wrap around to next lines
-     evil-cross-lines t
-
-)
-
-    ;; esc should always quit: http://stackoverflow.com/a/10166400/61435
-    (define-key evil-normal-state-map [escape] 'keyboard-quit)
-    (define-key evil-visual-state-map [escape] 'keyboard-quit)
-    (define-key minibuffer-local-map [escape] 'abort-recursive-edit)
-    (define-key minibuffer-local-ns-map [escape] 'abort-recursive-edit)
-    (define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
-    (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
-    (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
-
-    ;; modes to map to different default states
-    (dolist (mode-map '((comint-mode . emacs)
-                        (term-mode . emacs)
-                        (eshell-mode . emacs)
-                        (help-mode . emacs)
-                        (fundamental-mode . emacs)))
-      (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))))
-
+	 magit-set-upstream-on-push 'askifnotset)))
 
 (require 'tramp)
