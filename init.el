@@ -68,18 +68,13 @@
       create-lockfiles nil
       cursor-type 'box
       frame-resize-pixelwise t
-      make-backup-files nil)
+      make-backup-files nil
+	  eshell-cmpl-ignore-case t)
+
 (setq initial-frame-alist
       '((width . 120)
         (height . 65)))
-;; Themes:
-;; kaolin-dark
-;; doom-one
-;; hemingway-dark
-(setq doom-themes-enable-bold t)
-(setq doom-themes-enable-italic t)
-(setq doom-one-brighter-modeline nil)
-(setq ns-use-srgb-colorspace t)
+
 (use-package doom-themes
   :ensure t
   :config (load-theme 'doom-one t))
@@ -122,6 +117,7 @@
   (setq exec-path-from-shell-check-startup-files nil)
   (exec-path-from-shell-initialize))
 
+;; Use C-M-i for ivy fuzzy regex completion
 (use-package company
   :ensure t
   :diminish company-mode
@@ -223,6 +219,39 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
                      :action (lambda (x)
                                (describe-package (intern x)))
                      :caller 'counsel-describe-package))))
+
+;; (defun counsel-find-function (str)
+;;   (if (< (length str) 3)
+;;       (counsel-more-chars 3)
+;;     (let ((cmd
+;;             (format
+;;               "find %s ! -readable -prune -o -iname \"%s*\" -print"
+;;               ; FIX: configure it and use `mdfind' instead
+;;				 ; NOTE: some versions of `find' may require parentheses,
+;;               ; like this: \( ! -readable -prune \)
+;;               default-directory
+;;               (counsel-unquote-regex-parens
+;;               (ivy--regex str)))))
+;;       (message "%s" cmd)
+;;       (counsel--async-command cmd))
+;;     '("" "working...")))
+
+;; ;;;###autoload
+;; (defun counsel-find (&optional initial-input)
+;;   "Use `mdfind', `counsel' and `ivy' to present all paths
+;;    in a directory tree that match the `REGEX' input"
+;;   (interactive)
+;;   (ivy-read "Find: " #'counsel-find-function
+;;             :initial-input initial-input
+;;             :dynamic-collection t
+;;             :history 'counsel-find-history
+;;             :action (lambda (file)
+;;                       (with-ivy-window
+;;                         (when file
+;;                           (find-file file))))
+;;             :unwind #'counsel-delete-process
+;;             :caller 'counsel-find))
+;; FIX: (counsel-set-async-exit-code 'counsel-find 1 "Nothing found")
 
 (use-package magit
   :ensure t
