@@ -24,6 +24,7 @@
 		  ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
+
 (setq-default indent-tabs-mode t
               indent-line-function 4
               tab-width 4
@@ -46,6 +47,7 @@
 (blink-cursor-mode  0)
 (global-auto-revert-mode 1)
 
+(load "~/.emacs.d/custom/eshell-customizations.el")
 (set-frame-font "Source Code Pro 11")
 
 (setq mac-option-modifier nil
@@ -71,11 +73,15 @@
       make-backup-files nil
 	  eshell-cmpl-ignore-case t)
 
+(setq org-log-done 'time)
 (setq org-directory "~/Dropbox/org/")
 (setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq initial-frame-alist
       '((width . 120)
         (height . 65)))
+
+;; Start emacs with eshell buffer
+(add-hook 'emacs-startup-hook (lambda () (eshell)))
 
 (use-package doom-themes
   :ensure t
@@ -230,7 +236,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	(add-hook 'prog-mode-hook (flycheck-mode 1))))
 
 (use-package flycheck-irony
-  :esnure t
+  :ensure t
   :init (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
 
 ;; (defun counsel-find-function (str)
