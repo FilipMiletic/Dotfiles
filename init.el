@@ -71,6 +71,8 @@
       make-backup-files nil
 	  eshell-cmpl-ignore-case t)
 
+(setq org-directory "~/Dropbox/org/")
+(setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq initial-frame-alist
       '((width . 120)
         (height . 65)))
@@ -88,7 +90,8 @@
   (add-hook 'ielm-mode-hook                        #'enable-paredit-mode)
   (add-hook 'lisp-mode-hook                        #'enable-paredit-mode)
   (add-hook 'lisp-interaction-mode-hook            #'enable-paredit-mode)
-  (add-hook 'scheme-mode-hook                      #'enable-paredit-mode))
+  (add-hook 'scheme-mode-hook                      #'enable-paredit-mode)
+  (add-hook 'clojure-mode-hook                     #'enable-paredit-mode))
 
 (use-package highlight-numbers
   :ensure t
@@ -220,6 +223,16 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
                                (describe-package (intern x)))
                      :caller 'counsel-describe-package))))
 
+(use-package flycheck
+  :ensure t
+  :init
+  (progn
+	(add-hook 'prog-mode-hook (flycheck-mode 1))))
+
+(use-package flycheck-irony
+  :esnure t
+  :init (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+
 ;; (defun counsel-find-function (str)
 ;;   (if (< (length str) 3)
 ;;       (counsel-more-chars 3)
@@ -303,4 +316,86 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	 magit-rewrite-incluseive 'ask
 	 magit-set-upstream-on-push 'askifnotset)))
 
-(require 'tramp)
+(use-package cider
+  :ensure t
+  :init
+  (setq cider-auto-select-error-buffer t
+		cider-repl-pop-to-buffer-on-connect nil
+		cider-repl-use-clojure-font-lock t
+		cider-repl-wrap-gistory t
+		cider-repl-history-size 1000
+		cider-repl-use-pretty-printing t
+		cider-show-error-buffer t
+		nrepl-hide-special-buffers t
+		nrepl-popup-stacktraces nil)
+  (add-hook 'cider-mode-hook #'eldoc-mode)
+  (add-hook 'cider-mode-hook #'company-mode)
+  (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'cider-repl-mode-hook #'paredit-mode)
+  (add-hook 'cider-repl-mode-hook #'company-mode))
+
+(defun my-irony-mode-hook ()
+  "Flycheck strikes again."
+  (define-key irony-mode-map [remap completion-at-point]
+	'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+	'irony-completion-at-point-async))
+
+(use-package irony
+  :ensure t
+  :config
+  (progn
+	(use-package company-irony
+	  :ensure t
+	  :config
+	  (add-to-list 'company-backends 'company-irony))
+	(add-hook 'c++-mode-hook 'irony-mode)
+	(add-hook 'c-mode-hook 'irony-mode)
+	(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)))
+
+;; In order to start rtags server do following in terminal:
+;; rdm
+;; cd /path/to/project/root/
+;; cmake . -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+;; rc -J .
+(use-package rtags
+  :ensure t
+  :config
+  (progn
+	(use-package company-rtags
+	  :ensure t)
+	(use-package flycheck-rtags
+	  :ensure t)
+	(setq rtags-completions-enabled t)
+	(add-to-list 'company-backends 'company-rtags)
+	(defun my-flycheck-rtags-setup ()
+	  (flycheck-select-checker 'rtags)
+	  ;; rtags create more accurate overlays.
+	  (setq-local flycheck-highlighting-mode nil)
+	  (setq-local flycheck-check-syntax-automatically nil))
+	;; keybindings
+	(define-key c-mode-base-map (kbd "M-.")
+	  (function rtags-find-symbol-at-point))
+	(define-key c-mode-base-map (kbd "M-,")
+	  (function rtags-find-references-at-point))
+	(rtags-enable-standard-keybindings)
+	(setq rtags-autostart-diagnostics t)
+	(rtags-diagnostics)
+	(add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)))
+
+(use-package undo-tree
+  :ensure t)
+
+(use-package ace-window
+  :ensure t
+  :bind ([remap next-multiframe-window] . ace-window)
+  :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+;; XXX:  Just to shut up flycheck with all the free variables assignment warnings!
+;; Local Variables:
+;; byte-compile-warnings: (not free-vars)
+;; End:
+(provide 'init)
+;;; init ends here
