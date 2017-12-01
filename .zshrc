@@ -162,4 +162,4 @@ fh() {
   eval $(('fc' -l 1 || 'history') | fzf +s | sed 's/ *[0-9]* *//')
 }
 
-PROMPT='[%{$turquoise%}%~${PR_RST}]$vcs_info_msg_0_$(virtualenv_info) %{$turquoise%}%(!.#.λ) ${PR_RST}'
+PROMPT='[%{$limegreen%}%~${PR_RST}]$vcs_info_msg_0_$(virtualenv_info) %{$limegreen%}%(!.#.λ) ${PR_RST}'
