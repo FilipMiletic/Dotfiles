@@ -83,9 +83,12 @@
 ;; Start emacs with eshell buffer
 (add-hook 'emacs-startup-hook (lambda () (eshell)))
 
-(use-package doom-themes
+(load-theme 'kaolin-dark t)
+
+(use-package org-bullets
   :ensure t
-  :config (load-theme 'doom-one t))
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (use-package paredit
   :ensure t
@@ -315,8 +318,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	
 	(define-key magit-mode-map "c" 'magit-maybe-commit)
 
-	(use-package rebase-mode)
-
 	(setq
 	 magit-diff-refine-hunk t
 	 magit-rewrite-incluseive 'ask
@@ -332,6 +333,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		cider-repl-history-size 1000
 		cider-repl-use-pretty-printing t
 		cider-show-error-buffer t
+		cider-inject-dependencies-at-jack-in t
 		nrepl-hide-special-buffers t
 		nrepl-popup-stacktraces nil)
   (add-hook 'cider-mode-hook #'eldoc-mode)
@@ -395,8 +397,8 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   :ensure t)
 
 (use-package ace-window
-  :ensure t
-  :bind ([remap next-multiframe-window] . ace-window)
+  :commands ace-window
+  :init (bind-key "C-x o" 'ace-window)
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 ;; XXX:  Just to shut up flycheck with all the free variables assignment warnings!
