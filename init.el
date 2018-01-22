@@ -1,4 +1,7 @@
+;;; package --- Summary
+;;; Commentary:
 (require 'package)
+;;; Code:
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("melpa"     . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
@@ -11,7 +14,7 @@
 
 (eval-when-compile
   (require 'use-package))
-(require 'diminish)
+;;(require 'diminish)
 (require 'bind-key)
 
 (defalias 'display-startup-echo-area-message #'ignore)
@@ -30,10 +33,8 @@
               tab-width 4
               c-basic-offset 4
               fill-column 80
-              left-fringe-width 8
-	      right-fringe-width 6)
+              cursor-in-non-selected-windows nil)
 
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (add-to-list 'load-path "~/.emacs.d/custom")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
@@ -48,12 +49,12 @@
 (global-auto-revert-mode 1)
 
 (load "~/.emacs.d/custom/eshell-customizations.el")
-(set-frame-font "Source Code Pro 11")
+(set-frame-font "Fira Code Retina 11")
 
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       load-prefer-newer t
-      gc-cons-threshold 100000000
+      gc-cons-threshold 200000000
       ring-bell-function 'ignore
       inhibit-splash-screen t
       initial-scratch-message nil
@@ -71,23 +72,19 @@
       cursor-type 'box
       frame-resize-pixelwise t
       make-backup-files nil
-	  eshell-cmpl-ignore-case t)
-
+	  eshell-cmpl-ignore-case t
+	  create-lockfiles nil)
 (setq org-log-done 'time)
-(setq org-directory "~/Dropbox/org/")
-(setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq initial-frame-alist
       '((width . 120)
         (height . 65)))
 
-;; Start emacs with eshell buffer
-(add-hook 'emacs-startup-hook (lambda () (eshell)))
-
-(load-theme 'kaolin-dark t)
+(use-package kaolin-themes
+  :ensure t
+  :config (load-theme 'kaolin-dark t))
 
 (use-package org-bullets
-  :ensure t
-  :config
+  :init
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (use-package paredit
@@ -100,7 +97,8 @@
   (add-hook 'lisp-mode-hook                        #'enable-paredit-mode)
   (add-hook 'lisp-interaction-mode-hook            #'enable-paredit-mode)
   (add-hook 'scheme-mode-hook                      #'enable-paredit-mode)
-  (add-hook 'clojure-mode-hook                     #'enable-paredit-mode))
+  (add-hook 'clojure-mode-hook                     #'enable-paredit-mode)
+  (add-hook 'slime-repl-mode-hook                  #'enable-paredit-mode))
 
 (use-package highlight-numbers
   :ensure t
@@ -121,7 +119,8 @@
   (add-hook 'lisp-mode-hook                        'rainbow-delimiters-mode)
   (add-hook 'lisp-interaction-mode-hook            'rainbow-delimiters-mode)
   (add-hook 'scheme-mode-hook                      'rainbow-delimiters-mode)
-  (add-hook 'clojure-mode-hook                     'rainbow-delimiters-mode))
+  (add-hook 'clojure-mode-hook                     'rainbow-delimiters-mode)
+  (add-hook 'slime-repl-mode-hook                  'rainbow-delimiters-mode))
 
 (use-package exec-path-from-shell
   :ensure t
@@ -136,8 +135,6 @@
   :init
   (add-hook 'after-init-hook 'global-company-mode)
   :config
-  ;; List of company backends
-  ;; (add-to-list 'company-backends 'company-irony)
   (setq company-auto-complete nil
         company-idle-delay .1
         company-echo-delay 0
@@ -238,6 +235,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   (progn
 	(add-hook 'prog-mode-hook (flycheck-mode 1))))
 
+;; TODO: Configure flycheck to work with cquery
 (use-package flycheck-irony
   :ensure t
   :init (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
@@ -309,13 +307,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		(when (eq 'magit-status-mode current-mode)
 		  (jump-to-register :magit-fullscreen))))
 
-	(defun magit-maybe-commit (&optional show-options)
-	  "Runs magit-commit unless prefix is passed"
-	  (interactive "P")
-	  (if show-options
-		  (magit-key-mode-popup-comitting)
-		(magit-commit)))
-	
 	(define-key magit-mode-map "c" 'magit-maybe-commit)
 
 	(setq
@@ -324,8 +315,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	 magit-set-upstream-on-push 'askifnotset)))
 
 (use-package cider
-  :ensure t
-  :init
+  :config
   (setq cider-auto-select-error-buffer t
 		cider-repl-pop-to-buffer-on-connect nil
 		cider-repl-use-clojure-font-lock t
@@ -342,13 +332,8 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'company-mode))
 
-(defun my-irony-mode-hook ()
-  "Flycheck strikes again."
-  (define-key irony-mode-map [remap completion-at-point]
-	'irony-completion-at-point-async)
-  (define-key irony-mode-map [remap complete-symbol]
-	'irony-completion-at-point-async))
 
+;; TODO: Replace Irony with cquery (/w ivy and company support of course)
 (use-package irony
   :ensure t
   :config
@@ -368,6 +353,8 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 ;; cd /path/to/project/root/
 ;; cmake . -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 ;; rc -J .
+
+;; TODO: Replacing rtags also with cquery
 (use-package rtags
   :ensure t
   :config
@@ -391,19 +378,50 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	(rtags-enable-standard-keybindings)
 	(setq rtags-autostart-diagnostics t)
 	(rtags-diagnostics)
-	(add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)))
+	(add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)
+	(add-hook 'c++-mode-hook      #'my-flycheck-rtags-setup)))
+(defun my-flycheck-rtags-setup ()
+  "Tell flycheck to use rtags for checking."
+  (flycheck-select-checker 'rtags)
+  (setq-local flycheck-highlighting-mode nil)
+  (setq-local flycheck-check-syntax-automatically nil))
+(global-set-key (kbd "C-x p") 'rtags-peek-definition)
 
-(use-package undo-tree
-  :ensure t)
+(use-package fic-mode
+  :diminish fic-mode
+  :config (add-hook 'prog-mode-hook 'fic-mode))
 
 (use-package ace-window
   :commands ace-window
   :init (bind-key "C-x o" 'ace-window)
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
-;; XXX:  Just to shut up flycheck with all the free variables assignment warnings!
+(use-package tex
+  :defer t
+  :ensure auctex
+  :config (setq TeX-auto-save t))
+
+(use-package elfeed
+  :defer t
+  :bind ("C-x w" . elfeed)
+  :init (setf url-queue-timeout 30)
+  :config
+  (push "-k" elfeed-curl-extra-arguments)
+  (setq-default elfeed-search-filter "@1-week-ago +unread")
+  (add-hook 'elfeed-new-entry-hook
+          (elfeed-make-tagger :before "2 weeks ago"
+                              :remove 'unread)))
+
+(setq elfeed-feeds
+      '(("https://nullprogram.com/feed/" systems emacs general) 
+        ("https://planet.emacsen.org/atom.xml" emacs)
+		("https://utcc.utoronto.ca/~cks/space/blog/" unix general)
+		("https://www.joelonsoftware.com/feed/")
+		("http://feeds.feedburner.com/HighScalability")
+		("https://blog.codinghorror.com/rss/")))
+
 ;; Local Variables:
-;; byte-compile-warnings: (not free-vars)
+;; byte-compile-warnings: (not free-vars noruntime)
 ;; End:
 (provide 'init)
 ;;; init ends here
