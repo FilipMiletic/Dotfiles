@@ -3,9 +3,8 @@
 (require 'package)
 ;;; Code:
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa"     . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("gnu"       . "http://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa"     . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("gnu"       . "https://elpa.gnu.org/packages/"))
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -14,7 +13,7 @@
 
 (eval-when-compile
   (require 'use-package))
-;;(require 'diminish)
+(require 'diminish)
 (require 'bind-key)
 
 (defalias 'display-startup-echo-area-message #'ignore)
@@ -27,17 +26,17 @@
 		  ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
-
 (setq-default indent-tabs-mode t
               indent-line-function 4
               tab-width 4
               c-basic-offset 4
               fill-column 80
               cursor-in-non-selected-windows nil)
-
+(setq-default word-wrap t)
 (add-to-list 'load-path "~/.emacs.d/custom")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
+(pixel-scroll-mode 1)
 (hl-line-mode       1)
 (menu-bar-mode      1)
 (tool-bar-mode     -1)
@@ -47,45 +46,107 @@
 (column-number-mode 1)
 (blink-cursor-mode  0)
 (global-auto-revert-mode 1)
-
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load "~/.emacs.d/custom/eshell-customizations.el")
 (set-frame-font "Fira Code Retina 11")
 
 (setq mac-option-modifier nil
-      mac-command-modifier 'meta
-      load-prefer-newer t
-      gc-cons-threshold 200000000
-      ring-bell-function 'ignore
-      inhibit-splash-screen t
-      initial-scratch-message nil
-      inhibit-startup-message t
-      mouse-wheel-scroll-amount '(1 ((shift) .1))
-      mouse-wheel-progressive-speed nil
-      scroll-step 1
-      scroll-conservatively 100000
-      scroll-margin 8
-      fringes-outside-margins 1
-      ns-pop-up-frames nil
-      make-backup-files nil
-      auto-save-default nil
-      create-lockfiles nil
-      cursor-type 'box
-      frame-resize-pixelwise t
-      make-backup-files nil
+	  mac-command-modifier 'meta
+	  load-prefer-newer t
+	  gc-cons-threshold 200000000
+	  ring-bell-function 'ignore
+	  inhibit-splash-screen t
+	  initial-scratch-message nil
+	  inhibit-startup-message t
+	  mouse-wheel-scroll-amount '(1 ((shift) .1))
+	  mouse-wheel-progressive-speed nil
+	  scroll-step 1
+	  scroll-conservatively 100000
+	  scroll-margin 8
+	  fringes-outside-margins 1
+	  ns-pop-up-frames nil
+	  make-backup-files nil
+	  auto-save-default nil
+	  create-lockfiles nil
+	  cursor-type 'box
+	  frame-resize-pixelwise t
+	  make-backup-files nil
 	  eshell-cmpl-ignore-case t
 	  create-lockfiles nil)
+
+;;------------------------------- ORG MODE SETTINGS ----------------------------
 (setq org-log-done 'time)
+(global-set-key (kbd "C-c c") 'org-capture)
+(setq org-default-notes-file "~/Documents/Notes/notes.org")
+(setq org-directory "~/Documents/Notes")
+(setq org-agenda-files "~/Documents/Notes/organizer.org")
 (setq initial-frame-alist
       '((width . 120)
         (height . 65)))
-
-(use-package kaolin-themes
-  :ensure t
-  :config (load-theme 'kaolin-dark t))
-
+(setq org-hide-emphasis-markers t)
 (use-package org-bullets
   :init
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+(setq org-todo-keywords
+	  (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+			  (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+
+(setq org-todo-keyword-faces
+	  (quote (("TODO"      :foreground "red"     :weight bold)
+			  ("NEXT"      :foreground "blue"    :weight bold)
+			  ("DONE"      :foreground "green"   :weight bold)
+			  ("WAITING"   :foreground "orange"  :weight bold)
+			  ("HOLD"      :foreground "magenta" :weight bold)
+			  ("CANCELLED" :foreground "green"   :weight bold))))
+
+(setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+
+(setq org-capture-templates
+      (quote (("t" "todo"    entry (file "~/Documents/Notes/organizer.org")
+               "* TODO %?\n%U\n%a\n"   :clock-in t :clock-resume t)
+              ("n" "note"    entry (file "~/Documents/Notes/notes.org")
+               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("j" "journal" entry (file+datetree "~/Documents/Notes/journal.org")
+               "* %?\n%U\n"            :clock-in t :clock-resume t))))
+
+(let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
+                             ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
+                             ((x-list-fonts "Verdana")         '(:font "Verdana"))
+                             ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+                             (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+       (headline           `(:inherit default :weight bold)))
+
+  (custom-theme-set-faces 'user
+                          `(org-level-8 ((t (,@headline ,@variable-tuple))))
+                          `(org-level-7 ((t (,@headline ,@variable-tuple))))
+                          `(org-level-6 ((t (,@headline ,@variable-tuple))))
+                          `(org-level-5 ((t (,@headline ,@variable-tuple))))
+                          `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
+                          `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
+                          `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
+                          `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
+                          `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
+;; ---------------------------------------------------------------------------------------------------------------
+;; Often used themes: oldlace, blaquemagick, kaolin, doom, solarized
+
+(use-package kaolin-themes
+  :ensure t
+  :config
+  (load-theme 'kaolin-aurora t))
+
+(setq moody-mode-line-height 18)
+
+(use-package find-file-in-project
+  :ensure t
+  :bind ("C-c f" . ffip))
 
 (use-package paredit
   :ensure t
@@ -97,8 +158,7 @@
   (add-hook 'lisp-mode-hook                        #'enable-paredit-mode)
   (add-hook 'lisp-interaction-mode-hook            #'enable-paredit-mode)
   (add-hook 'scheme-mode-hook                      #'enable-paredit-mode)
-  (add-hook 'clojure-mode-hook                     #'enable-paredit-mode)
-  (add-hook 'slime-repl-mode-hook                  #'enable-paredit-mode))
+  (add-hook 'clojure-mode-hook                     #'enable-paredit-mode))
 
 (use-package highlight-numbers
   :ensure t
@@ -119,8 +179,7 @@
   (add-hook 'lisp-mode-hook                        'rainbow-delimiters-mode)
   (add-hook 'lisp-interaction-mode-hook            'rainbow-delimiters-mode)
   (add-hook 'scheme-mode-hook                      'rainbow-delimiters-mode)
-  (add-hook 'clojure-mode-hook                     'rainbow-delimiters-mode)
-  (add-hook 'slime-repl-mode-hook                  'rainbow-delimiters-mode))
+  (add-hook 'clojure-mode-hook                     'rainbow-delimiters-mode))
 
 (use-package exec-path-from-shell
   :ensure t
@@ -173,7 +232,7 @@
 		 ("C-c p"   . counsel-file-jump)
          ("C-h f"   . counsel-describe-function)
          ("C-h v"   . counsel-describe-variable)
-         ("C-c k"   . counsel-rg)
+         ("C-c s s" . counsel-rg)
          ("M-y"     . counsel-yank-pop))
   :config
   (progn (defun counsel-major-mode-commands (&optional initial-input)
@@ -211,8 +270,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
                         :sort sort
                         :keymap counsel-describe-map
                         :initial-input initial-input
-                        :caller 'counsel-major-mode-commands)
-			 ))
+                        :caller 'counsel-major-mode-commands)))
 		 
          (defun counsel-describe-package ()
            "Forward to `describe-package'."
@@ -235,50 +293,14 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   (progn
 	(add-hook 'prog-mode-hook (flycheck-mode 1))))
 
+;; TODO: Replace rtags with cquery
 ;; TODO: Configure flycheck to work with cquery
-(use-package flycheck-irony
-  :ensure t
-  :init (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
-
-;; (defun counsel-find-function (str)
-;;   (if (< (length str) 3)
-;;       (counsel-more-chars 3)
-;;     (let ((cmd
-;;             (format
-;;               "find %s ! -readable -prune -o -iname \"%s*\" -print"
-;;               ; FIX: configure it and use `mdfind' instead
-;;				 ; NOTE: some versions of `find' may require parentheses,
-;;               ; like this: \( ! -readable -prune \)
-;;               default-directory
-;;               (counsel-unquote-regex-parens
-;;               (ivy--regex str)))))
-;;       (message "%s" cmd)
-;;       (counsel--async-command cmd))
-;;     '("" "working...")))
-
-;; ;;;###autoload
-;; (defun counsel-find (&optional initial-input)
-;;   "Use `mdfind', `counsel' and `ivy' to present all paths
-;;    in a directory tree that match the `REGEX' input"
-;;   (interactive)
-;;   (ivy-read "Find: " #'counsel-find-function
-;;             :initial-input initial-input
-;;             :dynamic-collection t
-;;             :history 'counsel-find-history
-;;             :action (lambda (file)
-;;                       (with-ivy-window
-;;                         (when file
-;;                           (find-file file))))
-;;             :unwind #'counsel-delete-process
-;;             :caller 'counsel-find))
-;; FIX: (counsel-set-async-exit-code 'counsel-find 1 "Nothing found")
 
 (use-package magit
   :ensure t
   :commands magit-get-top-dir
   :bind (("C-c g" . magit-status)
-		 ("C-c C-g" . magit-file-log)
-		 ("C-c f" . magit-grep))
+		 ("C-c C-g" . magit-file-log))
   :init
   (progn
 	(delete 'Git vc-handled-backends)
@@ -314,6 +336,14 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	 magit-rewrite-incluseive 'ask
 	 magit-set-upstream-on-push 'askifnotset)))
 
+(use-package geiser
+  :ensure t
+  :defer
+  :bind (:map scheme-mode-map ("C-c C-c" . geiser-eval-last-sexp))
+  :init
+  (progn
+	(setq geiser-racket-binary "/Applications/Racket v6.12/bin/racket")))
+
 (use-package cider
   :config
   (setq cider-auto-select-error-buffer t
@@ -332,64 +362,42 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'company-mode))
 
-
 ;; TODO: Replace Irony with cquery (/w ivy and company support of course)
-(use-package irony
-  :ensure t
-  :config
-  (progn
-	(use-package company-irony
-	  :ensure t
-	  :config
-	  (add-to-list 'company-backends 'company-irony))
-	(add-hook 'c++-mode-hook 'irony-mode)
-	(add-hook 'c-mode-hook 'irony-mode)
-	(add-hook 'irony-mode-hook 'my-irony-mode-hook)
-    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)))
+;; (use-package irony
+;;   :ensure t
+;;   :config
+;;   (progn
+;; 	(use-package company-irony
+;; 	  :ensure t
+;; 	  :config
+;; 	  (add-to-list 'company-backends 'company-irony))
+;; 	(use-package company-irony-c-headers
+;; 	  :ensure t
+;; 	  :config
+;; 	  (add-to-list 'company-backends 'company-irony-c-headers))
+;; 	(add-hook 'c++-mode-hook 'irony-mode)
+;; 	(add-hook 'c-mode-hook 'irony-mode)
+;;     (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+;;     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)))
 
-;; In order to start rtags server do following in terminal:
-;; rdm
-;; cd /path/to/project/root/
-;; cmake . -DCMAKE_EXPORT_COMPILE_COMMANDS=1
-;; rc -J .
+;; ;; TODO: Replacing rtags also with cquery
+;; (use-package rtags
+;;   :commands rtags-start-process-unless-running
+;;   :config
+;;   (progn
+;; 	(use-package company-rtags
+;; 	  :ensure t)
+;; 	(add-to-list 'company-backends 'company-rtags)))
 
-;; TODO: Replacing rtags also with cquery
-(use-package rtags
-  :ensure t
-  :config
-  (progn
-	(use-package company-rtags
-	  :ensure t)
-	(use-package flycheck-rtags
-	  :ensure t)
-	(setq rtags-completions-enabled t)
-	(add-to-list 'company-backends 'company-rtags)
-	(defun my-flycheck-rtags-setup ()
-	  (flycheck-select-checker 'rtags)
-	  ;; rtags create more accurate overlays.
-	  (setq-local flycheck-highlighting-mode nil)
-	  (setq-local flycheck-check-syntax-automatically nil))
-	;; keybindings
-	(define-key c-mode-base-map (kbd "M-.")
-	  (function rtags-find-symbol-at-point))
-	(define-key c-mode-base-map (kbd "M-,")
-	  (function rtags-find-references-at-point))
-	(rtags-enable-standard-keybindings)
-	(setq rtags-autostart-diagnostics t)
-	(rtags-diagnostics)
-	(add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)
-	(add-hook 'c++-mode-hook      #'my-flycheck-rtags-setup)))
-(defun my-flycheck-rtags-setup ()
-  "Tell flycheck to use rtags for checking."
-  (flycheck-select-checker 'rtags)
-  (setq-local flycheck-highlighting-mode nil)
-  (setq-local flycheck-check-syntax-automatically nil))
-(global-set-key (kbd "C-x p") 'rtags-peek-definition)
-
-(use-package fic-mode
-  :diminish fic-mode
-  :config (add-hook 'prog-mode-hook 'fic-mode))
+;; (defun rtags ()
+;; "Rtags config used only for navigation."
+;;   (interactive)
+;;   (rtags-start-process-unless-running)
+;;   (setq rtags-display-result-backend 'ivy)
+;;   (add-hook 'kill-emacs-hook 'rtags-quit-rdm)
+;;   (define-key (kbd "M-.") 'rtags-find-symbol-at-point)
+;;   (define-key (kbd "M-?") 'rtags-find-reference-at-point ))
+;; (global-set-key (kbd "C-x p") 'rtags-peek-definition)
 
 (use-package ace-window
   :commands ace-window
@@ -399,7 +407,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 (use-package tex
   :defer t
   :ensure auctex
-  :config (setq TeX-auto-save t))
+  :config (setq TeX-auto-save nil))
 
 (use-package elfeed
   :defer t
@@ -407,18 +415,19 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   :init (setf url-queue-timeout 30)
   :config
   (push "-k" elfeed-curl-extra-arguments)
-  (setq-default elfeed-search-filter "@1-week-ago +unread")
-  (add-hook 'elfeed-new-entry-hook
-          (elfeed-make-tagger :before "2 weeks ago"
-                              :remove 'unread)))
+  (setq-default elfeed-search-filter "@1-week-ago +unread"))
 
 (setq elfeed-feeds
-      '(("https://nullprogram.com/feed/" systems emacs general) 
-        ("https://planet.emacsen.org/atom.xml" emacs)
-		("https://utcc.utoronto.ca/~cks/space/blog/" unix general)
+      '(("https://nullprogram.com/feed/" systems emacs general)
+		("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix general)
 		("https://www.joelonsoftware.com/feed/")
+		("https://eli.thegreenplace.net/feeds/all.atom.xml")
+		("https://blog.acolyer.org/feed/" papers)
+		("http://bit-player.org/feed")
 		("http://feeds.feedburner.com/HighScalability")
-		("https://blog.codinghorror.com/rss/")))
+		("https://blog.codinghorror.com/rss/")
+		("https://steve-yegge.blogspot.rs/" general)
+		("http://blog.cognitect.com/blog?format=rss" clojure)))
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
