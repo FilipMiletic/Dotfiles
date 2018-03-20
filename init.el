@@ -37,7 +37,6 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 (pixel-scroll-mode 1)
-(hl-line-mode       1)
 (menu-bar-mode      1)
 (tool-bar-mode     -1)
 (scroll-bar-mode   -1)
@@ -45,15 +44,15 @@
 (line-number-mode   1)
 (column-number-mode 1)
 (blink-cursor-mode  0)
+(global-hl-line-mode 1)
 (global-auto-revert-mode 1)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load "~/.emacs.d/custom/eshell-customizations.el")
-(set-frame-font "Fira Code Retina 11")
+(set-frame-font "Iosevka Term 12")
 
 (setq mac-option-modifier nil
 	  mac-command-modifier 'meta
 	  load-prefer-newer t
-	  gc-cons-threshold 200000000
 	  ring-bell-function 'ignore
 	  inhibit-splash-screen t
 	  initial-scratch-message nil
@@ -73,7 +72,18 @@
 	  make-backup-files nil
 	  eshell-cmpl-ignore-case t
 	  create-lockfiles nil)
+(setq gc-cons-threshold most-positive-fixnum)
 
+;; Some custom functions
+(defun open-previous-line (arg)
+  "Open a new line above current one ARG."
+  (interactive "p")
+  (beginning-of-line)
+  (open-line arg)
+  (when newline-and-indent
+	(indent-according-to-mode)))
+(global-set-key (kbd "M-o") 'open-previous-line)
+(defvar newline-and-indent t)
 ;;------------------------------- ORG MODE SETTINGS ----------------------------
 (setq org-log-done 'time)
 (global-set-key (kbd "C-c c") 'org-capture)
@@ -136,17 +146,36 @@
                           `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
 ;; ---------------------------------------------------------------------------------------------------------------
 ;; Often used themes: oldlace, blaquemagick, kaolin, doom, solarized
-
-(use-package kaolin-themes
+(use-package monotropic-theme :ensure :defer)
+(use-package kaolin-themes :ensure :defer)
+(use-package circadian
   :ensure t
-  :config
-  (load-theme 'kaolin-aurora t))
-
-(setq moody-mode-line-height 18)
+  :config (setq circadian-themes '(("7:00" . eink)
+								  ("17:30" . kaolin-aurora)))
+  (circadian-setup))
 
 (use-package find-file-in-project
   :ensure t
   :bind ("C-c f" . ffip))
+
+;; Get used to changes and learn how to use it, instead of paredit
+;; (use-package parinfer
+;;   :ensure t
+;;   :bind
+;;   (("C-," . parinfer-toggle-mode))
+;;   :init
+;;   (progn
+;;     (setq parinfer-extensions
+;;           '(defaults       ; should be included.
+;;             pretty-parens  ; different paren styles for different modes.
+;;             paredit        ; Introduce some paredit commands.
+;;             smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+;;             smart-yank))   ; Yank behavior depend on mode.
+;;     (add-hook 'clojure-mode-hook #'parinfer-mode)
+;;     (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+;;     (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+;;     (add-hook 'scheme-mode-hook #'parinfer-mode)
+;;     (add-hook 'lisp-mode-hook #'parinfer-mode)))
 
 (use-package paredit
   :ensure t
@@ -336,14 +365,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	 magit-rewrite-incluseive 'ask
 	 magit-set-upstream-on-push 'askifnotset)))
 
-(use-package geiser
-  :ensure t
-  :defer
-  :bind (:map scheme-mode-map ("C-c C-c" . geiser-eval-last-sexp))
-  :init
-  (progn
-	(setq geiser-racket-binary "/Applications/Racket v6.12/bin/racket")))
-
 (use-package cider
   :config
   (setq cider-auto-select-error-buffer t
@@ -361,6 +382,8 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'company-mode))
+
+(setq scheme-program-name "/usr/local/bin/mit-scheme")
 
 ;; TODO: Replace Irony with cquery (/w ivy and company support of course)
 ;; (use-package irony
@@ -398,6 +421,9 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 ;;   (define-key (kbd "M-.") 'rtags-find-symbol-at-point)
 ;;   (define-key (kbd "M-?") 'rtags-find-reference-at-point ))
 ;; (global-set-key (kbd "C-x p") 'rtags-peek-definition)
+(use-package fic-mode
+  :commands fic-mode
+  :init (add-hook 'prog-mode-hook 'fic-mode))
 
 (use-package ace-window
   :commands ace-window
@@ -415,19 +441,19 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   :init (setf url-queue-timeout 30)
   :config
   (push "-k" elfeed-curl-extra-arguments)
-  (setq-default elfeed-search-filter "@1-week-ago +unread"))
-
-(setq elfeed-feeds
-      '(("https://nullprogram.com/feed/" systems emacs general)
-		("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix general)
+  (setq-default elfeed-search-filter "@1-week-ago +unread")
+  (setq elfeed-feeds
+      '(("https://nullprogram.com/feed/" systems emacs)
+		("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
 		("https://www.joelonsoftware.com/feed/")
 		("https://eli.thegreenplace.net/feeds/all.atom.xml")
 		("https://blog.acolyer.org/feed/" papers)
 		("http://bit-player.org/feed")
 		("http://feeds.feedburner.com/HighScalability")
 		("https://blog.codinghorror.com/rss/")
-		("https://steve-yegge.blogspot.rs/" general)
-		("http://blog.cognitect.com/blog?format=rss" clojure)))
+		("https://martinfowler.com/feed.atom" agile)
+		("https://steve-yegge.blogspot.rs/")
+		("http://blog.cognitect.com/blog?format=rss" clojure))))
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
