@@ -44,11 +44,13 @@
 (line-number-mode   1)
 (column-number-mode 1)
 (blink-cursor-mode  0)
-(global-hl-line-mode 1)
+(global-hl-line-mode -1)
 (global-auto-revert-mode 1)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load "~/.emacs.d/custom/eshell-customizations.el")
-(set-frame-font "Iosevka Term 12")
+(setq-default line-spacing 1)
+(set-frame-font "mononoki 13")
+;; (set-frame-font "Fira Code Retina 11")
 
 (setq mac-option-modifier nil
 	  mac-command-modifier 'meta
@@ -146,13 +148,9 @@
                           `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
 ;; ---------------------------------------------------------------------------------------------------------------
 ;; Often used themes: oldlace, blaquemagick, kaolin, doom, solarized
-(use-package monotropic-theme :ensure :defer)
-(use-package kaolin-themes :ensure :defer)
-(use-package circadian
+(use-package doom-themes
   :ensure t
-  :config (setq circadian-themes '(("7:00" . eink)
-								  ("17:30" . kaolin-aurora)))
-  (circadian-setup))
+  :config (load-theme 'doom-vibrant t))
 
 (use-package find-file-in-project
   :ensure t
@@ -421,9 +419,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 ;;   (define-key (kbd "M-.") 'rtags-find-symbol-at-point)
 ;;   (define-key (kbd "M-?") 'rtags-find-reference-at-point ))
 ;; (global-set-key (kbd "C-x p") 'rtags-peek-definition)
-(use-package fic-mode
-  :commands fic-mode
-  :init (add-hook 'prog-mode-hook 'fic-mode))
 
 (use-package ace-window
   :commands ace-window
@@ -453,7 +448,8 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		("https://blog.codinghorror.com/rss/")
 		("https://martinfowler.com/feed.atom" agile)
 		("https://steve-yegge.blogspot.rs/")
-		("http://blog.cognitect.com/blog?format=rss" clojure))))
+		("http://blog.cognitect.com/blog?format=rss" clojure)
+		("http://www.righto.com/feeds/posts/default" hardware))))
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
