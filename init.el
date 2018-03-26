@@ -129,9 +129,7 @@
               ("j" "journal" entry (file+datetree "~/Documents/Notes/journal.org")
                "* %?\n%U\n"            :clock-in t :clock-resume t))))
 
-(let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
-                             ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-                             ((x-list-fonts "Verdana")         '(:font "Verdana"))
+(let* ((variable-tuple (cond ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
                              ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
                              (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
        (headline           `(:inherit default :weight bold)))
@@ -384,42 +382,38 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 
 (setq scheme-program-name "/usr/local/bin/mit-scheme")
 
-;; TODO: Replace Irony with cquery (/w ivy and company support of course)
-;; (use-package irony
-;;   :ensure t
-;;   :config
-;;   (progn
-;; 	(use-package company-irony
-;; 	  :ensure t
-;; 	  :config
-;; 	  (add-to-list 'company-backends 'company-irony))
-;; 	(use-package company-irony-c-headers
-;; 	  :ensure t
-;; 	  :config
-;; 	  (add-to-list 'company-backends 'company-irony-c-headers))
-;; 	(add-hook 'c++-mode-hook 'irony-mode)
-;; 	(add-hook 'c-mode-hook 'irony-mode)
-;;     (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-;;     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)))
+;; Added support for Ctags, and Cquery which currently blows my mind
+(setq path-to-ctags "/usr/local/bin/ctags")
+(defun create-tags (dir-name)
+  "Create tags file in directory DIR-NAME."
+  (interactive "DDirectory: ")
+  (shell-command
+   (format "%s -f TAGS -e -R %s" path-to-ctags (directory-file-name dir-name ))))
 
-;; ;; TODO: Replacing rtags also with cquery
-;; (use-package rtags
-;;   :commands rtags-start-process-unless-running
-;;   :config
-;;   (progn
-;; 	(use-package company-rtags
-;; 	  :ensure t)
-;; 	(add-to-list 'company-backends 'company-rtags)))
+(use-package lsp-mode
+  :ensure t)
 
-;; (defun rtags ()
-;; "Rtags config used only for navigation."
-;;   (interactive)
-;;   (rtags-start-process-unless-running)
-;;   (setq rtags-display-result-backend 'ivy)
-;;   (add-hook 'kill-emacs-hook 'rtags-quit-rdm)
-;;   (define-key (kbd "M-.") 'rtags-find-symbol-at-point)
-;;   (define-key (kbd "M-?") 'rtags-find-reference-at-point ))
-;; (global-set-key (kbd "C-x p") 'rtags-peek-definition)
+(setq cquery-executable "/usr/local/bin/cquery")
+(setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t)))
+
+(use-package cquery
+  :ensure t
+  :after lsp-mode)
+
+(use-package company-lsp
+  :ensure t
+  :after (cquery company)
+  :config (push 'company-lsp company-backends)
+  (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
+
+(use-package lsp-ui
+  :ensure t
+  :init (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+(use-package ivy-xref
+  :ensure t
+  :after cquery
+  :config (set-variable 'xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
 (use-package ace-window
   :commands ace-window
