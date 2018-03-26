@@ -49,7 +49,7 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load "~/.emacs.d/custom/eshell-customizations.el")
 (setq-default line-spacing 1)
-(set-frame-font "mononoki 13")
+(set-frame-font "Inconsolata 13")
 ;; (set-frame-font "Fira Code Retina 11")
 
 (setq mac-option-modifier nil
@@ -147,7 +147,8 @@
                           `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
                           `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
 ;; ---------------------------------------------------------------------------------------------------------------
-;; Often used themes: oldlace, blaquemagick, kaolin, doom, solarized
+(setq doom-vibrant-comment-bg t)
+(setq doom-vibrant-padded-modeline t)
 (use-package doom-themes
   :ensure t
   :config (load-theme 'doom-vibrant t))
