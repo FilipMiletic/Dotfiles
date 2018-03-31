@@ -49,7 +49,7 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load "~/.emacs.d/custom/eshell-customizations.el")
 (setq-default line-spacing 1)
-(set-frame-font "Inconsolata 13")
+(set-frame-font "Hack 11")
 ;; (set-frame-font "Fira Code Retina 11")
 
 (setq mac-option-modifier nil
@@ -147,9 +147,10 @@
 ;; ---------------------------------------------------------------------------------------------------------------
 (setq doom-vibrant-comment-bg t)
 (setq doom-vibrant-padded-modeline t)
+
 (use-package doom-themes
   :ensure t
-  :config (load-theme 'doom-vibrant t))
+  :config (load-theme 'doom-one t))
 
 (use-package find-file-in-project
   :ensure t
@@ -319,48 +320,10 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   (progn
 	(add-hook 'prog-mode-hook (flycheck-mode 1))))
 
-;; TODO: Replace rtags with cquery
-;; TODO: Configure flycheck to work with cquery
-
 (use-package magit
   :ensure t
-  :commands magit-get-top-dir
-  :bind (("C-c g" . magit-status)
-		 ("C-c C-g" . magit-file-log))
-  :init
-  (progn
-	(delete 'Git vc-handled-backends)
-
-	(defadvice magit-status (around magit-fullscreen activate)
-	  (window-configuration-to-register :magit-fullscreen)
-	  ad-do-it
-	  (delete-other-windows))
-	
-	(defadvice git-commit-commit (after delete-window activate)
-	  (delete-window))
-
-	(defadvice git-commit-abort  (after delete-window activate)
-	  (delete-window))
-
-	(defun magit-commit-mode-init ()
-	  (when (looking-at "\n")
-		(open-line 1)))
-
-	(add-hook 'git-commit-mode-hook 'magit-commit-mode-init))
-  :config
-  (progn
-	(defadvice magit-quit-window (around magit-restore-screen activate)
-	  (let ((current-mode major-mode))
-		ad-do-it
-		(when (eq 'magit-status-mode current-mode)
-		  (jump-to-register :magit-fullscreen))))
-
-	(define-key magit-mode-map "c" 'magit-maybe-commit)
-
-	(setq
-	 magit-diff-refine-hunk t
-	 magit-rewrite-incluseive 'ask
-	 magit-set-upstream-on-push 'askifnotset)))
+  :bind (("C-x g" . magit-status)
+		 ("C-c g" . magit-file-log)))
 
 (use-package cider
   :config
@@ -390,6 +353,12 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   (shell-command
    (format "%s -f TAGS -e -R %s" path-to-ctags (directory-file-name dir-name ))))
 
+(use-package ggtags
+  :ensure t)
+
+(use-package counsel-gtags
+  :ensure t)
+
 (use-package lsp-mode
   :ensure t)
 
@@ -408,7 +377,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 
 (use-package lsp-ui
   :ensure t
-  :init (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+  :config (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
 (use-package ivy-xref
   :ensure t
@@ -446,6 +415,29 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		("http://blog.cognitect.com/blog?format=rss" clojure)
 		("http://www.righto.com/feeds/posts/default" hardware))))
 
+(defun indent-buffer ()
+  "Indent current buffer according to major mode."
+  (interactive)
+  (indent-region (point-min) (point-max)))
+
+(use-package rust-mode
+  :ensure t
+  :config (add-hook 'rust-mode-hook
+					(lambda ()
+					  (local-set-key (kbd "C-c <tab>") #'rust-format-buffer))))
+
+(use-package cargo
+  :ensure t
+  :config (add-hook 'rust-mode-hook 'cargo-minor-mode))
+
+(use-package racer
+  :ensure t
+  :config
+  (progn
+	(setq racer-cmd "~/.cargo/bin/racer")
+	(setq racer-rust-src-path "/Users/phil/Developer/other/rust/src")
+	(add-hook 'rust-mode-hook #'racer-mode)
+	(add-hook 'racer-mode-hook #'company-mode)))
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
 ;; End:
