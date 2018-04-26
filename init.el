@@ -3,9 +3,10 @@
 (require 'package)
 ;;; Code:
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa"     . "https://melpa.org/packages/"))
-(add-to-list 'package-archives '("gnu"       . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
+
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -44,13 +45,12 @@
 (line-number-mode   1)
 (column-number-mode 1)
 (blink-cursor-mode  0)
-(global-hl-line-mode -1)
+(global-hl-line-mode 1)
 (global-auto-revert-mode 1)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load "~/.emacs.d/custom/eshell-customizations.el")
 (setq-default line-spacing 1)
-(set-frame-font "Hack 11")
-;; (set-frame-font "Fira Code Retina 11")
+(set-frame-font "Iosevka Term 11")
 
 (setq mac-option-modifier nil
 	  mac-command-modifier 'meta
@@ -76,7 +76,7 @@
 	  create-lockfiles nil)
 (setq gc-cons-threshold most-positive-fixnum)
 
-;; Some custom functions
+;; --------------------------- Some custom functions -----------------------------
 (defun open-previous-line (arg)
   "Open a new line above current one ARG."
   (interactive "p")
@@ -86,7 +86,8 @@
 	(indent-according-to-mode)))
 (global-set-key (kbd "M-o") 'open-previous-line)
 (defvar newline-and-indent t)
-;;------------------------------- ORG MODE SETTINGS ----------------------------
+
+;;------------------------------- ORG MODE SETTINGS ------------------------------
 (setq org-log-done 'time)
 (global-set-key (kbd "C-c c") 'org-capture)
 (setq org-default-notes-file "~/Documents/Notes/notes.org")
@@ -96,9 +97,10 @@
       '((width . 120)
         (height . 65)))
 (setq org-hide-emphasis-markers t)
+
 (use-package org-bullets
-  :init
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  :ensure t
+  :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (setq org-todo-keywords
 	  (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -123,57 +125,25 @@
 
 (setq org-capture-templates
       (quote (("t" "todo"    entry (file "~/Documents/Notes/organizer.org")
-               "* TODO %?\n%U\n%a\n"   :clock-in t :clock-resume t)
+               "* TODO %?\n%U\n%a\n"   :clock-in t)
               ("n" "note"    entry (file "~/Documents/Notes/notes.org")
-               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+               "* %? :NOTE:\n%U\n%a\n" :clock-in t)
               ("j" "journal" entry (file+datetree "~/Documents/Notes/journal.org")
-               "* %?\n%U\n"            :clock-in t :clock-resume t))))
+               "* %?\n%U\n"            :clock-in t))))
 
-(let* ((variable-tuple (cond ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-                             ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
-                             (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-       (headline           `(:inherit default :weight bold)))
-
-  (custom-theme-set-faces 'user
-                          `(org-level-8 ((t (,@headline ,@variable-tuple))))
-                          `(org-level-7 ((t (,@headline ,@variable-tuple))))
-                          `(org-level-6 ((t (,@headline ,@variable-tuple))))
-                          `(org-level-5 ((t (,@headline ,@variable-tuple))))
-                          `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-                          `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
-                          `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
-                          `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
-                          `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
-;; ---------------------------------------------------------------------------------------------------------------
-(setq doom-vibrant-comment-bg t)
-(setq doom-vibrant-padded-modeline t)
-
+(add-hook 'org-mode-hook #'(lambda ()
+							 (visual-line-mode)))
+;; -------------------------------------------------------------------------------
+(setq doom-one-padded-modeline t)
 (use-package doom-themes
   :ensure t
   :config (load-theme 'doom-one t))
 
+(setq frame-title-format '("%b"))
+
 (use-package find-file-in-project
   :ensure t
   :bind ("C-c f" . ffip))
-
-;; Get used to changes and learn how to use it, instead of paredit
-;; (use-package parinfer
-;;   :ensure t
-;;   :bind
-;;   (("C-," . parinfer-toggle-mode))
-;;   :init
-;;   (progn
-;;     (setq parinfer-extensions
-;;           '(defaults       ; should be included.
-;;             pretty-parens  ; different paren styles for different modes.
-;;             paredit        ; Introduce some paredit commands.
-;;             smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
-;;             smart-yank))   ; Yank behavior depend on mode.
-;;     (add-hook 'clojure-mode-hook #'parinfer-mode)
-;;     (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
-;;     (add-hook 'common-lisp-mode-hook #'parinfer-mode)
-;;     (add-hook 'scheme-mode-hook #'parinfer-mode)
-;;     (add-hook 'lisp-mode-hook #'parinfer-mode)))
 
 (use-package paredit
   :ensure t
@@ -208,11 +178,11 @@
   (add-hook 'scheme-mode-hook                      'rainbow-delimiters-mode)
   (add-hook 'clojure-mode-hook                     'rainbow-delimiters-mode))
 
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (setq exec-path-from-shell-check-startup-files nil)
-  (exec-path-from-shell-initialize))
+;; (use-package exec-path-from-shell
+;;   :ensure t
+;;   :config
+;;   (setq exec-path-from-shell-check-startup-files nil)
+;;   (exec-path-from-shell-initialize))
 
 ;; Use C-M-i for ivy fuzzy regex completion
 (use-package company
@@ -239,13 +209,12 @@
          ("C-c C-k" . kill-buffer))
   :config
   (progn (ivy-mode 1)
-         (setq ivy-height 10)
+		 (setq ivy-height 10)
          (setq enable-recursive-minibuffers t)
          (setq swiper-include-line-number-in-search t)
          (setq ivy-re-builders-alist
                '((counsel-M-x . ivy--regex-fuzzy)
                  (t . ivy--regex-plus)))
-
          (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-partial-or-done)))
 
 (use-package smex
@@ -256,7 +225,7 @@
   :ensure t
   :bind (("M-x"     . counsel-M-x)
          ("C-x C-f" . counsel-find-file)
-		 ("C-c p"   . counsel-file-jump)
+		 ("C-c p"   . counsel-fzf)
          ("C-h f"   . counsel-describe-function)
          ("C-h v"   . counsel-describe-variable)
          ("C-c s s" . counsel-rg)
@@ -326,6 +295,9 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		 ("C-c g" . magit-file-log)))
 
 (use-package cider
+  :commands (cider cider-connect cider-jack-in)
+  :mode (("\\.clj\\'" . clojure-mode)
+         ("\\.edn\\'" . clojure-mode))
   :config
   (setq cider-auto-select-error-buffer t
 		cider-repl-pop-to-buffer-on-connect nil
@@ -375,10 +347,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   :config (push 'company-lsp company-backends)
   (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
 
-(use-package lsp-ui
-  :ensure t
-  :config (add-hook 'lsp-mode-hook 'lsp-ui-mode))
-
 (use-package ivy-xref
   :ensure t
   :after cquery
@@ -413,12 +381,17 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		("https://martinfowler.com/feed.atom" agile)
 		("https://steve-yegge.blogspot.rs/")
 		("http://blog.cognitect.com/blog?format=rss" clojure)
-		("http://www.righto.com/feeds/posts/default" hardware))))
+		("http://www.righto.com/feeds/posts/default" hardware)
+		("http://lambda-the-ultimate.org/rss.xml" functional))))
 
 (defun indent-buffer ()
   "Indent current buffer according to major mode."
   (interactive)
   (indent-region (point-min) (point-max)))
+
+(use-package fzf
+  :ensure t
+  :bind (("C-c C-f" . fzf)))
 
 (use-package rust-mode
   :ensure t
