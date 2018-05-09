@@ -44,13 +44,14 @@
 (show-paren-mode    1)
 (line-number-mode   1)
 (column-number-mode 1)
+(transient-mark-mode 1)
 (blink-cursor-mode  0)
 (global-hl-line-mode 1)
 (global-auto-revert-mode 1)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load "~/.emacs.d/custom/eshell-customizations.el")
-(setq-default line-spacing 1)
-(set-frame-font "Iosevka Term 11")
+;; (setq-default line-spacing 1)
+(set-frame-font "Operator Mono 12")
 
 (setq mac-option-modifier nil
 	  mac-command-modifier 'meta
@@ -94,7 +95,7 @@
 (setq org-directory "~/Documents/Notes")
 (setq org-agenda-files "~/Documents/Notes/organizer.org")
 (setq initial-frame-alist
-      '((width . 120)
+      '((width . 135)
         (height . 65)))
 (setq org-hide-emphasis-markers t)
 
@@ -134,16 +135,26 @@
 (add-hook 'org-mode-hook #'(lambda ()
 							 (visual-line-mode)))
 ;; -------------------------------------------------------------------------------
-(setq doom-one-padded-modeline t)
-(use-package doom-themes
+;; (setq doom-one-padded-modeline t)
+;; (use-package doom-themes
+;;   :ensure t
+;;   :config (load-theme 'doom-one t))
+(setq zenburn-override-colors-alist
+      '(("zenburn-bg" . "#20292D")))
+(use-package zenburn-theme
   :ensure t
-  :config (load-theme 'doom-one t))
+  :config (load-theme 'zenburn t))
+
 
 (setq frame-title-format '("%b"))
 
 (use-package find-file-in-project
   :ensure t
   :bind ("C-c f" . ffip))
+
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region))
 
 (use-package paredit
   :ensure t
@@ -178,13 +189,13 @@
   (add-hook 'scheme-mode-hook                      'rainbow-delimiters-mode)
   (add-hook 'clojure-mode-hook                     'rainbow-delimiters-mode))
 
-;; (use-package exec-path-from-shell
-;;   :ensure t
-;;   :config
-;;   (setq exec-path-from-shell-check-startup-files nil)
-;;   (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (setq exec-path-from-shell-check-startup-files nil)
+  (exec-path-from-shell-initialize))
 
-;; Use C-M-i for ivy fuzzy regex completion
+;; use C-M-i for ivy fuzzy regex completion
 (use-package company
   :ensure t
   :diminish company-mode
@@ -225,7 +236,7 @@
   :ensure t
   :bind (("M-x"     . counsel-M-x)
          ("C-x C-f" . counsel-find-file)
-		 ("C-c p"   . counsel-fzf)
+		 ("C-x f"   . counsel-fzf)
          ("C-h f"   . counsel-describe-function)
          ("C-h v"   . counsel-describe-variable)
          ("C-c s s" . counsel-rg)
@@ -241,7 +252,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
            (let* ((cands obarray)
                   (pred 'commandp)
                   (sort t))
-             (when (require 'smex nil 'noerror)
+             n(when (require 'smex nil 'noerror)
                (unless smex-initialized-p
                  (smex-initialize))
                (smex-detect-new-commands)
@@ -372,9 +383,10 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   (setq elfeed-feeds
       '(("https://nullprogram.com/feed/" systems emacs)
 		("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
-		("https://www.joelonsoftware.com/feed/")
 		("https://eli.thegreenplace.net/feeds/all.atom.xml")
 		("https://blog.acolyer.org/feed/" papers)
+		("http://250bpm.com/feed")
+		("https://joelonsoftware.com/feed/")
 		("http://bit-player.org/feed")
 		("http://feeds.feedburner.com/HighScalability")
 		("https://blog.codinghorror.com/rss/")
