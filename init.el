@@ -7,7 +7,6 @@
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
 
-
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -32,26 +31,24 @@
               tab-width 4
               c-basic-offset 4
               fill-column 80
-              cursor-in-non-selected-windows nil)
-(setq-default word-wrap t)
+              cursor-in-non-selected-windows nil
+			  word-wrap t
+			  line-spacing 1)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/custom")
+(load "~/.emacs.d/custom/eshell-customizations.el")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
-(pixel-scroll-mode 1)
+(pixel-scroll-mode  1)
 (menu-bar-mode      1)
 (tool-bar-mode     -1)
 (scroll-bar-mode   -1)
 (show-paren-mode    1)
 (line-number-mode   1)
 (column-number-mode 1)
-(transient-mark-mode 1)
 (blink-cursor-mode  0)
+(transient-mark-mode 1)
 (global-hl-line-mode 1)
-(global-auto-revert-mode 1)
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(load "~/.emacs.d/custom/eshell-customizations.el")
-;; (setq-default line-spacing 1)
-(set-frame-font "Operator Mono 12")
 
 (setq mac-option-modifier nil
 	  mac-command-modifier 'meta
@@ -74,10 +71,10 @@
 	  frame-resize-pixelwise t
 	  make-backup-files nil
 	  eshell-cmpl-ignore-case t
-	  create-lockfiles nil)
-(setq gc-cons-threshold most-positive-fixnum)
+	  create-lockfiles nil
+	  frame-title-format '("%b")
+	  gc-cons-threshold most-positive-fixnum)
 
-;; --------------------------- Some custom functions -----------------------------
 (defun open-previous-line (arg)
   "Open a new line above current one ARG."
   (interactive "p")
@@ -85,10 +82,17 @@
   (open-line arg)
   (when newline-and-indent
 	(indent-according-to-mode)))
+
 (global-set-key (kbd "M-o") 'open-previous-line)
+(global-set-key (kbd "C-x C-u") 'undo-tree-mode)
 (defvar newline-and-indent t)
 
-;;------------------------------- ORG MODE SETTINGS ------------------------------
+(defun indent-buffer ()
+  "Indent current buffer according to major mode."
+  (interactive)
+  (indent-region (point-min) (point-max)))
+
+;; Some org mode stuff
 (setq org-log-done 'time)
 (global-set-key (kbd "C-c c") 'org-capture)
 (setq org-default-notes-file "~/Documents/Notes/notes.org")
@@ -134,19 +138,15 @@
 
 (add-hook 'org-mode-hook #'(lambda ()
 							 (visual-line-mode)))
-;; -------------------------------------------------------------------------------
-;; (setq doom-one-padded-modeline t)
-;; (use-package doom-themes
-;;   :ensure t
-;;   :config (load-theme 'doom-one t))
-(setq zenburn-override-colors-alist
-      '(("zenburn-bg" . "#20292D")))
-(use-package zenburn-theme
+
+;; --------------------------------- VISUALS -------------------------------------
+;; Fonts: Hack 11 /w extra spacing 1 or 12 /w extra spacing 2
+(add-to-list 'default-frame-alist '(ns-appearance . dark))
+(set-frame-font "Hack 11")
+(setq doom-themes-padded-modeline t)
+(use-package doom-themes
   :ensure t
-  :config (load-theme 'zenburn t))
-
-
-(setq frame-title-format '("%b"))
+  :config (load-theme 'doom-vibrant t))
 
 (use-package find-file-in-project
   :ensure t
@@ -227,7 +227,6 @@
                '((counsel-M-x . ivy--regex-fuzzy)
                  (t . ivy--regex-plus)))
          (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-partial-or-done)))
-
 (use-package smex
   :ensure t
   :config (smex-initialize))
@@ -395,11 +394,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		("http://blog.cognitect.com/blog?format=rss" clojure)
 		("http://www.righto.com/feeds/posts/default" hardware)
 		("http://lambda-the-ultimate.org/rss.xml" functional))))
-
-(defun indent-buffer ()
-  "Indent current buffer according to major mode."
-  (interactive)
-  (indent-region (point-min) (point-max)))
 
 (use-package fzf
   :ensure t
