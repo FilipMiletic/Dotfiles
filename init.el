@@ -33,10 +33,12 @@
               fill-column 80
               cursor-in-non-selected-windows nil
 			  word-wrap t
-			  line-spacing 1)
+			  line-spacing 2)
+
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/custom")
-(load "~/.emacs.d/custom/eshell-customizations.el")
+
+
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 (pixel-scroll-mode  1)
@@ -103,6 +105,12 @@
         (height . 65)))
 (setq org-hide-emphasis-markers t)
 
+(use-package eshell
+  :init
+  (add-hook 'eshell-mode-hook
+			(lambda ()
+			  (load "~/.emacs.d/custom/eshell-customizations.el"))))
+
 (use-package org-bullets
   :ensure t
   :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
@@ -142,7 +150,7 @@
 ;; --------------------------------- VISUALS -------------------------------------
 ;; Fonts: Hack 11 /w extra spacing 1 or 12 /w extra spacing 2
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-frame-font "Hack 11")
+(set-frame-font "Hack 12")
 (setq doom-themes-padded-modeline t)
 (use-package doom-themes
   :ensure t
@@ -383,8 +391,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
       '(("https://nullprogram.com/feed/" systems emacs)
 		("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
 		("https://eli.thegreenplace.net/feeds/all.atom.xml")
-		("https://blog.acolyer.org/feed/" papers)
-		("http://250bpm.com/feed")
 		("https://joelonsoftware.com/feed/")
 		("http://bit-player.org/feed")
 		("http://feeds.feedburner.com/HighScalability")
@@ -394,6 +400,9 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		("http://blog.cognitect.com/blog?format=rss" clojure)
 		("http://www.righto.com/feeds/posts/default" hardware)
 		("http://lambda-the-ultimate.org/rss.xml" functional))))
+(add-hook 'elfeed-show-mode-hook
+		  (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
+									  (font-spec :family "Helvetica Neue" :size 14))))
 
 (use-package fzf
   :ensure t
