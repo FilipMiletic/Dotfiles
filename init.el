@@ -154,7 +154,7 @@
 (setq doom-themes-padded-modeline t)
 (use-package doom-themes
   :ensure t
-  :config (load-theme 'doom-vibrant t))
+  :config (load-theme 'doom-molokai t))
 
 (use-package find-file-in-project
   :ensure t
@@ -397,6 +397,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		("https://blog.codinghorror.com/rss/")
 		("https://martinfowler.com/feed.atom" agile)
 		("https://steve-yegge.blogspot.rs/")
+		("https://www.tedunangst.com/flak/rss")
 		("http://blog.cognitect.com/blog?format=rss" clojure)
 		("http://www.righto.com/feeds/posts/default" hardware)
 		("http://lambda-the-ultimate.org/rss.xml" functional))))
@@ -426,8 +427,42 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	(setq racer-rust-src-path "/Users/phil/Developer/other/rust/src")
 	(add-hook 'rust-mode-hook #'racer-mode)
 	(add-hook 'racer-mode-hook #'company-mode)))
+
+(setq my-credentials-file "~/.emacs.d/.private.el")
+(defun my-nickserv-password (server)
+  "Here I specify file which has to store credentials for SERVER."
+  (with-temp-buffer
+	(insert-file-contents-literally my-credentials-file)
+	(plist-get (read (buffer-string)) :nickserv-password)))
+(use-package circe
+  :ensure t
+  :config
+  (progn
+	(setq circe-network-options
+		  '(("Freenode"
+			 :nick "phlm"
+			 :nickserv-password my-nickserv-password
+			 :channels ("#clojure" "#haskell" "#illumos" :after-auth "#emacs" "#freebsd"))))
+	(enable-circe-color-nicks)
+	(setq circe-reduce-lurker-spam t)
+	(setq circe-format-server-topic "*** Topic change by {userhost}: {topic-diff}")
+	(setq circe-format-say "{nick:-12s} {body}")
+	(setq lui-time-stamp-position 'right-margin
+          lui-fill-type nil)
+	(add-hook 'lui-mode-hook 'my-lui-setup)
+	(defun my-lui-setup ()
+	  (setq
+	   fringes-outside-margins t
+	   right-margin-width 8
+	   word-wrap t
+	   wrap-prefix "    "))))
+
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
 ;; End:
 (provide 'init)
 ;;; init ends here
+
+
+
+
