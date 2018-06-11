@@ -1,7 +1,7 @@
-call plug#begin('~/.local/share/nvim/plugged')
-Plug 'majutsushi/tagbar'
+call plug#begin('~/.vim/plugged')
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
-Plug 'robertmeta/nofrils'
+Plug 'sjl/badwolf'
+Plug 'gf3/molotov'
 call plug#end()
 
 set copyindent
@@ -12,7 +12,7 @@ set softtabstop=0
 set noexpandtab
 set autoindent
 set hidden
-set viminfo='20,\"90,h,%
+set viminfo+=n~/.vim/viminfo
 set backspace=2
 set numberwidth=5
 set scrolloff=3
@@ -45,13 +45,15 @@ set laststatus=2
 set background=dark
 let mapleader=","
 
-colorscheme goodwolf
+set termguicolors
+colorscheme molotov
 
 " General {{{
 augroup general_config
-	"NeoVim Terminal
-	tnoremap <Esc> <C-\><C-n>
-
+	" Change cursor in different modes
+	let &t_SI = "\<Esc>[6 q"
+	let &t_SR = "\<Esc>[4 q"
+	let &t_EI = "\<Esc>[2 q"
 	" Itallic comments {{{
 	set t_ZH="\e[3m"
 	set t_ZR="\e[23m"
@@ -86,9 +88,6 @@ augroup general_config
 	noremap <leader>W :w !sudo tee %<CR>
 	" }}}
 
-	" NERDTree Open
-	nnoremap <C-x> :NERDTree<CR>
-
 	" Remap :W to :w {{{
 	command! W w
 	" }}}
@@ -118,10 +117,6 @@ augroup general_config
 
 	" Yank from cursor to end of line {{{
 	nnoremap Y y$
-	" }}}
-
-	" Insert newline {{{
-	map <leader><Enter> o<ESC>
 	" }}}
 
 	" Search and replace word under cursor (,*) {{{
@@ -208,9 +203,9 @@ augroup fzf_config
 	set rtp+=/usr/local/opt/fzf
 
 	let g:fzf_layout = { 'up': '~30%' }
-	let g:fzf_history_dir = '~/.config/nvim/fzf-history'
+	let g:fzf_history_dir = '~/.vim/fzf-history'
 	let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
-	
+
 	" --column: Show column number
 	" --line-number: Show line number
 	" --no-heading: Do not show file headings in results
