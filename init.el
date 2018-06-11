@@ -33,7 +33,7 @@
               fill-column 80
               cursor-in-non-selected-windows nil
 			  word-wrap t
-			  line-spacing 2)
+			  line-spacing 1)
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/custom")
@@ -147,14 +147,14 @@
 (add-hook 'org-mode-hook #'(lambda ()
 							 (visual-line-mode)))
 
-;; --------------------------------- VISUALS -------------------------------------
-;; Fonts: Hack 11 /w extra spacing 1 or 12 /w extra spacing 2
+;; --------------------------------- VISUALS --------------------------------------
+;; Fonts: Hack 11 /w extra spacing 1 or 12 /w extra spacing 2, Iosevka /w 0 spacing
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
 (set-frame-font "Hack 12")
 (setq doom-themes-padded-modeline t)
 (use-package doom-themes
   :ensure t
-  :config (load-theme 'doom-molokai t))
+  :config (load-theme 'doom-vibrant t))
 
 (use-package find-file-in-project
   :ensure t
@@ -398,6 +398,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		("https://martinfowler.com/feed.atom" agile)
 		("https://steve-yegge.blogspot.rs/")
 		("https://www.tedunangst.com/flak/rss")
+		("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
 		("http://blog.cognitect.com/blog?format=rss" clojure)
 		("http://www.righto.com/feeds/posts/default" hardware)
 		("http://lambda-the-ultimate.org/rss.xml" functional))))
@@ -442,7 +443,10 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		  '(("Freenode"
 			 :nick "phlm"
 			 :nickserv-password my-nickserv-password
-			 :channels ("#clojure" "#haskell" "#illumos" :after-auth "#emacs" "#freebsd"))))
+			 :channels ("#clojure" "#haskell" "#illumos" :after-auth "#emacs" "#freebsd"))
+			("OFTC"
+			 :nick "phlm"
+			 :channels ("#kernelnewbies"))))
 	(enable-circe-color-nicks)
 	(setq circe-reduce-lurker-spam t)
 	(setq circe-format-server-topic "*** Topic change by {userhost}: {topic-diff}")
@@ -462,7 +466,3 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 ;; End:
 (provide 'init)
 ;;; init ends here
-
-
-
-
