@@ -43,7 +43,7 @@
 (load custom-file)
 (pixel-scroll-mode  1)
 (menu-bar-mode      1)
-(tool-bar-mode     -1)
+;;(tool-bar-mode     0)
 (scroll-bar-mode   -1)
 (show-paren-mode    1)
 (line-number-mode   1)
@@ -75,7 +75,8 @@
 	  eshell-cmpl-ignore-case t
 	  create-lockfiles nil
 	  frame-title-format '("%b")
-	  gc-cons-threshold most-positive-fixnum)
+	  gc-cons-threshold 100000000
+	  )
 
 (defun open-previous-line (arg)
   "Open a new line above current one ARG."
@@ -106,13 +107,14 @@
 (setq org-hide-emphasis-markers t)
 
 (use-package eshell
-  :init
+  :defer t
+  :config
   (add-hook 'eshell-mode-hook
 			(lambda ()
 			  (load "~/.emacs.d/custom/eshell-customizations.el"))))
 
 (use-package org-bullets
-  :ensure t
+  :defer t
   :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (setq org-todo-keywords
@@ -150,15 +152,11 @@
 ;; --------------------------------- VISUALS --------------------------------------
 ;; Fonts: Hack 11 /w extra spacing 1 or 12 /w extra spacing 2, Iosevka /w 0 spacing
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-frame-font "Hack 12")
+(set-frame-font "Hack 11")
 (setq doom-themes-padded-modeline t)
 (use-package doom-themes
   :ensure t
   :config (load-theme 'doom-vibrant t))
-
-(use-package find-file-in-project
-  :ensure t
-  :bind ("C-c f" . ffip))
 
 (use-package expand-region
   :ensure t
@@ -217,8 +215,16 @@
         company-minimum-prefix-length 2
         company-tooltip-limit 12))
 
+(use-package ivy
+  :init (add-hook 'after-init-hook #'ivy-mode)
+  :config
+  (setq ivy-height 12
+		ivy-wrap t
+		ivy-fixed-height-minibuffer t
+		projectile-completion-system 'ivy
+		smex-completion-method 'ivy))
+
 (use-package swiper
-  :demand
   :bind (("C-s"     . swiper)
          ("C-r"     . swiper)
          ("C-c u"   . swiper-all)
@@ -226,15 +232,8 @@
          ("C-c C-o" . ivy-occur)
          ("C-c C-b" . ivy-switch-buffer)
          ("C-c C-k" . kill-buffer))
-  :config
-  (progn (ivy-mode 1)
-		 (setq ivy-height 10)
-         (setq enable-recursive-minibuffers t)
-         (setq swiper-include-line-number-in-search t)
-         (setq ivy-re-builders-alist
-               '((counsel-M-x . ivy--regex-fuzzy)
-                 (t . ivy--regex-plus)))
-         (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-partial-or-done)))
+  :config (setq swiper-include-line-number-in-search t))
+
 (use-package smex
   :ensure t
   :config (smex-initialize))
@@ -243,69 +242,13 @@
   :ensure t
   :bind (("M-x"     . counsel-M-x)
          ("C-x C-f" . counsel-find-file)
-		 ("C-x f"   . counsel-fzf)
          ("C-h f"   . counsel-describe-function)
          ("C-h v"   . counsel-describe-variable)
-         ("C-c s s" . counsel-rg)
-         ("M-y"     . counsel-yank-pop))
-  :config
-  (progn (defun counsel-major-mode-commands (&optional initial-input)
-           "Ivy version of `smex-major-mode-commands'.
-Optional INITIAL-INPUT is the initial input in the minibuffer."
-           (interactive)
-           (unless initial-input
-             (setq initial-input (cdr (assoc this-command
-                                             ivy-initial-inputs-alist))))
-           (let* ((cands obarray)
-                  (pred 'commandp)
-                  (sort t))
-             n(when (require 'smex nil 'noerror)
-               (unless smex-initialized-p
-                 (smex-initialize))
-               (smex-detect-new-commands)
-               (smex-update)
-               (setq cands (delete-dups (append (smex-extract-commands-from-keymap (current-local-map))
-                                                (smex-extract-commands-from-features major-mode))))
-               (setq cands (smex-sort-according-to-cache cands))
-               (setq cands (mapcar #'symbol-name cands))
-               (setq pred nil)
-               (setq sort nil))
-              (ivy-read (counsel--M-x-prompt) cands
-                        :predicate pred
-                        :require-match t
-                        :history 'extended-command-history
-                        :action
-                        (lambda (cmd)
-                          (when (featurep 'smex)
-                            (smex-rank (intern cmd)))
-                          (let ((prefix-arg current-prefix-arg)
-                                (this-command (intern cmd)))
-                            (command-execute (intern cmd) 'record)))
-                        :sort sort
-                        :keymap counsel-describe-map
-                        :initial-input initial-input
-                        :caller 'counsel-major-mode-commands)))
-		 
-         (defun counsel-describe-package ()
-           "Forward to `describe-package'."
-           (interactive)
-           (ivy-read "Describe package: "
-                     (let ((packages (append (mapcar 'car package-alist)
-                                             (mapcar 'car package-archive-contents)
-                                             (mapcar 'car package--builtins))))
-                       (delq nil
-                             (mapcar (lambda (elt)
-                                       (symbol-name elt))
-                                     packages)))
-                     :action (lambda (x)
-                               (describe-package (intern x)))
-                     :caller 'counsel-describe-package))))
+         ("C-c C-s" . counsel-rg)
+         ("M-y"     . counsel-yank-pop)))
 
 (use-package flycheck
-  :ensure t
-  :init
-  (progn
-	(add-hook 'prog-mode-hook (flycheck-mode 1))))
+  :defer t)
 
 (use-package magit
   :ensure t
@@ -313,6 +256,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		 ("C-c g" . magit-file-log)))
 
 (use-package cider
+  :defer t
   :commands (cider cider-connect cider-jack-in)
   :mode (("\\.clj\\'" . clojure-mode)
          ("\\.edn\\'" . clojure-mode))
@@ -343,30 +287,46 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
   (shell-command
    (format "%s -f TAGS -e -R %s" path-to-ctags (directory-file-name dir-name ))))
 
+(use-package projectile
+  :defer t
+  :config
+  (setq projectile-completion-system 'ivy
+		projectile-enable-caching t))
+
 (use-package ggtags
-  :ensure t)
+  :defer t)
 
 (use-package counsel-gtags
-  :ensure t)
+  :defer t)
+
+(use-package counsel-projectile
+  :defer t)
 
 (use-package lsp-mode
-  :ensure t)
+  :defer t)
 
 (setq cquery-executable "/usr/local/bin/cquery")
 (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t)))
 
+(defun cquery//enable ()
+  "Enable cquery for all C/C++ modes."
+  (condition-case nil
+	  (lsp-cquery-enable)
+	(user-error nill)))
+
 (use-package cquery
-  :ensure t
-  :after lsp-mode)
+  :commands (lsp-cquery-enable)
+  :hook (c-mode . #'cquery//enable)
+  :config
+  (add-hook 'c-mode-hook #'cquery//enable)
+  (add-hook 'c++-mode-hook #'cquery//enable))
 
 (use-package company-lsp
-  :ensure t
-  :after (cquery company)
+  :after (cquery company lsp-mode)
   :config (push 'company-lsp company-backends)
   (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
 
 (use-package ivy-xref
-  :ensure t
   :after cquery
   :config (set-variable 'xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
@@ -396,7 +356,6 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		("http://feeds.feedburner.com/HighScalability")
 		("https://blog.codinghorror.com/rss/")
 		("https://martinfowler.com/feed.atom" agile)
-		("https://steve-yegge.blogspot.rs/")
 		("https://www.tedunangst.com/flak/rss")
 		("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
 		("http://blog.cognitect.com/blog?format=rss" clojure)
@@ -406,22 +365,18 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 		  (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
 									  (font-spec :family "Helvetica Neue" :size 14))))
 
-(use-package fzf
-  :ensure t
-  :bind (("C-c C-f" . fzf)))
-
 (use-package rust-mode
-  :ensure t
+  :defer t
   :config (add-hook 'rust-mode-hook
 					(lambda ()
 					  (local-set-key (kbd "C-c <tab>") #'rust-format-buffer))))
 
 (use-package cargo
-  :ensure t
+  :defer t
   :config (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package racer
-  :ensure t
+  :defer t
   :config
   (progn
 	(setq racer-cmd "~/.cargo/bin/racer")
@@ -436,7 +391,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	(insert-file-contents-literally my-credentials-file)
 	(plist-get (read (buffer-string)) :nickserv-password)))
 (use-package circe
-  :ensure t
+  :defer t
   :config
   (progn
 	(setq circe-network-options
@@ -459,7 +414,7 @@ Optional INITIAL-INPUT is the initial input in the minibuffer."
 	   fringes-outside-margins t
 	   right-margin-width 8
 	   word-wrap t
-	   wrap-prefix "    "))))
+	   wrap-prefix "     "))))
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
