@@ -43,7 +43,7 @@
 (load custom-file)
 (pixel-scroll-mode  1)
 (menu-bar-mode      1)
-;;(tool-bar-mode     0)
+;;(tool-bar-mode     0) -- it's better to disable it by editing default app settings
 (scroll-bar-mode   -1)
 (show-paren-mode    1)
 (line-number-mode   1)
@@ -221,8 +221,9 @@
   (setq ivy-height 12
 		ivy-wrap t
 		ivy-fixed-height-minibuffer t
-		projectile-completion-system 'ivy
-		smex-completion-method 'ivy))
+		ivy-re-builders-alist
+               '((counsel-M-x . ivy--regex-fuzzy)
+                 (t . ivy--regex-plus))))
 
 (use-package swiper
   :bind (("C-s"     . swiper)
