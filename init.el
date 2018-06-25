@@ -21,9 +21,9 @@
 (defadvice handle-delete-frame (around my-handle-delete-frame-advice activate)
   "Hide Emacs instead of closing the last frame."
   (let ((frame (posn-window (event-start event)))
-		  (numfrs (length(frame-list))))
+		(numfrs (length(frame-list))))
 	(if (> numfrs 1)
-		  ad-do-it
+		ad-do-it
 	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
 (setq-default indent-tabs-mode t
@@ -218,12 +218,15 @@
 (use-package ivy
   :init (add-hook 'after-init-hook #'ivy-mode)
   :config
-  (setq ivy-height 12
+  (setq ivy-height 10
 		ivy-wrap t
 		ivy-fixed-height-minibuffer t
-		ivy-re-builders-alist
-               '((counsel-M-x . ivy--regex-fuzzy)
-                 (t . ivy--regex-plus))))
+		ivy-use-virtual-buffers t
+		enable-recursive-minibuffers t
+        ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
+								(t . ivy--regex-plus)))
+  (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
+  (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
 
 (use-package swiper
   :bind (("C-s"     . swiper)
@@ -349,22 +352,22 @@
   (push "-k" elfeed-curl-extra-arguments)
   (setq-default elfeed-search-filter "@1-week-ago +unread")
   (setq elfeed-feeds
-      '(("https://nullprogram.com/feed/" systems emacs)
-		("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
-		("https://eli.thegreenplace.net/feeds/all.atom.xml")
-		("https://joelonsoftware.com/feed/")
-		("http://bit-player.org/feed")
-		("http://feeds.feedburner.com/HighScalability")
-		("https://blog.codinghorror.com/rss/")
-		("https://martinfowler.com/feed.atom" agile)
-		("https://www.tedunangst.com/flak/rss")
-		("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
-		("http://blog.cognitect.com/blog?format=rss" clojure)
-		("http://www.righto.com/feeds/posts/default" hardware)
-		("http://lambda-the-ultimate.org/rss.xml" functional))))
+		'(("https://nullprogram.com/feed/" systems emacs)
+		  ("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
+		  ("https://eli.thegreenplace.net/feeds/all.atom.xml")
+		  ("https://joelonsoftware.com/feed/")
+		  ("http://bit-player.org/feed")
+		  ("http://feeds.feedburner.com/HighScalability")
+		  ("https://blog.codinghorror.com/rss/")
+		  ("https://martinfowler.com/feed.atom" agile)
+		  ("https://www.tedunangst.com/flak/rss")
+		  ("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
+		  ("http://blog.cognitect.com/blog?format=rss" clojure)
+		  ("http://www.righto.com/feeds/posts/default" hardware)
+		  ("http://lambda-the-ultimate.org/rss.xml" functional))))
 (add-hook 'elfeed-show-mode-hook
 		  (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
-									  (font-spec :family "Helvetica Neue" :size 14))))
+										 (font-spec :family "Helvetica Neue" :size 14))))
 
 (use-package rust-mode
   :defer t
