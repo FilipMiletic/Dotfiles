@@ -33,7 +33,7 @@
               fill-column 80
               cursor-in-non-selected-windows nil
 			  word-wrap t
-			  line-spacing 1)
+			  line-spacing 2)
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/custom")
@@ -50,7 +50,7 @@
 (column-number-mode 1)
 (blink-cursor-mode  0)
 (transient-mark-mode 1)
-(global-hl-line-mode 1)
+(global-hl-line-mode 0)
 
 (setq mac-option-modifier nil
 	  mac-command-modifier 'meta
@@ -75,8 +75,7 @@
 	  eshell-cmpl-ignore-case t
 	  create-lockfiles nil
 	  frame-title-format '("%b")
-	  gc-cons-threshold 100000000
-	  )
+	  gc-cons-threshold 100000000)
 
 (defun open-previous-line (arg)
   "Open a new line above current one ARG."
@@ -149,14 +148,13 @@
 (add-hook 'org-mode-hook #'(lambda ()
 							 (visual-line-mode)))
 
-;; --------------------------------- VISUALS --------------------------------------
-;; Fonts: Hack 11 /w extra spacing 1 or 12 /w extra spacing 2, Iosevka /w 0 spacing
+;; -- Packages
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-frame-font "Hack 11")
-(setq doom-themes-padded-modeline t)
-(use-package doom-themes
+(set-face-attribute 'default nil :family "PragmataPro" :height 120 :weight 'regular)
+
+(use-package zenburn-theme
   :ensure t
-  :config (load-theme 'doom-vibrant t))
+  :config (load-theme 'zenburn t))
 
 (use-package expand-region
   :ensure t
@@ -179,10 +177,10 @@
   :config
   (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
-(use-package highlight-quoted
-  :ensure t
-  :config
-  (add-hook 'prog-mode-hook 'highlight-quoted-mode))
+;; (use-package highlight-quoted
+;;   :ensure t
+;;   :config
+;;   (add-hook 'prog-mode-hook 'highlight-quoted-mode))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -402,7 +400,7 @@
 		  '(("Freenode"
 			 :nick "phlm"
 			 :nickserv-password my-nickserv-password
-			 :channels ("#clojure" "#haskell" "#illumos" :after-auth "#emacs" "#freebsd"))
+			 :channels ("#clojure" "#haskell" "#illumos" :after-auth "#emacs" "#freebsd" "#unleashed"))
 			("OFTC"
 			 :nick "phlm"
 			 :channels ("#kernelnewbies"))))
