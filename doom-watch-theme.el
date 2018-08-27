@@ -120,7 +120,7 @@ Can be an integer to determine the exact padding."
     :inherit 'font-lock-comment-face
     :foreground doc-comments)
    
-   (mode-line-buffer-id :foreground green :bold bold)
+   (mode-line-buffer-id :foreground (doom-lighten green 0.08) :bold bold)
    
    ((line-number &override) :foreground base4)
    ((line-number-current-line &override) :foreground blue :bold bold)
