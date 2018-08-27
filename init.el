@@ -1,4 +1,4 @@
-;;; package --- Summary
+;;; Package --- Summary
 ;;; Commentary:
 (require 'package)
 ;;; Code:
@@ -16,34 +16,38 @@
 (require 'diminish)
 (require 'bind-key)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic settings
 (defalias 'display-startup-echo-area-message #'ignore)
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+;; MacOS dock behaviour
 (defadvice handle-delete-frame (around my-handle-delete-frame-advice activate)
   "Hide Emacs instead of closing the last frame."
   (let ((frame (posn-window (event-start event)))
 		(numfrs (length(frame-list))))
 	(if (> numfrs 1)
 		ad-do-it
-	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
+	  (do-applescript "tell application \"System Events\" to tell /
+                       process \"Emacs\" to set visible to false"))))
 
 (setq-default indent-tabs-mode t
               indent-line-function 4
               tab-width 4
               c-basic-offset 4
               fill-column 80
-              cursor-in-non-selected-windows nil
+			  cursor-type 'box
+              cursor-in-non-selected-windows 'hollow
 			  word-wrap t
-			  line-spacing 2)
+			  require-final-newline t)
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/custom")
-
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 (pixel-scroll-mode  1)
 (menu-bar-mode      1)
-;;(tool-bar-mode     0) -- it's better to disable it by editing default app settings
 (scroll-bar-mode   -1)
 (show-paren-mode    1)
 (line-number-mode   1)
@@ -69,7 +73,6 @@
 	  make-backup-files nil
 	  auto-save-default nil
 	  create-lockfiles nil
-	  cursor-type 'box
 	  frame-resize-pixelwise t
 	  make-backup-files nil
 	  eshell-cmpl-ignore-case t
@@ -77,6 +80,8 @@
 	  frame-title-format '("%b")
 	  gc-cons-threshold 100000000)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Custom functions
 (defun open-previous-line (arg)
   "Open a new line above current one ARG."
   (interactive "p")
@@ -94,17 +99,13 @@
   (interactive)
   (indent-region (point-min) (point-max)))
 
-;; Some org mode stuff
-(setq org-log-done 'time)
-(global-set-key (kbd "C-c c") 'org-capture)
-(setq org-default-notes-file "~/Documents/Notes/notes.org")
-(setq org-directory "~/Documents/Notes")
-(setq org-agenda-files "~/Documents/Notes/organizer.org")
 (setq initial-frame-alist
       '((width . 135)
         (height . 65)))
 (setq org-hide-emphasis-markers t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Built in packages
 (use-package eshell
   :defer t
   :config
@@ -112,49 +113,37 @@
 			(lambda ()
 			  (load "~/.emacs.d/custom/eshell-customizations.el"))))
 
-(use-package org-bullets
+(use-package org
+  :mode (("\\.org\\'" . org-mode))
   :defer t
-  :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-(setq org-todo-keywords
-	  (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-			  (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
-
-(setq org-todo-keyword-faces
-	  (quote (("TODO"      :foreground "red"     :weight bold)
-			  ("NEXT"      :foreground "blue"    :weight bold)
-			  ("DONE"      :foreground "green"   :weight bold)
-			  ("WAITING"   :foreground "orange"  :weight bold)
-			  ("HOLD"      :foreground "magenta" :weight bold)
-			  ("CANCELLED" :foreground "green"   :weight bold))))
-
-(setq org-todo-state-tags-triggers
-      (quote (("CANCELLED" ("CANCELLED" . t))
-              ("WAITING" ("WAITING" . t))
-              ("HOLD" ("WAITING") ("HOLD" . t))
-              (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
-
-(setq org-capture-templates
-      (quote (("t" "todo"    entry (file "~/Documents/Notes/organizer.org")
-               "* TODO %?\n%U\n%a\n"   :clock-in t)
-              ("n" "note"    entry (file "~/Documents/Notes/notes.org")
-               "* %? :NOTE:\n%U\n%a\n" :clock-in t)
-              ("j" "journal" entry (file+datetree "~/Documents/Notes/journal.org")
-               "* %?\n%U\n"            :clock-in t))))
+  :config
+  (setq org-agenda-files (quote ("~/Documents/Notes/plan.org"))
+		org-startup-indented t
+		org-todo-keywords
+		'(("TODO" . (:foreground red :weight bold))
+		  ("WAIT" . (:foreground cyan :weight bold))
+		  ("DONE" . (:foreground green :weight normal))))
+  (setq-default org-catch-invisible-edits 'smart))
 
 (add-hook 'org-mode-hook #'(lambda ()
 							 (visual-line-mode)))
 
-;; -- Packages
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :family "PragmataPro" :height 120 :weight 'regular)
+(set-face-attribute 'default nil :family "Iosevka" :height 120 :weight 'regular)
 
-(use-package zenburn-theme
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; -- Packages
+(use-package doom-themes
   :ensure t
-  :config (load-theme 'zenburn t))
+  :config
+  (setq doom-neotree-enable-file-icons t
+		doom-themes-padded-modeline t)
+  (load-theme 'doom-watch t)
+  (setq doom-themes-enable-bold t
+		doom-themes-padded-modeline t
+		doom-neotree-file-icons 'simple)
+  (doom-themes-neotree-config)
+  (doom-themes-org-config))
 
 (use-package expand-region
   :ensure t
@@ -164,42 +153,46 @@
   :ensure t
   :diminish paredit-mode
   :config
-  (add-hook 'emacs-lisp-mode-hook                  #'enable-paredit-mode)
-  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-  (add-hook 'ielm-mode-hook                        #'enable-paredit-mode)
-  (add-hook 'lisp-mode-hook                        #'enable-paredit-mode)
-  (add-hook 'lisp-interaction-mode-hook            #'enable-paredit-mode)
-  (add-hook 'scheme-mode-hook                      #'enable-paredit-mode)
-  (add-hook 'clojure-mode-hook                     #'enable-paredit-mode))
+  (dolist (m '(clojure-mode-hook
+			   cider-repl-mode-hook
+			   emacs-lisp-mode-hook
+			   racket-mode-hook
+			   racket-repl-mode-hook
+			   scheme-mode-hook
+			   eval-expression-minibuffer-setup-hook))
+	(add-hook m #'paredit-mode)))
 
 (use-package highlight-numbers
   :ensure t
   :config
   (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
-;; (use-package highlight-quoted
-;;   :ensure t
-;;   :config
-;;   (add-hook 'prog-mode-hook 'highlight-quoted-mode))
-
 (use-package rainbow-delimiters
   :ensure t
   :config
-  (add-hook 'emacs-lisp-mode-hook                  'rainbow-delimiters-mode)
-  (add-hook 'eval-expression-minibuffer-setup-hook 'rainbow-delimiters-mode)
-  (add-hook 'ielm-mode-hook                        'rainbow-delimiters-mode)
-  (add-hook 'lisp-mode-hook                        'rainbow-delimiters-mode)
-  (add-hook 'lisp-interaction-mode-hook            'rainbow-delimiters-mode)
-  (add-hook 'scheme-mode-hook                      'rainbow-delimiters-mode)
-  (add-hook 'clojure-mode-hook                     'rainbow-delimiters-mode))
+  (dolist (m '(clojure-mode-hook
+			   cider-repl-mode-hook
+			   emacs-lisp-mode-hook
+			   racket-mode-hook
+			   racket-repl-mode-hook
+			   scheme-mode-hook
+			   lisp-mode-hook
+			   eval-expression-minibuffer-setup-hook))
+	(add-hook m #'rainbow-delimiters-mode)))
 
 (use-package exec-path-from-shell
   :ensure t
+  :init (exec-path-from-shell-initialize)
   :config
-  (setq exec-path-from-shell-check-startup-files nil)
-  (exec-path-from-shell-initialize))
+  (setq exec-path-from-shell-check-startup-files nil))
 
-;; use C-M-i for ivy fuzzy regex completion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enhancers
+(use-package which-key
+  :defer 0.2
+  :diminish
+  :config (which-key-mode))
+
 (use-package company
   :ensure t
   :diminish company-mode
@@ -214,6 +207,7 @@
         company-tooltip-limit 12))
 
 (use-package ivy
+  :ensure t
   :init (add-hook 'after-init-hook #'ivy-mode)
   :config
   (setq ivy-height 10
@@ -221,19 +215,25 @@
 		ivy-fixed-height-minibuffer t
 		ivy-use-virtual-buffers t
 		enable-recursive-minibuffers t
+		ivy-format-function 'ivy-format-function-arrow
         ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
 								(t . ivy--regex-plus)))
   (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
   (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
 
+(use-package ivy-rich
+  :after ivy
+  :init (ivy-rich-mode 1)
+  :config (setq ivy-virtual-abbreviate 'full
+				ivy-rich-path-style 'abbrev))
+
 (use-package swiper
+  :ensure t
   :bind (("C-s"     . swiper)
          ("C-r"     . swiper)
          ("C-c u"   . swiper-all)
          ("C-c C-r" . ivy-resume)
-         ("C-c C-o" . ivy-occur)
-         ("C-c C-b" . ivy-switch-buffer)
-         ("C-c C-k" . kill-buffer))
+         ("C-c C-o" . ivy-occur))
   :config (setq swiper-include-line-number-in-search t))
 
 (use-package smex
@@ -250,14 +250,153 @@
          ("M-y"     . counsel-yank-pop)))
 
 (use-package flycheck
-  :defer t)
+  :ensure t
+  :init (global-flycheck-mode))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; IRC, RSS, git, navigation and snippets
 (use-package magit
   :ensure t
   :bind (("C-x g" . magit-status)
 		 ("C-c g" . magit-file-log)))
 
+(use-package neotree
+  :ensure t
+  :bind (("C-c f t" . neotree-toggle))
+  :config
+  (setq neo-window-width 40
+		neo-theme 'icons
+		neo-create-file-auto-open t
+		neo-banner-message nil
+		neo-show-updir-line t
+		neo-dont-be-alone t
+		neo-persist-show nil
+		neo-show-hidden-files t))
+
+(use-package projectile
+  :ensure t
+  :config
+  (setq projectile-completion-system 'ivy
+		projectile-enable-caching t
+		projectile-find-dir-includes-top-level t))
+
+;; Install Yasnippet-snippets package too
+(use-package yasnippet
+  :disabled t
+  :ensure t
+  :diminish yas-minor-mode
+  :bind (("C-c C-c" . yas-insert-snippet))
+  :config (yas-reload-all)
+  (add-hook 'prog-mode-hook #'yas-minor-mode))
+
+(use-package ace-window
+  :ensure t
+  :commands ace-window
+  :init (bind-key "C-x o" 'ace-window)
+  :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+;; RSS reader
+(use-package elfeed
+  :ensure t
+  :defer t
+  :bind ("C-x w" . elfeed)
+  :init (setf url-queue-timeout 30)
+  :config
+  (push "-k" elfeed-curl-extra-arguments)
+  (setq-default elfeed-search-filter "@1-week-ago +unread")
+  (setq elfeed-feeds
+		'(("https://nullprogram.com/feed/" systems emacs)
+		  ("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
+		  ("https://eli.thegreenplace.net/feeds/all.atom.xml")
+		  ("https://joelonsoftware.com/feed/")
+		  ("http://bit-player.org/feed")
+		  ("http://feeds.feedburner.com/HighScalability")
+		  ("https://blog.codinghorror.com/rss/")
+		  ("https://martinfowler.com/feed.atom" agile)
+		  ("https://www.tedunangst.com/flak/rss")
+		  ("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
+		  ("http://blog.cognitect.com/blog?format=rss" clojure)
+		  ("http://www.righto.com/feeds/posts/default" hardware)
+		  ("http://lambda-the-ultimate.org/rss.xml" functional)
+		  ("http://willcrichton.net/notes/"))))
+(add-hook 'elfeed-show-mode-hook
+		  (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
+										 (font-spec :family "Menlo" :size 12))))
+
+;; IRC setup
+(setq my-credentials-file "~/.emacs.d/.private.el")
+(defun my-nickserv-password (server)
+  "Here I specify file which has to store credentials for SERVER."
+  (with-temp-buffer
+	(insert-file-contents-literally my-credentials-file)
+	(plist-get (read (buffer-string)) :nickserv-password)))
+
+(use-package circe
+  :defer t
+  :config
+  (progn
+	(setq circe-network-options
+		  '(("Freenode"
+			 :nick "phlm"
+			 :nickserv-password my-nickserv-password
+			 :channels ("#clojure" "#haskell" "#illumos" :after-auth "#emacs" "#freebsd" "#unleashed"))
+			("OFTC"
+			 :nick "phlm"
+			 :channels ("#kernelnewbies"))
+			("Mozilla"
+			 :host "irc.mozilla.org"
+			 :port (6697)
+			 :nick "phlm"
+			 :nickserv-password my-nickserv-password
+			 :channels ("#rust" "#rust-beginners"))))
+	(enable-circe-color-nicks)
+	(setq circe-reduce-lurker-spam t)
+	(setq circe-format-server-topic "*** Topic change by {userhost}: {topic-diff}")
+	(setq circe-format-say "{nick:-12s} {body}")
+	(setq lui-time-stamp-position 'right-margin
+          lui-fill-type nil)
+	(add-hook 'lui-mode-hook 'my-lui-setup)
+	(defun my-lui-setup ()
+	  (setq
+	   fringes-outside-margins t
+	   right-margin-width 8
+	   word-wrap t
+	   wrap-prefix "     "))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Languages
+;; C/C++
+(use-package ggtags
+  :ensure t
+  :config
+  (add-hook 'c-mode-common-hook
+			(lambda ()
+			  (when (derived-mode-p 'c-mode 'c++-mode)
+				(ggtags-mode 1)))))
+
+(use-package counsel-gtags
+  :defer t)
+
+(use-package counsel-projectile
+  :defer t)
+
+(use-package xcscope
+  :init (cscope-setup))
+
+
+;; Racket/Scheme
+(use-package geiser
+  :ensure t
+  :defer
+  :bind (:map scheme-mode-map ("C-c C-c" . geiser-eval-last-sexp))
+  :config
+  (progn
+	(setq geiser-active-implementations '(racket))
+	(setq geiser-default-implementation 'racket)))
+
+;; Clojure
 (use-package cider
+  :ensure t
   :defer t
   :commands (cider cider-connect cider-jack-in)
   :mode (("\\.clj\\'" . clojure-mode)
@@ -279,94 +418,8 @@
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'company-mode))
 
-(setq scheme-program-name "/usr/local/bin/mit-scheme")
 
-;; Added support for Ctags, and Cquery which currently blows my mind
-(setq path-to-ctags "/usr/local/bin/ctags")
-(defun create-tags (dir-name)
-  "Create tags file in directory DIR-NAME."
-  (interactive "DDirectory: ")
-  (shell-command
-   (format "%s -f TAGS -e -R %s" path-to-ctags (directory-file-name dir-name ))))
-
-(use-package projectile
-  :defer t
-  :config
-  (setq projectile-completion-system 'ivy
-		projectile-enable-caching t))
-
-(use-package ggtags
-  :defer t)
-
-(use-package counsel-gtags
-  :defer t)
-
-(use-package counsel-projectile
-  :defer t)
-
-(use-package lsp-mode
-  :defer t)
-
-(setq cquery-executable "/usr/local/bin/cquery")
-(setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t)))
-
-(defun cquery//enable ()
-  "Enable cquery for all C/C++ modes."
-  (condition-case nil
-	  (lsp-cquery-enable)
-	(user-error nill)))
-
-(use-package cquery
-  :commands (lsp-cquery-enable)
-  :hook (c-mode . #'cquery//enable)
-  :config
-  (add-hook 'c-mode-hook #'cquery//enable)
-  (add-hook 'c++-mode-hook #'cquery//enable))
-
-(use-package company-lsp
-  :after (cquery company lsp-mode)
-  :config (push 'company-lsp company-backends)
-  (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
-
-(use-package ivy-xref
-  :after cquery
-  :config (set-variable 'xref-show-xrefs-function #'ivy-xref-show-xrefs))
-
-(use-package ace-window
-  :commands ace-window
-  :init (bind-key "C-x o" 'ace-window)
-  :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
-
-(use-package tex
-  :defer t
-  :ensure auctex
-  :config (setq TeX-auto-save nil))
-
-(use-package elfeed
-  :defer t
-  :bind ("C-x w" . elfeed)
-  :init (setf url-queue-timeout 30)
-  :config
-  (push "-k" elfeed-curl-extra-arguments)
-  (setq-default elfeed-search-filter "@1-week-ago +unread")
-  (setq elfeed-feeds
-		'(("https://nullprogram.com/feed/" systems emacs)
-		  ("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
-		  ("https://eli.thegreenplace.net/feeds/all.atom.xml")
-		  ("https://joelonsoftware.com/feed/")
-		  ("http://bit-player.org/feed")
-		  ("http://feeds.feedburner.com/HighScalability")
-		  ("https://blog.codinghorror.com/rss/")
-		  ("https://martinfowler.com/feed.atom" agile)
-		  ("https://www.tedunangst.com/flak/rss")
-		  ("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
-		  ("http://blog.cognitect.com/blog?format=rss" clojure)
-		  ("http://www.righto.com/feeds/posts/default" hardware)
-		  ("http://lambda-the-ultimate.org/rss.xml" functional))))
-(add-hook 'elfeed-show-mode-hook
-		  (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
-										 (font-spec :family "Helvetica Neue" :size 14))))
-
+;; Rust
 (use-package rust-mode
   :defer t
   :config (add-hook 'rust-mode-hook
@@ -386,40 +439,11 @@
 	(add-hook 'rust-mode-hook #'racer-mode)
 	(add-hook 'racer-mode-hook #'company-mode)))
 
-(setq my-credentials-file "~/.emacs.d/.private.el")
-(defun my-nickserv-password (server)
-  "Here I specify file which has to store credentials for SERVER."
-  (with-temp-buffer
-	(insert-file-contents-literally my-credentials-file)
-	(plist-get (read (buffer-string)) :nickserv-password)))
-(use-package circe
-  :defer t
-  :config
-  (progn
-	(setq circe-network-options
-		  '(("Freenode"
-			 :nick "phlm"
-			 :nickserv-password my-nickserv-password
-			 :channels ("#clojure" "#haskell" "#illumos" :after-auth "#emacs" "#freebsd" "#unleashed"))
-			("OFTC"
-			 :nick "phlm"
-			 :channels ("#kernelnewbies"))))
-	(enable-circe-color-nicks)
-	(setq circe-reduce-lurker-spam t)
-	(setq circe-format-server-topic "*** Topic change by {userhost}: {topic-diff}")
-	(setq circe-format-say "{nick:-12s} {body}")
-	(setq lui-time-stamp-position 'right-margin
-          lui-fill-type nil)
-	(add-hook 'lui-mode-hook 'my-lui-setup)
-	(defun my-lui-setup ()
-	  (setq
-	   fringes-outside-margins t
-	   right-margin-width 8
-	   word-wrap t
-	   wrap-prefix "     "))))
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
+;; fill-column: 80
 ;; End:
+
 (provide 'init)
 ;;; init ends here
