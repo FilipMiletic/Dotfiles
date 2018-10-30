@@ -17,31 +17,34 @@
 (deftheme blackbox "Have you set up optical filters for you space suit? I have...")
 
 (let
-    ((blackbox-fg "#cccccc")
-     (blackbox-bg "#181818")
+    ((blackbox-fg "#eeeeee")
+     (blackbox-bg "#161616")
      (blackbox-bg-modeline-active "#2f4f4f")
      (blackbox-bg-modeline-inactive "#202020")
      (blackbox-box-modeline-active "#3f5f5f")
      (blackbox-box-modeline-inactive "#303030")
-     (blackbox-keyword "#ffffff")
-     (blackbox-str "#63eb63")
-     (blackbox-comment "#8EB5D0")
+	 ;; keyword f5f8fa
+     (blackbox-keyword "#f4f4f4")
+     ;; str 63eb63
+	 (blackbox-str "#e242ac")
+	 ;; comment  07b3b3
+     (blackbox-comment "#63eb63")
 	 (blackbox-special "#ffa500")
      (blackbox-gray "#777777")
      (blackbox-fg-dim "#777777")
-     (blackbox-bg-dim "#101010")
+     (blackbox-bg-dim "#161616")
      (blackbox-fg-dim-2 "#506060")
      (blackbox-fg-todo "#bdabab")
-     (blackbox-bg-todo "#775555")
+     (blackbox-bg-todo "#ff0055")
      (blackbox-fg-done "#abbdab")
      (blackbox-bg-done "#777777")
      (blackbox-title "#f0f07f")
      (blackbox-heading "#ffffff")
-     (blackbox-bg-hl-parens "#703000")
+     (blackbox-bg-hl-parens "#e242ac")
      (blackbox-bg-alt "#252520")
      (blackbox-fg-modeline-hl "#ffff00")
      (blackbox-bg-whitespace "#1a1a1f")
-     (blackbox-fg-whitespace "#303040")
+     (blackbox-fg-whitespace "#242431")
      (blackbox-fg-search "#fff68f")
      (blackbox-bg-search "#606020")
      (blackbox-fg-lazysearch "#40e0d0")
@@ -75,7 +78,7 @@
 
 
    ;; frame UI
-   `(mode-line ((t (:background ,blackbox-fg-whitespace :foreground ,blackbox-keyword :box (:line-width 3 :color ,blackbox-bg-dim)))))
+   `(mode-line ((t (:background ,blackbox-fg-whitespace :foreground ,blackbox-keyword :box (:line-width 3 :color ,blackbox-fg-whitespace)))))
    `(mode-line-inactive ((t (:background ,blackbox-bg-dim :foreground ,blackbox-gray :box (:line-width 3 :color ,blackbox-bg-dim)))))
    `(mode-line-buffer-id ((t (:foreground ,blackbox-comment))))
    `(mode-line-highlight ((nil (:foreground ,blackbox-fg-modeline-hl :box (:line-width 3 :color ,blackbox-fg)))))
