@@ -21,6 +21,10 @@
 (defalias 'display-startup-echo-area-message #'ignore)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'text-mode-hook
+  '(lambda() (set-fill-column 80)))
+
 ;; MacOS dock behaviour
 (defadvice handle-delete-frame (around my-handle-delete-frame-advice activate)
   "Hide Emacs instead of closing the last frame."
@@ -28,37 +32,41 @@
 		(numfrs (length(frame-list))))
 	(if (> numfrs 1)
 		ad-do-it
-	  (do-applescript "tell application \"System Events\" to tell /
-                       process \"Emacs\" to set visible to false"))))
+	  (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
 (setq-default indent-tabs-mode t
               indent-line-function 4
               tab-width 4
-              c-basic-offset 4
               fill-column 80
 			  cursor-type 'box
               cursor-in-non-selected-windows 'hollow
-			  word-wrap t
+;;			  word-wrap t
 			  require-final-newline t)
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/custom")
-
+(setq use-package-always-ensure t)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 (pixel-scroll-mode  1)
+(tool-bar-mode      0)
 (menu-bar-mode      1)
-(scroll-bar-mode   -1)
+(scroll-bar-mode    0)
 (show-paren-mode    1)
 (line-number-mode   1)
 (column-number-mode 1)
 (blink-cursor-mode  0)
-(transient-mark-mode 1)
 (global-hl-line-mode 0)
+
+
+(setq c-default-style "bsd")
+(setq-default c-basic-offset 8)
 
 (setq mac-option-modifier nil
 	  mac-command-modifier 'meta
+	  dired-use-ls-dired nil
 	  load-prefer-newer t
+	  delete-old-versions t
 	  ring-bell-function 'ignore
 	  inhibit-splash-screen t
 	  initial-scratch-message nil
@@ -78,10 +86,21 @@
 	  eshell-cmpl-ignore-case t
 	  create-lockfiles nil
 	  frame-title-format '("%b")
-	  gc-cons-threshold 100000000)
+	  gc-cons-threshold (* 50 1000 1000)
+	  ns-use-mwheel-momentum t
+	  ns-use-thin-smoothing nil
+	  ns-use-mwheel-acceleration t
+	  ns-antialias-text nil
+	  shell-file-name "/bin/bash")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Custom functions
+
+(add-hook 'hi-lock-mode-hook
+          (lambda nil
+            (highlight-regexp "FIXME" (quote hi-red-b))
+            (highlight-regexp "TODO" (quote hi-red-b))))
+
 (defun open-previous-line (arg)
   "Open a new line above current one ARG."
   (interactive "p")
@@ -101,8 +120,36 @@
 
 (setq initial-frame-alist
       '((width . 135)
-        (height . 65)))
+        (height . 60)))
 (setq org-hide-emphasis-markers t)
+
+(defun eshell/clear ()
+  "Clear eshell buffer."
+  (let ((inhibit-read-only t))
+	(erase-buffer)
+	(eshell-send-input)))
+
+(defun fm/finder ()
+  "Open current file in Finder."
+  (interactive)
+  (let ((file (buffer-file-name)))
+    (if file
+        (shell-command
+         (format "%s %s" (executable-find "open") (file-name-directory file)))
+      (error "Buffer is not attached to any file!"))))
+
+(defun fm/rename-this-file-and-buffer (new-name)
+  "Renames both current buffer and file it has open with NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (unless filename
+      (error "Buffer '%s' is not visiting a file!" name))
+    (progn
+      (when (file-exists-p filename)
+        (rename-file filename new-name 1))
+      (set-visited-file-name new-name)
+      (rename-buffer new-name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Built in packages
@@ -117,40 +164,30 @@
   :mode (("\\.org\\'" . org-mode))
   :defer t
   :config
-  (setq org-agenda-files (quote ("~/Documents/Notes/plan.org"))
-		org-startup-indented t
+  (setq org-agenda-files (quote ("~/Documents/org/plan.org"))
 		org-todo-keywords
-		'(("TODO" . (:foreground red :weight bold))
-		  ("WAIT" . (:foreground cyan :weight bold))
-		  ("DONE" . (:foreground green :weight normal))))
-  (setq-default org-catch-invisible-edits 'smart))
+		'((sequence "TODO" "HOLD" "DONE"))))
 
 (add-hook 'org-mode-hook #'(lambda ()
 							 (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :family "Iosevka" :height 120 :weight 'regular)
-
+(set-face-attribute 'fixed-pitch nil
+                      :family "Input"
+                      :height 120)
+(set-face-attribute 'default nil :family "Ubuntu Mono" :height 130 :weight 'normal)
+(add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
+(add-hook 'org-mode-hook 'auto-fill-mode)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; -- Packages
-(use-package doom-themes
-  :ensure t
-  :config
-  (setq doom-neotree-enable-file-icons t
-		doom-themes-padded-modeline t)
-  (load-theme 'doom-watch t)
-  (setq doom-themes-enable-bold t
-		doom-themes-padded-modeline t
-		doom-neotree-file-icons 'simple)
-  (doom-themes-neotree-config)
-  (doom-themes-org-config))
+(load-theme 'goodwolf t)
 
 (use-package expand-region
-  :ensure t
+  
   :bind ("C-=" . er/expand-region))
 
 (use-package paredit
-  :ensure t
   :diminish paredit-mode
   :config
   (dolist (m '(clojure-mode-hook
@@ -163,12 +200,10 @@
 	(add-hook m #'paredit-mode)))
 
 (use-package highlight-numbers
-  :ensure t
   :config
   (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
 (use-package rainbow-delimiters
-  :ensure t
   :config
   (dolist (m '(clojure-mode-hook
 			   cider-repl-mode-hook
@@ -181,33 +216,49 @@
 	(add-hook m #'rainbow-delimiters-mode)))
 
 (use-package exec-path-from-shell
-  :ensure t
   :init (exec-path-from-shell-initialize)
   :config
   (setq exec-path-from-shell-check-startup-files nil))
 
+(use-package smart-mode-line
+  :init
+  (progn
+	(setq sml/theme 'respectful)
+	(setq sml/name-width 50)
+	(setq sml/mode-width 'full)
+	(setq sml/no-confirm-load-theme t))
+  :config (sml/setup))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enhancers
 (use-package which-key
-  :defer 0.2
+  :defer 1
   :diminish
   :config (which-key-mode))
 
-(use-package company
+(use-package hl-todo
   :ensure t
+  :config (dolist (m '(c-mode-hook
+					   c++-mode-hook
+					   scheme-mode-hook
+					   clojure-mode-hook
+					   lisp-mode-hook))
+			(add-hook m #'hl-todo-mode)))
+
+(use-package company
+  :defer 1
   :diminish company-mode
   :init
   (add-hook 'after-init-hook 'global-company-mode)
   :config
   (setq company-auto-complete nil
-        company-idle-delay .1
+        company-idle-delay .3
         company-echo-delay 0
         company-tooltip-flip-when-above t
         company-minimum-prefix-length 2
         company-tooltip-limit 12))
 
 (use-package ivy
-  :ensure t
   :init (add-hook 'after-init-hook #'ivy-mode)
   :config
   (setq ivy-height 10
@@ -228,7 +279,6 @@
 				ivy-rich-path-style 'abbrev))
 
 (use-package swiper
-  :ensure t
   :bind (("C-s"     . swiper)
          ("C-r"     . swiper)
          ("C-c u"   . swiper-all)
@@ -237,11 +287,9 @@
   :config (setq swiper-include-line-number-in-search t))
 
 (use-package smex
-  :ensure t
   :config (smex-initialize))
 
 (use-package counsel
-  :ensure t
   :bind (("M-x"     . counsel-M-x)
          ("C-x C-f" . counsel-find-file)
          ("C-h f"   . counsel-describe-function)
@@ -250,31 +298,17 @@
          ("M-y"     . counsel-yank-pop)))
 
 (use-package flycheck
-  :ensure t
   :init (global-flycheck-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; IRC, RSS, git, navigation and snippets
+;; TODO: configure shackle and emacs-purpose for better pane control when compiling
 (use-package magit
-  :ensure t
+  :defer t
   :bind (("C-x g" . magit-status)
 		 ("C-c g" . magit-file-log)))
 
-(use-package neotree
-  :ensure t
-  :bind (("C-c f t" . neotree-toggle))
-  :config
-  (setq neo-window-width 40
-		neo-theme 'icons
-		neo-create-file-auto-open t
-		neo-banner-message nil
-		neo-show-updir-line t
-		neo-dont-be-alone t
-		neo-persist-show nil
-		neo-show-hidden-files t))
-
 (use-package projectile
-  :ensure t
   :config
   (setq projectile-completion-system 'ivy
 		projectile-enable-caching t
@@ -283,21 +317,19 @@
 ;; Install Yasnippet-snippets package too
 (use-package yasnippet
   :disabled t
-  :ensure t
+  :defer t
   :diminish yas-minor-mode
   :bind (("C-c C-c" . yas-insert-snippet))
   :config (yas-reload-all)
   (add-hook 'prog-mode-hook #'yas-minor-mode))
 
 (use-package ace-window
-  :ensure t
   :commands ace-window
   :init (bind-key "C-x o" 'ace-window)
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 ;; RSS reader
 (use-package elfeed
-  :ensure t
   :defer t
   :bind ("C-x w" . elfeed)
   :init (setf url-queue-timeout 30)
@@ -318,15 +350,23 @@
 		  ("http://blog.cognitect.com/blog?format=rss" clojure)
 		  ("http://www.righto.com/feeds/posts/default" hardware)
 		  ("http://lambda-the-ultimate.org/rss.xml" functional)
-		  ("http://willcrichton.net/notes/"))))
-(add-hook 'elfeed-show-mode-hook
+		  ("http://willcrichton.net/notes/")
+		  ("https://danlebrero.com/feed.rss" programming)
+		  ("http://tonsky.me/blog/atom.xml" clojure)
+		  ("http://www.scheme.dk/planet/atom.xml" scheme)
+		  ("https://existentialtype.wordpress.com/feed/" functional)
+		  ("https://byorgey.wordpress.com/feed/" functional)
+		  ("http://lambda-the-ultimate.org/rss.xml" functional)
+		  ("https://furbo.org/feed"))))
+
+(add-hook 'elfeed-show-mode-hookb
 		  (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
-										 (font-spec :family "Menlo" :size 12))))
+										 (font-spec :family "Monaco" :size 12))))
 
 ;; IRC setup
 (setq my-credentials-file "~/.emacs.d/.private.el")
 (defun my-nickserv-password (server)
-  "Here I specify file which has to store credentials for SERVER."
+  "IRC SERVER authentication."
   (with-temp-buffer
 	(insert-file-contents-literally my-credentials-file)
 	(plist-get (read (buffer-string)) :nickserv-password)))
@@ -339,7 +379,7 @@
 		  '(("Freenode"
 			 :nick "phlm"
 			 :nickserv-password my-nickserv-password
-			 :channels ("#clojure" "#haskell" "#illumos" :after-auth "#emacs" "#freebsd" "#unleashed"))
+			 :channels (:after-auth "#lisp" "#scheme" "#clojure" "#emacs" "#freebsd" ))
 			("OFTC"
 			 :nick "phlm"
 			 :channels ("#kernelnewbies"))
@@ -367,7 +407,7 @@
 ;; Languages
 ;; C/C++
 (use-package ggtags
-  :ensure t
+  :defer t
   :config
   (add-hook 'c-mode-common-hook
 			(lambda ()
@@ -386,8 +426,7 @@
 
 ;; Racket/Scheme
 (use-package geiser
-  :ensure t
-  :defer
+  :defer t
   :bind (:map scheme-mode-map ("C-c C-c" . geiser-eval-last-sexp))
   :config
   (progn
@@ -396,7 +435,6 @@
 
 ;; Clojure
 (use-package cider
-  :ensure t
   :defer t
   :commands (cider cider-connect cider-jack-in)
   :mode (("\\.clj\\'" . clojure-mode)
