@@ -48,6 +48,7 @@
 (setq use-package-always-ensure t)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
+(transient-mark-mode t)
 (pixel-scroll-mode  1)
 (tool-bar-mode      0)
 (menu-bar-mode      1)
@@ -88,9 +89,9 @@
 	  frame-title-format '("%b")
 	  gc-cons-threshold (* 50 1000 1000)
 	  ns-use-mwheel-momentum t
-	  ns-use-thin-smoothing nil
 	  ns-use-mwheel-acceleration t
-	  ns-antialias-text nil
+	  ns-use-thin-smoothing nil
+	  ns-antialias-text t
 	  shell-file-name "/bin/bash")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -172,16 +173,19 @@
 							 (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'fixed-pitch nil
-                      :family "Input"
-                      :height 120)
 (set-face-attribute 'default nil :family "Ubuntu Mono" :height 130 :weight 'normal)
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; -- Packages
-(load-theme 'goodwolf t)
+(load-theme 'blackbox t)
+;;(load-theme 'goodwolf t)
+;; (set-background-color "black")
+;; (set-foreground-color "green")
+;; (set-face-foreground 'region "white")
+;; (set-face-background 'region "SkyBlue4")
+;; (set-face-foreground 'font-lock-comment-face "grey")
 
 (use-package expand-region
   
@@ -196,6 +200,8 @@
 			   racket-mode-hook
 			   racket-repl-mode-hook
 			   scheme-mode-hook
+			   slime-mode-hook
+			   slime-repl-mode-hook
 			   eval-expression-minibuffer-setup-hook))
 	(add-hook m #'paredit-mode)))
 
@@ -357,7 +363,8 @@
 		  ("https://existentialtype.wordpress.com/feed/" functional)
 		  ("https://byorgey.wordpress.com/feed/" functional)
 		  ("http://lambda-the-ultimate.org/rss.xml" functional)
-		  ("https://furbo.org/feed"))))
+		  ("https://furbo.org/feed/")
+		  )))
 
 (add-hook 'elfeed-show-mode-hookb
 		  (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
@@ -379,7 +386,7 @@
 		  '(("Freenode"
 			 :nick "phlm"
 			 :nickserv-password my-nickserv-password
-			 :channels (:after-auth "#lisp" "#scheme" "#clojure" "#emacs" "#freebsd" ))
+			 :channels (:after-auth "#lisp" "#scheme" "#clojure" "#emacs" "#freebsd" "#haskell"))
 			("OFTC"
 			 :nick "phlm"
 			 :channels ("#kernelnewbies"))
@@ -457,6 +464,16 @@
   (add-hook 'cider-repl-mode-hook #'company-mode))
 
 
+;; Common Lisp
+(load (expand-file-name "~/.quicklisp/slime-helper.el"))
+(use-package slime
+  :ensure t
+  :config
+  (progn
+	(setq inferior-lisp-program "/usr/local/Cellar/sbcl/1.4.12/bin/sbcl")
+	(setq slime-contribs '(slime-fancy))))
+
+
 ;; Rust
 (use-package rust-mode
   :defer t
@@ -477,6 +494,8 @@
 	(add-hook 'rust-mode-hook #'racer-mode)
 	(add-hook 'racer-mode-hook #'company-mode)))
 
+(use-package realgud
+  :ensure realgud)
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
