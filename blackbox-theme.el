@@ -17,18 +17,18 @@
 (deftheme blackbox "Have you set up optical filters for you space suit? I have...")
 
 (let
-    ((blackbox-fg "#eeeeee")
-     (blackbox-bg "#161616")
+    ((blackbox-fg "#b2b2b2")
+     (blackbox-bg "#131313")
      (blackbox-bg-modeline-active "#2f4f4f")
      (blackbox-bg-modeline-inactive "#202020")
      (blackbox-box-modeline-active "#3f5f5f")
      (blackbox-box-modeline-inactive "#303030")
 	 ;; keyword f5f8fa
-     (blackbox-keyword "#f4f4f4")
-     ;; str 63eb63
-	 (blackbox-str "#e242ac")
-	 ;; comment  07b3b3
-     (blackbox-comment "#63eb63")
+     (blackbox-keyword "#ffffff")
+     ;; str 63eb63, e242ac
+	 (blackbox-str "#1EECEA")
+	 ;; comment  63eb63
+     (blackbox-comment "#00df69")
 	 (blackbox-special "#ffa500")
      (blackbox-gray "#777777")
      (blackbox-fg-dim "#777777")
@@ -69,8 +69,8 @@
    '(widget-field-face ((t (:background "#a0a0a0" :foreground "#000000"))))
    ;; `(header-line ((t (:foreground ,blackbox-keyword :background "#6b5e46" :box (:line-width 1 :color "#8d7a56" :style none)))))
    `(header-line ((t (:foreground ,blackbox-keyword :background "#404040"))))
-
-
+   `(hl-line ((t (:background ,blackbox-bg-alt))))
+   
    `(isearch ((t (:background ,blackbox-bg-search :foreground ,blackbox-fg-search :weight bold :underline (:color ,blackbox-fg-search)))))
    `(lazy-highlight ((t (:background ,blackbox-bg-lazysearch :foreground ,blackbox-fg-lazysearch :weight bold :underline (:color ,blackbox-fg-lazysearch)))))
    ;; match?
@@ -87,8 +87,12 @@
 
 
    ;; syntax font-lock I DO care about
+   ;; Classical colors all the way. 90s child after all...
    `(font-lock-string-face ((t (:foreground ,blackbox-str))))
    `(font-lock-comment-face ((t (:foreground ,blackbox-comment))))
+   ;;`(font-lock-comment-face ((((class color) (background dark)) (:foreground "green"))))
+   ;;`(font-lock-string-face ((((class color) (background dark)) (:foreground "cyan"))))
+
    `(font-lock-keyword-face ((t (:foreground ,blackbox-keyword))))
    ;; syntax font-lock I DON'T care about
    '(font-lock-builtin-face ((t nil)))
@@ -102,7 +106,7 @@
 
 
    ;; parenthesis and pairs
-   `(show-paren-match ((t :background "cyan" :foreground "black")))
+   `(show-paren-match ((t :background "yellow" :foreground "black")))
    `(sp-show-pair-match-face ((t (:background ,blackbox-bg-hl-parens))))
 
 
@@ -126,14 +130,14 @@
    ;; company
    '(company-tooltip ((t (:background "Gray20" :foreground "Gray80"))))
    '(company-tooltip-selection ((t (:background "LightSteelBlue4" :foreground "White"))))
-   '(company-tooltip-annotation ((t (:foreground "Gray60" :slant italic))))
+   '(company-tooltip-annotation ((t (:foreground "Gray60"))))
    '(company-tooltip-annotation-selection ((t (:foreground "Gray80"))))
-   '(company-tooltip-common ((t (:slant italic))))
+   '(company-tooltip-common ((t ())))
    '(company-scrollbar-bg ((t (:background "Gray40"))))
    '(company-scrollbar-fg ((t (:background "Gray80"))))
    '(company-preview ((t (:inherit company-tooltip-selection))))
-   '(company-preview-common ((t (:inherit company-preview :slant italic))))
-   
+   '(company-preview-common ((t (:inherit company-preview))))
+
    ;; erc
    '(erc-current-nick-face ((t (:foreground "#ffffff"))))
    ;; if erc-nick-default-face has foreground setup then it could not be

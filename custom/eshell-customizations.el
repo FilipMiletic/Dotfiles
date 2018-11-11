@@ -52,9 +52,9 @@ PWD is not in a git repo (or the git command is not found)."
 
           (if (eq 'dark (frame-parameter nil 'background-mode))
               (concat   ;; Prompt for Dark Themes
-               (propertize parent 'face `(:foreground "#8888FF"))
-               (propertize name   'face `(:foreground "#8888FF" :weight bold))
-               (propertize branch 'face `(:foreground "#98C379"))
+               (propertize parent 'face `(:foreground "#00bb00"))
+               (propertize name   'face `(:foreground "#5555FF" :weight bold))
+               (propertize branch 'face `(:foreground "#00cc00"))
                (propertize " λ"   'face `(:weight ultra-bold))
                (propertize " "    'face `(:weight bold)))
 
