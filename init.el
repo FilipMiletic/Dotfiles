@@ -51,13 +51,14 @@
 (transient-mark-mode t)
 (pixel-scroll-mode  1)
 (tool-bar-mode      0)
-(menu-bar-mode      1)
+(unless (display-graphic-p)
+   (menu-bar-mode -1))
 (scroll-bar-mode    0)
 (show-paren-mode    1)
 (line-number-mode   1)
 (column-number-mode 1)
 (blink-cursor-mode  0)
-(global-hl-line-mode 0)
+(global-hl-line-mode 1)
 
 
 (setq c-default-style "bsd")
@@ -91,7 +92,7 @@
 	  ns-use-mwheel-momentum t
 	  ns-use-mwheel-acceleration t
 	  ns-use-thin-smoothing nil
-	  ns-antialias-text t
+	  ns-antialias-text nil
 	  shell-file-name "/bin/bash")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -152,6 +153,32 @@
       (set-visited-file-name new-name)
       (rename-buffer new-name))))
 
+(defun fm/pop-shell (arg)
+  "Pop shell in a side window.  Pass ARG to shell."
+  (interactive "P")
+  (select-window
+   (display-buffer-in-side-window
+	(save-window-excursion
+	  (let ((prefix-arg arg))
+		(call-interactively #'eshell))
+	  (current-buffer))
+	'((side . bottom)))))
+
+(unless (display-graphic-p)
+ (defun copy-from-osx ()
+   "Copy suport for macOS."
+   (shell-command-to-string "pbpaste"))
+  
+ (defun paste-to-osx (text &optional push)
+   "Paste support for TEXT in tty macOS PUSH fuck you flycheck."
+   (let ((process-connection-type nil))
+     (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+       (process-send-string proc text)
+       (process-send-eof proc)))))
+
+(setq interprogram-cut-function 'paste-to-osx)
+(setq interprogram-paste-function 'copy-from-osx)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Built in packages
 (use-package eshell
@@ -173,22 +200,13 @@
 							 (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :family "Ubuntu Mono" :height 130 :weight 'normal)
+(set-face-attribute 'default nil :family "ProFont for Powerline" :height 120 :weight 'normal)
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; -- Packages
 (load-theme 'blackbox t)
-;;(load-theme 'goodwolf t)
-;; (set-background-color "black")
-;; (set-foreground-color "green")
-;; (set-face-foreground 'region "white")
-;; (set-face-background 'region "SkyBlue4")
-;; (set-face-foreground 'font-lock-comment-face "grey")
-
+;; -- Packages
 (use-package expand-region
-  
   :bind ("C-=" . er/expand-region))
 
 (use-package paredit
@@ -465,11 +483,11 @@
 
 
 ;; Common Lisp
-(load (expand-file-name "~/.quicklisp/slime-helper.el"))
 (use-package slime
-  :ensure t
+  :defer t
   :config
   (progn
+	(load (expand-file-name "~/.quicklisp/slime-helper.el"))
 	(setq inferior-lisp-program "/usr/local/Cellar/sbcl/1.4.12/bin/sbcl")
 	(setq slime-contribs '(slime-fancy))))
 
@@ -495,7 +513,7 @@
 	(add-hook 'racer-mode-hook #'company-mode)))
 
 (use-package realgud
-  :ensure realgud)
+  :defer t)
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
