@@ -18,7 +18,7 @@
 
 (let
     ((blackbox-fg "#b2b2b2")
-     (blackbox-bg "#131313")
+     (blackbox-bg "#141414")
      (blackbox-bg-modeline-active "#2f4f4f")
      (blackbox-bg-modeline-inactive "#202020")
      (blackbox-box-modeline-active "#3f5f5f")
@@ -26,13 +26,13 @@
 	 ;; keyword f5f8fa
      (blackbox-keyword "#ffffff")
      ;; str 63eb63, e242ac
-	 (blackbox-str "#1EECEA")
+	 (blackbox-str "#00dbb1")
 	 ;; comment  63eb63
      (blackbox-comment "#00df69")
 	 (blackbox-special "#ffa500")
      (blackbox-gray "#777777")
      (blackbox-fg-dim "#777777")
-     (blackbox-bg-dim "#161616")
+     (blackbox-bg-dim "#12181B")
      (blackbox-fg-dim-2 "#506060")
      (blackbox-fg-todo "#bdabab")
      (blackbox-bg-todo "#ff0055")
@@ -41,7 +41,7 @@
      (blackbox-title "#f0f07f")
      (blackbox-heading "#ffffff")
      (blackbox-bg-hl-parens "#e242ac")
-     (blackbox-bg-alt "#252520")
+     (blackbox-bg-alt "#1E282D")
      (blackbox-fg-modeline-hl "#ffff00")
      (blackbox-bg-whitespace "#1a1a1f")
      (blackbox-fg-whitespace "#242431")
@@ -69,7 +69,7 @@
    '(widget-field-face ((t (:background "#a0a0a0" :foreground "#000000"))))
    ;; `(header-line ((t (:foreground ,blackbox-keyword :background "#6b5e46" :box (:line-width 1 :color "#8d7a56" :style none)))))
    `(header-line ((t (:foreground ,blackbox-keyword :background "#404040"))))
-   `(hl-line ((t (:background ,blackbox-bg-alt))))
+   `(hl-line ((t (:background "#202022"))))
    
    `(isearch ((t (:background ,blackbox-bg-search :foreground ,blackbox-fg-search :weight bold :underline (:color ,blackbox-fg-search)))))
    `(lazy-highlight ((t (:background ,blackbox-bg-lazysearch :foreground ,blackbox-fg-lazysearch :weight bold :underline (:color ,blackbox-fg-lazysearch)))))
