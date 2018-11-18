@@ -163,22 +163,6 @@
 		(call-interactively #'eshell))
 	  (current-buffer))
 	'((side . bottom)))))
-
-(unless (display-graphic-p)
- (defun copy-from-osx ()
-   "Copy suport for macOS."
-   (shell-command-to-string "pbpaste"))
-  
- (defun paste-to-osx (text &optional push)
-   "Paste support for TEXT in tty macOS PUSH fuck you flycheck."
-   (let ((process-connection-type nil))
-     (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-       (process-send-string proc text)
-       (process-send-eof proc)))))
-
-(setq interprogram-cut-function 'paste-to-osx)
-(setq interprogram-paste-function 'copy-from-osx)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Built in packages
 (use-package eshell
@@ -439,14 +423,40 @@
 			  (when (derived-mode-p 'c-mode 'c++-mode)
 				(ggtags-mode 1)))))
 
+(defun +ccls/enable ()
+  "Enalbe CCLS with LSP."
+  (condition-case nil
+	  (lsp-ccls-enable)
+	(user-error nil)))
+
+(setq ccls-executable "/usr/local/Cellar/ccls/0.20180924/bin/ccls")
+
+(use-package ccls
+  :commands (lsp-ccls-enable)
+  :init
+  (add-hook 'c-mode-hook #'+ccls/enable)
+  (add-hook 'c++-mode-hook #'+ccls/enable)
+  (add-hook 'cuda-mode-hook #'+ccls/enable))
+
 (use-package counsel-gtags
   :defer t)
 
 (use-package counsel-projectile
   :defer t)
 
+(use-package clang-format
+  :commands (clang-format-region))
+
 (use-package xcscope
   :init (cscope-setup))
+
+(use-package lsp-mode
+  :defer t)
+
+(use-package company-lsp
+  :after (ccls company lsp-mode)
+  :config (push 'company-lsp company-backends)
+  (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
 
 
 ;; Racket/Scheme
