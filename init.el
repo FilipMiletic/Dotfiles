@@ -48,22 +48,19 @@
 (setq use-package-always-ensure t)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
+
+
 (transient-mark-mode t)
-(pixel-scroll-mode  1)
-(tool-bar-mode	    0)
+(pixel-scroll-mode   1)
+(tool-bar-mode	     0)
 (unless (display-graphic-p)
   (menu-bar-mode -1))
-(scroll-bar-mode    0)
-(show-paren-mode    1)
-(line-number-mode   1)
-(column-number-mode 1)
-(blink-cursor-mode  0)
+(scroll-bar-mode     0)
+(show-paren-mode     1)
+(line-number-mode    1)
+(column-number-mode  1)
+(blink-cursor-mode   0)
 (global-hl-line-mode 1)
-
-
-(setq whitespace-style '(lines))
-(setq whitespace-line-column 80)
-(global-whitespace-mode 1)
 
 (setq c-default-style "gnu")
 (setq-default c-basic-offset 8)
@@ -91,19 +88,15 @@
       make-backup-files nil
       eshell-cmpl-ignore-case t
       create-lockfiles nil
-      frame-title-format '("%b")
+      frame-title-format (list "emacs: %b -- %f")
       gc-cons-threshold (* 50 1000 1000)
       ns-use-mwheel-momentum t
       ns-use-mwheel-acceleration t
       ns-use-thin-smoothing nil
       ns-antialias-text nil
       shell-file-name "/bin/bash")
-
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Custom functions
-
 (add-hook 'hi-lock-mode-hook
 	  (lambda nil
 	    (highlight-regexp "FIXME" (quote hi-red-b))
@@ -131,11 +124,11 @@
 	(height . 60)))
 (setq org-hide-emphasis-markers t)
 
+(setq eshell-scroll-to-bottom-on-output nil)
 (defun eshell/clear ()
   "Clear eshell buffer."
   (let ((inhibit-read-only t))
-    (erase-buffer)
-    (eshell-send-input)))
+    (erase-buffer)))
 
 (defun fm/finder ()
   "Open current file in Finder."
@@ -193,9 +186,11 @@
 (set-face-attribute 'default nil :family "ProFont for Powerline" :height 120 :weight 'normal)
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
+(setq org-html-validation-link nil)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load-theme 'blackbox t)
 ;; -- Packages
+(load-theme 'blackbox t)
+
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
@@ -203,7 +198,8 @@
   :diminish paredit-mode
   :config
   (dolist (m '(clojure-mode-hook
-	       cider-repl-mode-hook
+			   cider-repl-mode-hook
+			   clojure-mode-hook
 	       emacs-lisp-mode-hook
 	       racket-mode-hook
 	       racket-repl-mode-hook
@@ -242,12 +238,7 @@
     (setq sml/mode-width 'full)
     (setq sml/no-confirm-load-theme t))
   :config (sml/setup))
-;; (use-package doom-modeline
-;;       :ensure t
-;;       :defer t
-;;       :hook (after-init . doom-modeline-init)
-;;       :config (setq doom-modeline-icon t)
-;;       (setq doom-modeline-height 20))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enhancers
 (use-package which-key
@@ -351,7 +342,7 @@
 ;; RSS reader
 (use-package elfeed
   :defer t
-  :bind ("C-x w" . elfeed)
+  :bind ("C-c w" . elfeed)
   :init (setf url-queue-timeout 30)
   :config
   (push "-k" elfeed-curl-extra-arguments)
@@ -400,16 +391,10 @@
 	  '(("Freenode"
 	     :nick "phlm"
 	     :nickserv-password my-nickserv-password
-	     :channels (:after-auth "#lisp" "#scheme" "#clojure" "#emacs" "#freebsd" "#haskell"))
+	     :channels (:after-auth "#lisp" "#emacs" "#freebsd" "#haskell" "#clojure" "#illumos" "##c++"))
 	    ("OFTC"
 	     :nick "phlm"
-	     :channels ("#kernelnewbies"))
-	    ("Mozilla"
-	     :host "irc.mozilla.org"
-	     :port (6697)
-	     :nick "phlm"
-	     :nickserv-password my-nickserv-password
-	     :channels ("#rust" "#rust-beginners"))))
+	     :channels ("#kernelnewbies"))))
     (enable-circe-color-nicks)
     (setq circe-reduce-lurker-spam t)
     (setq circe-format-server-topic "*** Topic change by {userhost}: {topic-diff}")
@@ -523,6 +508,8 @@
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'company-mode))
 
+(use-package clj-refactor
+  :defer t)
 
 ;; Common Lisp
 (use-package slime

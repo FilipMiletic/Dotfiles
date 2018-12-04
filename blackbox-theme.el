@@ -17,22 +17,22 @@
 (deftheme blackbox "Have you set up optical filters for you space suit? I have...")
 
 (let
-    ((blackbox-fg "#b2b2b2")
-     (blackbox-bg "#141414")
+    ((blackbox-fg "#cdcdcd")
+     (blackbox-bg "#101010")
      (blackbox-bg-modeline-active "#2f4f4f")
      (blackbox-bg-modeline-inactive "#202020")
      (blackbox-box-modeline-active "#3f5f5f")
      (blackbox-box-modeline-inactive "#303030")
 	 ;; keyword f5f8fa
      (blackbox-keyword "#ffffff")
-     ;; str 63eb63, e242ac
-	 (blackbox-str "#00dbb1")
+     ;; str 63eb63, 00dbb1
+	 (blackbox-str "#23D0CA")
 	 ;; comment  63eb63
      (blackbox-comment "#00df69")
-	 (blackbox-special "#ffa500")
+     (blackbox-special "#ffa500")
      (blackbox-gray "#777777")
      (blackbox-fg-dim "#777777")
-     (blackbox-bg-dim "#12181B")
+     (blackbox-bg-dim "#141414")
      (blackbox-fg-dim-2 "#506060")
      (blackbox-fg-todo "#bdabab")
      (blackbox-bg-todo "#ff0055")
@@ -69,7 +69,7 @@
    '(widget-field-face ((t (:background "#a0a0a0" :foreground "#000000"))))
    ;; `(header-line ((t (:foreground ,blackbox-keyword :background "#6b5e46" :box (:line-width 1 :color "#8d7a56" :style none)))))
    `(header-line ((t (:foreground ,blackbox-keyword :background "#404040"))))
-   `(hl-line ((t (:background "#202022"))))
+   `(hl-line ((t (:background "#141416"))))
    
    `(isearch ((t (:background ,blackbox-bg-search :foreground ,blackbox-fg-search :weight bold :underline (:color ,blackbox-fg-search)))))
    `(lazy-highlight ((t (:background ,blackbox-bg-lazysearch :foreground ,blackbox-fg-lazysearch :weight bold :underline (:color ,blackbox-fg-lazysearch)))))
@@ -78,7 +78,7 @@
 
 
    ;; frame UI
-   `(mode-line ((t (:background ,blackbox-fg-whitespace :foreground ,blackbox-keyword :box (:line-width 3 :color ,blackbox-fg-whitespace)))))
+   `(mode-line ((t (:background "#303030" :foreground ,blackbox-keyword :box (:line-width 3 :color "#303030")))))
    `(mode-line-inactive ((t (:background ,blackbox-bg-dim :foreground ,blackbox-gray :box (:line-width 3 :color ,blackbox-bg-dim)))))
    `(mode-line-buffer-id ((t (:foreground ,blackbox-comment))))
    `(mode-line-highlight ((nil (:foreground ,blackbox-fg-modeline-hl :box (:line-width 3 :color ,blackbox-fg)))))
