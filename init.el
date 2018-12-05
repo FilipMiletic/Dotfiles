@@ -16,55 +16,52 @@
 (require 'diminish)
 (require 'bind-key)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; -----------------------------------------------------------------------------
 ;; Basic settings
+;; -----------------------------------------------------------------------------
 (defalias 'display-startup-echo-area-message #'ignore)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (add-hook 'text-mode-hook
-	  '(lambda() (set-fill-column 80)))
+          '(lambda() (set-fill-column 80)))
 
 ;; MacOS dock behaviour
 (defadvice handle-delete-frame (around my-handle-delete-frame-advice activate)
   "Hide Emacs instead of closing the last frame."
   (let ((frame (posn-window (event-start event)))
-	(numfrs (length(frame-list))))
+        (numfrs (length(frame-list))))
     (if (> numfrs 1)
-	ad-do-it
+        ad-do-it
       (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 
-(setq-default indent-tabs-mode t
-	      indent-line-function 4
-	      tab-width 4
-	      fill-column 80
-	      cursor-type 'box
-	      cursor-in-non-selected-windows 'hollow
-	      ;;			  word-wrap t
-	      require-final-newline t)
+(setq-default indent-tabs-mode nil
+              indent-line-function 4
+              tab-width 4
+              fill-column 80
+              cursor-type 'box
+              cursor-in-non-selected-windows 'hollow
+              require-final-newline t)
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/custom")
 (setq use-package-always-ensure t)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
-
-
 (transient-mark-mode t)
 (pixel-scroll-mode   1)
-(tool-bar-mode	     0)
+(tool-bar-mode       0)
 (unless (display-graphic-p)
   (menu-bar-mode -1))
 (scroll-bar-mode     0)
 (show-paren-mode     1)
 (line-number-mode    1)
 (column-number-mode  1)
-(blink-cursor-mode   0)
-(global-hl-line-mode 1)
+(blink-cursor-mode   1)
+(global-hl-line-mode 0)
 
 (setq c-default-style "gnu")
 (setq-default c-basic-offset 8)
-
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       dired-use-ls-dired nil
@@ -94,13 +91,16 @@
       ns-use-mwheel-acceleration t
       ns-use-thin-smoothing nil
       ns-antialias-text nil
-      shell-file-name "/bin/bash")
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Custom functions
+      shell-file-name "/bin/bash"
+      blink-cursor-blinks 7)
+
+;; -----------------------------------------------------------------------------
+;; Custom functions and customisations of builtin packages
+;; -----------------------------------------------------------------------------
 (add-hook 'hi-lock-mode-hook
-	  (lambda nil
-	    (highlight-regexp "FIXME" (quote hi-red-b))
-	    (highlight-regexp "TODO" (quote hi-red-b))))
+          (lambda nil
+            (highlight-regexp "FIXME" (quote hi-red-b))
+            (highlight-regexp "TODO" (quote hi-red-b))))
 
 (defun open-previous-line (arg)
   "Open a new line above current one ARG."
@@ -121,7 +121,7 @@
 
 (setq initial-frame-alist
       '((width . 135)
-	(height . 60)))
+        (height . 60)))
 (setq org-hide-emphasis-markers t)
 
 (setq eshell-scroll-to-bottom-on-output nil)
@@ -135,78 +135,97 @@
   (interactive)
   (let ((file (buffer-file-name)))
     (if file
-	(shell-command
-	 (format "%s %s" (executable-find "open") (file-name-directory file)))
+        (shell-command
+         (format "%s %s" (executable-find "open") (file-name-directory file)))
       (error "Buffer is not attached to any file!"))))
 
 (defun fm/rename-this-file-and-buffer (new-name)
   "Renames both current buffer and file it has open with NEW-NAME."
   (interactive "sNew name: ")
   (let ((name (buffer-name))
-	(filename (buffer-file-name)))
+        (filename (buffer-file-name)))
     (unless filename
       (error "Buffer '%s' is not visiting a file!" name))
     (progn
       (when (file-exists-p filename)
-	(rename-file filename new-name 1))
+        (rename-file filename new-name 1))
       (set-visited-file-name new-name)
       (rename-buffer new-name))))
 
 (defun fm/pop-shell (arg)
-  "Pop shell in a side window.	Pass ARG to shell."
+  "Pop shell in a side window.  Pass ARG to shell."
   (interactive "P")
   (select-window
    (display-buffer-in-side-window
     (save-window-excursion
       (let ((prefix-arg arg))
-	(call-interactively #'eshell))
+        (call-interactively #'eshell))
       (current-buffer))
     '((side . bottom)))))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Built in packages
+
 (use-package eshell
   :defer t
   :config
   (add-hook 'eshell-mode-hook
-	    (lambda ()
-	      (load "~/.emacs.d/custom/eshell-customizations.el"))))
+            (lambda ()
+              (load "~/.emacs.d/custom/eshell-customizations.el"))))
 
 (use-package org
   :mode (("\\.org\\'" . org-mode))
   :defer t
   :config
   (setq org-agenda-files (quote ("~/Documents/org/plan.org"))
-	org-todo-keywords
-	'((sequence "TODO" "HOLD" "DONE"))))
+        org-todo-keywords
+        '((sequence "TODO" "HOLD" "DONE"))))
 
 (add-hook 'org-mode-hook #'(lambda ()
-			     (visual-line-mode)))
+                             (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
 (set-face-attribute 'default nil :family "ProFont for Powerline" :height 120 :weight 'normal)
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (setq org-html-validation-link nil)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; -----------------------------------------------------------------------------
 ;; -- Packages
+;; -----------------------------------------------------------------------------
 (load-theme 'blackbox t)
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
+(use-package shackle
+  :config
+  (progn
+    (setq shackle-default-alignment 'below)
+    (setq shackle-default-size 0.4)
+    (setq shackle-select-reused-windows nil)
+    (setq shackle-rules
+          '((compilation-mode :noselect t)
+            ("*undo-tree*"    :noselect t :size 0.25 :align right)
+            ("*eshell*"           :select t :other t)
+            ("*Shell Command Output*" :noselect t)
+            (occur-mode :noselect t :align t)
+            ("*Help*" :select t :inhibit-window-quit t :other t)
+            ("*Messages*" :noselect t :inhibit-window-quit t :other t)
+            (magit-status-mode :select t :inhibit-window-quit t :same t)
+            (magit-log-mode :select t :inhibit-window-quit t :same t)))
+    (shackle-mode 1)))
+
 (use-package paredit
   :diminish paredit-mode
   :config
   (dolist (m '(clojure-mode-hook
-			   cider-repl-mode-hook
-			   clojure-mode-hook
-	       emacs-lisp-mode-hook
-	       racket-mode-hook
-	       racket-repl-mode-hook
-	       scheme-mode-hook
-	       slime-mode-hook
-	       slime-repl-mode-hook
-	       eval-expression-minibuffer-setup-hook))
+               cider-repl-mode-hook
+               clojure-mode-hook
+               emacs-lisp-mode-hook
+               racket-mode-hook
+               racket-repl-mode-hook
+               scheme-mode-hook
+               slime-mode-hook
+               slime-repl-mode-hook
+               eval-expression-minibuffer-setup-hook))
     (add-hook m #'paredit-mode)))
 
 (use-package highlight-numbers
@@ -216,13 +235,13 @@
 (use-package rainbow-delimiters
   :config
   (dolist (m '(clojure-mode-hook
-	       cider-repl-mode-hook
-	       emacs-lisp-mode-hook
-	       racket-mode-hook
-	       racket-repl-mode-hook
-	       scheme-mode-hook
-	       lisp-mode-hook
-	       eval-expression-minibuffer-setup-hook))
+               cider-repl-mode-hook
+               emacs-lisp-mode-hook
+               racket-mode-hook
+               racket-repl-mode-hook
+               scheme-mode-hook
+               lisp-mode-hook
+               eval-expression-minibuffer-setup-hook))
     (add-hook m #'rainbow-delimiters-mode)))
 
 (use-package exec-path-from-shell
@@ -239,8 +258,6 @@
     (setq sml/no-confirm-load-theme t))
   :config (sml/setup))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Enhancers
 (use-package which-key
   :defer 1
   :diminish
@@ -249,11 +266,11 @@
 (use-package hl-todo
   :ensure t
   :config (dolist (m '(c-mode-hook
-		       c++-mode-hook
-		       scheme-mode-hook
-		       clojure-mode-hook
-		       lisp-mode-hook))
-	    (add-hook m #'hl-todo-mode)))
+                       c++-mode-hook
+                       scheme-mode-hook
+                       clojure-mode-hook
+                       lisp-mode-hook))
+            (add-hook m #'hl-todo-mode)))
 
 (use-package company
   :defer 1
@@ -262,23 +279,23 @@
   (add-hook 'after-init-hook 'global-company-mode)
   :config
   (setq company-auto-complete nil
-	company-idle-delay .3
-	company-echo-delay 0
-	company-tooltip-flip-when-above t
-	company-minimum-prefix-length 2
-	company-tooltip-limit 12))
+        company-idle-delay .3
+        company-echo-delay 0
+        company-tooltip-flip-when-above t
+        company-minimum-prefix-length 2
+        company-tooltip-limit 12))
 
 (use-package ivy
   :init (add-hook 'after-init-hook #'ivy-mode)
   :config
   (setq ivy-height 10
-	ivy-wrap t
-	ivy-fixed-height-minibuffer t
-	ivy-use-virtual-buffers t
-	enable-recursive-minibuffers t
-	ivy-format-function 'ivy-format-function-arrow
-	ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
-				(t . ivy--regex-plus)))
+        ivy-wrap t
+        ivy-fixed-height-minibuffer t
+        ivy-use-virtual-buffers t
+        enable-recursive-minibuffers t
+        ivy-format-function 'ivy-format-function-arrow
+        ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
+                                (t . ivy--regex-plus)))
   (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
   (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
 
@@ -286,46 +303,46 @@
   :after ivy
   :init (ivy-rich-mode 1)
   :config (setq ivy-virtual-abbreviate 'full
-		ivy-rich-path-style 'abbrev))
+                ivy-rich-path-style 'abbrev))
 
 (use-package swiper
-  :bind (("C-s"	    . swiper)
-	 ("C-r"	    . swiper)
-	 ("C-c u"   . swiper-all)
-	 ("C-c C-r" . ivy-resume)
-	 ("C-c C-o" . ivy-occur))
+  :bind (("C-s"         . swiper)
+         ("C-r"         . swiper)
+         ("C-c u"   . swiper-all)
+         ("C-c C-r" . ivy-resume)
+         ("C-c C-o" . ivy-occur))
   :config (setq swiper-include-line-number-in-search t))
 
 (use-package smex
   :config (smex-initialize))
 
 (use-package counsel
-  :bind (("M-x"	    . counsel-M-x)
-	 ("C-x C-f" . counsel-find-file)
-	 ("C-h f"   . counsel-describe-function)
-	 ("C-h v"   . counsel-describe-variable)
-	 ("C-c C-s" . counsel-rg)
-	 ("M-y"	    . counsel-yank-pop)))
-
+  :bind (("M-x"         . counsel-M-x)
+         ("C-x C-f" . counsel-find-file)
+         ("C-h f"   . counsel-describe-function)
+         ("C-h v"   . counsel-describe-variable)
+         ("C-c C-s" . counsel-rg)
+         ("M-y"         . counsel-yank-pop)))
 
 (use-package flycheck
   :init (global-flycheck-mode))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; IRC, RSS, git, navigation and snippets
-;; TODO: configure shackle and emacs-purpose for better pane control when compiling
+;; -----------------------------------------------------------------------------
+;; IRC, RSS, git, navigation and snippets, and shackle for minibuffers
+;; -----------------------------------------------------------------------------
+;; Git and project organisation
 (use-package magit
   :defer t
   :bind (("C-x g" . magit-status)
-	 ("C-c g" . magit-file-log)))
+         ("C-c g" . magit-file-log)))
 
 (use-package projectile
   :config
   (setq projectile-completion-system 'ivy
-	projectile-enable-caching t
-	projectile-find-dir-includes-top-level t))
+        projectile-enable-caching t
+        projectile-find-dir-includes-top-level t))
 
-;; Install Yasnippet-snippets package too
+;; Snippets
 (use-package yasnippet
   :disabled t
   :defer t
@@ -339,7 +356,7 @@
   :init (bind-key "C-x o" 'ace-window)
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
-;; RSS reader
+;; RSS
 (use-package elfeed
   :defer t
   :bind ("C-c w" . elfeed)
@@ -348,34 +365,34 @@
   (push "-k" elfeed-curl-extra-arguments)
   (setq-default elfeed-search-filter "@1-week-ago +unread")
   (setq elfeed-feeds
-	'(("https://nullprogram.com/feed/" systems emacs)
-	  ("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
-	  ("https://eli.thegreenplace.net/feeds/all.atom.xml")
-	  ("https://joelonsoftware.com/feed/")
-	  ("http://bit-player.org/feed")
-	  ("http://feeds.feedburner.com/HighScalability")
-	  ("https://blog.codinghorror.com/rss/")
-	  ("https://martinfowler.com/feed.atom" agile)
-	  ("https://www.tedunangst.com/flak/rss")
-	  ("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
-	  ("http://blog.cognitect.com/blog?format=rss" clojure)
-	  ("http://www.righto.com/feeds/posts/default" hardware)
-	  ("http://lambda-the-ultimate.org/rss.xml" functional)
-	  ("http://willcrichton.net/notes/")
-	  ("https://danlebrero.com/feed.rss" programming)
-	  ("http://tonsky.me/blog/atom.xml" clojure)
-	  ("http://www.scheme.dk/planet/atom.xml" scheme)
-	  ("https://existentialtype.wordpress.com/feed/" functional)
-	  ("https://byorgey.wordpress.com/feed/" functional)
-	  ("http://lambda-the-ultimate.org/rss.xml" functional)
-	  ("https://furbo.org/feed/")
-	  )))
+        '(("https://nullprogram.com/feed/" systems emacs)
+          ("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
+          ("https://eli.thegreenplace.net/feeds/all.atom.xml")
+          ("https://joelonsoftware.com/feed/")
+          ("http://bit-player.org/feed")
+          ("http://feeds.feedburner.com/HighScalability")
+          ("https://blog.codinghorror.com/rss/")
+          ("https://martinfowler.com/feed.atom" agile)
+          ("https://www.tedunangst.com/flak/rss")
+          ("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
+          ("http://blog.cognitect.com/blog?format=rss" clojure)
+          ("http://www.righto.com/feeds/posts/default" hardware)
+          ("http://lambda-the-ultimate.org/rss.xml" functional)
+          ("http://willcrichton.net/notes/")
+          ("https://danlebrero.com/feed.rss" programming)
+          ("http://tonsky.me/blog/atom.xml" clojure)
+          ("http://www.scheme.dk/planet/atom.xml" scheme)
+          ("https://existentialtype.wordpress.com/feed/" functional)
+          ("https://byorgey.wordpress.com/feed/" functional)
+          ("http://lambda-the-ultimate.org/rss.xml" functional)
+          ("https://furbo.org/feed/")
+          )))
 
 (add-hook 'elfeed-show-mode-hookb
-	  (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
-					 (font-spec :family "Monaco" :size 12))))
+          (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
+                                         (font-spec :family "Monaco" :size 12))))
 
-;; IRC setup
+;; IRC
 (setq my-credentials-file "~/.emacs.d/.private.el")
 (defun my-nickserv-password (server)
   "IRC SERVER authentication."
@@ -388,19 +405,19 @@
   :config
   (progn
     (setq circe-network-options
-	  '(("Freenode"
-	     :nick "phlm"
-	     :nickserv-password my-nickserv-password
-	     :channels (:after-auth "#lisp" "#emacs" "#freebsd" "#haskell" "#clojure" "#illumos" "##c++"))
-	    ("OFTC"
-	     :nick "phlm"
-	     :channels ("#kernelnewbies"))))
+          '(("Freenode"
+             :nick "phlm"
+             :nickserv-password my-nickserv-password
+             :channels (:after-auth "#lisp" "#emacs" "#freebsd" "#haskell" "#clojure" "#illumos" "##c++"))
+            ("OFTC"
+             :nick "phlm"
+             :channels ("#kernelnewbies"))))
     (enable-circe-color-nicks)
     (setq circe-reduce-lurker-spam t)
     (setq circe-format-server-topic "*** Topic change by {userhost}: {topic-diff}")
     (setq circe-format-say "{nick:-12s} {body}")
     (setq lui-time-stamp-position 'right-margin
-	  lui-fill-type nil)
+          lui-fill-type nil)
     (add-hook 'lui-mode-hook 'my-lui-setup)
     (defun my-lui-setup ()
       (setq
@@ -409,33 +426,33 @@
        word-wrap t
        wrap-prefix "     "))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Languages
+;; -----------------------------------------------------------------------------
+;; Languages: C, C++, Rust, Racket, Scheme, Clojure, Common Lisp, Latex
+;; -----------------------------------------------------------------------------
 ;; C/C++
-
 ;; Use llvm style for C++
 ;; For C use default GNU 8 spaces tab
 (c-add-style "llvm.org"
              '("gnu"
-	       (fill-column . 80)
-	       (c++-indent-level . 2)
-	       (c-basic-offset . 2)
-	       (indent-tabs-mode . nil)
-	       (c-offsets-alist . ((arglist-intro . ++)
-				   (innamespace . 0)
-				   (member-init-intro . ++)))))
+               (fill-column . 80)
+               (c++-indent-level . 2)
+               (c-basic-offset . 2)
+               (indent-tabs-mode . nil)
+               (c-offsets-alist . ((arglist-intro . ++)
+                                   (innamespace . 0)
+                                   (member-init-intro . ++)))))
 
 (add-hook 'c++-mode-hook (function (lambda ()
-				     (progn
-				       (c-set-style "llvm.org")))))
+                                     (progn
+                                       (c-set-style "llvm.org")))))
 
 (use-package ggtags
   :defer t
   :config
   (add-hook 'c-mode-common-hook
-	    (lambda ()
-	      (when (derived-mode-p 'c-mode 'c++-mode)
-		(ggtags-mode 1)))))
+            (lambda ()
+              (when (derived-mode-p 'c-mode 'c++-mode)
+                (ggtags-mode 1)))))
 
 (defun +ccls/enable ()
   "Enalbe CCLS with LSP."
@@ -475,7 +492,6 @@
   :config (push 'company-lsp company-backends)
   (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
 
-
 ;; Racket/Scheme
 (use-package geiser
   :defer t
@@ -490,18 +506,18 @@
   :defer t
   :commands (cider cider-connect cider-jack-in)
   :mode (("\\.clj\\'" . clojure-mode)
-	 ("\\.edn\\'" . clojure-mode))
+         ("\\.edn\\'" . clojure-mode))
   :config
   (setq cider-auto-select-error-buffer t
-	cider-repl-pop-to-buffer-on-connect nil
-	cider-repl-use-clojure-font-lock t
-	cider-repl-wrap-gistory t
-	cider-repl-history-size 1000
-	cider-repl-use-pretty-printing t
-	cider-show-error-buffer t
-	cider-inject-dependencies-at-jack-in t
-	nrepl-hide-special-buffers t
-	nrepl-popup-stacktraces nil)
+        cider-repl-pop-to-buffer-on-connect nil
+        cider-repl-use-clojure-font-lock t
+        cider-repl-wrap-gistory t
+        cider-repl-history-size 1000
+        cider-repl-use-pretty-printing t
+        cider-show-error-buffer t
+        cider-inject-dependencies-at-jack-in t
+        nrepl-hide-special-buffers t
+        nrepl-popup-stacktraces nil)
   (add-hook 'cider-mode-hook #'eldoc-mode)
   (add-hook 'cider-mode-hook #'company-mode)
   (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
@@ -525,8 +541,8 @@
 (use-package rust-mode
   :defer t
   :config (add-hook 'rust-mode-hook
-		    (lambda ()
-		      (local-set-key (kbd "C-c <tab>") #'rust-format-buffer))))
+                    (lambda ()
+                      (local-set-key (kbd "C-c <tab>") #'rust-format-buffer))))
 
 (use-package cargo
   :defer t
@@ -544,6 +560,30 @@
 (use-package realgud
   :defer t)
 
+;; LaTeX -- C-c C-c to compile LaTeX to pdf, and C-c C-c to open it in Skim
+;;          C-c C-l to view compilation output
+(setq TeX-PDF-mode t)
+(use-package auctex-latexmk
+  :defer t)
+
+(add-hook 'LaTeX-mode-hook
+          (lambda ()
+            (push
+             '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+               :help "Run latexmk on file")
+             TeX-command-list)))
+(add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
+
+(setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+(setq TeX-view-program-list
+      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+
+(custom-set-variables
+ '(TeX-source-correlate-method 'synctex)
+ '(TeX-source-correlate-mode t)
+ '(TeX-source-correlate-start-server t))
+
+;; -----------------------------------------------------------------------------
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
 ;; fill-column: 80
