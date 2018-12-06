@@ -454,21 +454,16 @@
               (when (derived-mode-p 'c-mode 'c++-mode)
                 (ggtags-mode 1)))))
 
-(defun +ccls/enable ()
-  "Enalbe CCLS with LSP."
-  (condition-case nil
-      (lsp-ccls-enable)
-    (user-error nil)))
-
 (setq ccls-executable "/usr/local/Cellar/ccls/0.20180924/bin/ccls")
 
 (use-package ccls
-  :commands (lsp-ccls-enable)
-  :init
-  (add-hook 'c-mode-hook #'+ccls/enable)
-  (add-hook 'c++-mode-hook #'+ccls/enable)
-  (add-hook 'cuda-mode-hook #'+ccls/enable)
-  :config (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
+  :commands (lsp)
+  :config (setq company-transformers nil
+                company-lsp-async t
+                company-lsp-cache-candidates nil))
+(add-hook 'c++-mode-hook  (lambda () (require 'ccls) (lsp)))
+(add-hook 'c-mode-hook    (lambda () (require 'ccls) (lsp)))
+(add-hook 'cuda-mode-hook (lambda () (require 'ccls) (lsp)))
 
 (use-package counsel-gtags
   :defer t)
@@ -485,7 +480,8 @@
   :init (cscope-setup))
 
 (use-package lsp-mode
-  :defer t)
+  :commands lsp
+  :config (require 'lsp-clients))
 
 (use-package company-lsp
   :after (ccls company lsp-mode)
@@ -535,7 +531,6 @@
     (load (expand-file-name "~/.quicklisp/slime-helper.el"))
     (setq inferior-lisp-program "/usr/local/Cellar/sbcl/1.4.12/bin/sbcl")
     (setq slime-contribs '(slime-fancy))))
-
 
 ;; Rust
 (use-package rust-mode
