@@ -58,10 +58,11 @@
 (line-number-mode    1)
 (column-number-mode  1)
 (blink-cursor-mode   1)
-(global-hl-line-mode 0)
+(global-hl-line-mode 1)
 
 (setq c-default-style "gnu")
 (setq-default c-basic-offset 8)
+
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       dired-use-ls-dired nil
@@ -182,7 +183,8 @@
                              (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :family "ProFont for Powerline" :height 120 :weight 'normal)
+(set-face-attribute 'default nil :family "ProFont for Powerline"
+                    :height 120 :weight 'normal)
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (setq org-html-validation-link nil)
@@ -365,32 +367,33 @@
   (push "-k" elfeed-curl-extra-arguments)
   (setq-default elfeed-search-filter "@1-week-ago +unread")
   (setq elfeed-feeds
-        '(("https://nullprogram.com/feed/" systems emacs)
-          ("https://utcc.utoronto.ca/~cks/space/blog/?atom" unix)
-          ("https://eli.thegreenplace.net/feeds/all.atom.xml")
-          ("https://joelonsoftware.com/feed/")
-          ("http://bit-player.org/feed")
-          ("http://feeds.feedburner.com/HighScalability")
-          ("https://blog.codinghorror.com/rss/")
-          ("https://martinfowler.com/feed.atom" agile)
-          ("https://www.tedunangst.com/flak/rss")
+        '(("https://nullprogram.com/feed/"                       systems emacs)
+          ("https://utcc.utoronto.ca/~cks/space/blog/?atom"               unix)
+          ("https://eli.thegreenplace.net/feeds/all.atom.xml"                 )
+          ("https://joelonsoftware.com/feed/"                                 )
+          ("http://bit-player.org/feed"                                       )
+          ("http://feeds.feedburner.com/HighScalability"                      )
+          ("https://blog.codinghorror.com/rss/"                               )
+          ("https://martinfowler.com/feed.atom"                          agile)
+          ("https://www.tedunangst.com/flak/rss"                              )
           ("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
-          ("http://blog.cognitect.com/blog?format=rss" clojure)
-          ("http://www.righto.com/feeds/posts/default" hardware)
-          ("http://lambda-the-ultimate.org/rss.xml" functional)
-          ("http://willcrichton.net/notes/")
-          ("https://danlebrero.com/feed.rss" programming)
-          ("http://tonsky.me/blog/atom.xml" clojure)
-          ("http://www.scheme.dk/planet/atom.xml" scheme)
-          ("https://existentialtype.wordpress.com/feed/" functional)
-          ("https://byorgey.wordpress.com/feed/" functional)
-          ("http://lambda-the-ultimate.org/rss.xml" functional)
-          ("https://furbo.org/feed/")
+          ("http://blog.cognitect.com/blog?format=rss"                 clojure)
+          ("http://www.righto.com/feeds/posts/default"                hardware)
+          ("http://lambda-the-ultimate.org/rss.xml"                 functional)
+          ("http://willcrichton.net/notes/"                                   )
+          ("https://danlebrero.com/feed.rss"                       programming)
+          ("http://tonsky.me/blog/atom.xml"                            clojure)
+          ("http://www.scheme.dk/planet/atom.xml"                       scheme)
+          ("https://existentialtype.wordpress.com/feed/"            functional)
+          ("https://byorgey.wordpress.com/feed/"                    functional)
+          ("http://lambda-the-ultimate.org/rss.xml"                 functional)
+          ("https://furbo.org/feed/"                                          )
           )))
 
 (add-hook 'elfeed-show-mode-hookb
-          (lambda () (set-face-attribute 'variable-pitch (selected-frame) :font
-                                         (font-spec :family "Monaco" :size 12))))
+          (lambda ()
+            (set-face-attribute 'variable-pitch (selected-frame)
+                                :font (font-spec :family "Monaco" :size 12))))
 
 ;; IRC
 (setq my-credentials-file "~/.emacs.d/.private.el")
@@ -408,7 +411,8 @@
           '(("Freenode"
              :nick "phlm"
              :nickserv-password my-nickserv-password
-             :channels (:after-auth "#lisp" "#emacs" "#freebsd" "#haskell" "#clojure" "#illumos" "##c++"))
+             :channels (:after-auth "#lisp" "#emacs" "#freebsd" "#haskell"
+                                    "#clojure" "#illumos" "##c++"))
             ("OFTC"
              :nick "phlm"
              :channels ("#kernelnewbies"))))
@@ -486,7 +490,8 @@
 (use-package company-lsp
   :after (ccls company lsp-mode)
   :config (push 'company-lsp company-backends)
-  (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
+  (setq company-transformers nil company-lsp-async t
+        company-lsp-cache-candidates nil))
 
 ;; Racket/Scheme
 (use-package geiser
@@ -522,15 +527,6 @@
 
 (use-package clj-refactor
   :defer t)
-
-;; Common Lisp
-(use-package slime
-  :defer t
-  :config
-  (progn
-    (load (expand-file-name "~/.quicklisp/slime-helper.el"))
-    (setq inferior-lisp-program "/usr/local/Cellar/sbcl/1.4.12/bin/sbcl")
-    (setq slime-contribs '(slime-fancy))))
 
 ;; Rust
 (use-package rust-mode
@@ -571,7 +567,8 @@
 
 (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
 (setq TeX-view-program-list
-      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+      '(("PDF Viewer"
+         "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
 
 (custom-set-variables
  '(TeX-source-correlate-method 'synctex)
