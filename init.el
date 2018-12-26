@@ -3,8 +3,8 @@
 (require 'package)
 ;;; Code:
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -58,11 +58,10 @@
 (line-number-mode    1)
 (column-number-mode  1)
 (blink-cursor-mode   1)
-(global-hl-line-mode 1)
 
 (setq c-default-style "gnu")
 (setq-default c-basic-offset 8)
-
+(setq-default     line-spacing 2)
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       dired-use-ls-dired nil
@@ -90,8 +89,8 @@
       gc-cons-threshold (* 50 1000 1000)
       ns-use-mwheel-momentum t
       ns-use-mwheel-acceleration t
-      ns-use-thin-smoothing nil
-      ns-antialias-text nil
+      ns-use-thin-smoothing t
+      ns-antialias-text t
       shell-file-name "/bin/bash"
       blink-cursor-blinks 7)
 
@@ -121,8 +120,8 @@
   (indent-region (point-min) (point-max)))
 
 (setq initial-frame-alist
-      '((width . 135)
-        (height . 60)))
+      '((width . 175)
+        (height . 53)))
 (setq org-hide-emphasis-markers t)
 
 (setq eshell-scroll-to-bottom-on-output nil)
@@ -183,8 +182,7 @@
                              (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :family "ProFont for Powerline"
-                    :height 120 :weight 'normal)
+(set-face-attribute 'default nil :font "Brutalist Mono-11")
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (setq org-html-validation-link nil)
@@ -192,6 +190,14 @@
 ;; -----------------------------------------------------------------------------
 ;; -- Packages
 ;; -----------------------------------------------------------------------------
+;;
+;; Light is Acme inspired, dark theme is my minimalistic 8bit retro theme with
+;; rainbow parens cause Lispsss )))))))))))
+;;
+;; (use-package acme-theme
+;;   :init (setq acme-theme-gray-rainbow-delimiters nil
+;;               acme-theme-more-syntax-hl t))
+
 (load-theme 'blackbox t)
 
 (use-package expand-region
@@ -251,15 +257,6 @@
   :config
   (setq exec-path-from-shell-check-startup-files nil))
 
-(use-package smart-mode-line
-  :init
-  (progn
-    (setq sml/theme 'respectful)
-    (setq sml/name-width 50)
-    (setq sml/mode-width 'full)
-    (setq sml/no-confirm-load-theme t))
-  :config (sml/setup))
-
 (use-package which-key
   :defer 1
   :diminish
@@ -290,7 +287,7 @@
 (use-package ivy
   :init (add-hook 'after-init-hook #'ivy-mode)
   :config
-  (setq ivy-height 10
+  (setq ivy-height 15
         ivy-wrap t
         ivy-fixed-height-minibuffer t
         ivy-use-virtual-buffers t
@@ -387,13 +384,8 @@
           ("https://existentialtype.wordpress.com/feed/"            functional)
           ("https://byorgey.wordpress.com/feed/"                    functional)
           ("http://lambda-the-ultimate.org/rss.xml"                 functional)
-          ("https://furbo.org/feed/"                                          )
-          )))
-
-(add-hook 'elfeed-show-mode-hookb
-          (lambda ()
-            (set-face-attribute 'variable-pitch (selected-frame)
-                                :font (font-spec :family "Monaco" :size 12))))
+          ("https://furbo.org/feed/"                                          ))
+        ))
 
 ;; IRC
 (setq my-credentials-file "~/.emacs.d/.private.el")
@@ -431,7 +423,7 @@
        wrap-prefix "     "))))
 
 ;; -----------------------------------------------------------------------------
-;; Languages: C, C++, Rust, Racket, Scheme, Clojure, Common Lisp, Latex
+;; Languages: C, C++, Rust, Racket, Scheme, Clojure, Latex
 ;; -----------------------------------------------------------------------------
 ;; C/C++
 ;; Use llvm style for C++
