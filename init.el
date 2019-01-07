@@ -4,7 +4,7 @@
 ;;; Code:
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -61,7 +61,7 @@
 
 (setq c-default-style "gnu")
 (setq-default c-basic-offset 8)
-(setq-default     line-spacing 2)
+(setq-default     line-spacing 1)
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       dired-use-ls-dired nil
@@ -120,7 +120,7 @@
   (indent-region (point-min) (point-max)))
 
 (setq initial-frame-alist
-      '((width . 175)
+      '((width . 120)
         (height . 53)))
 (setq org-hide-emphasis-markers t)
 
@@ -192,8 +192,9 @@
 ;; -----------------------------------------------------------------------------
 ;;
 ;; Light is Acme inspired, dark theme is my minimalistic 8bit retro theme with
-;; rainbow parens cause Lispsss )))))))))))
-;;
+;; rainbow parens cause Lispsss (blackbox)))).
+;; Use Acme it in case of bright environments, else use blackbox.
+
 ;; (use-package acme-theme
 ;;   :init (setq acme-theme-gray-rainbow-delimiters nil
 ;;               acme-theme-more-syntax-hl t))
@@ -316,12 +317,12 @@
   :config (smex-initialize))
 
 (use-package counsel
-  :bind (("M-x"         . counsel-M-x)
+  :bind (("M-x"     . counsel-M-x)
          ("C-x C-f" . counsel-find-file)
          ("C-h f"   . counsel-describe-function)
          ("C-h v"   . counsel-describe-variable)
          ("C-c C-s" . counsel-rg)
-         ("M-y"         . counsel-yank-pop)))
+         ("M-y"     . counsel-yank-pop)))
 
 (use-package flycheck
   :init (global-flycheck-mode))
@@ -384,8 +385,7 @@
           ("https://existentialtype.wordpress.com/feed/"            functional)
           ("https://byorgey.wordpress.com/feed/"                    functional)
           ("http://lambda-the-ultimate.org/rss.xml"                 functional)
-          ("https://furbo.org/feed/"                                          ))
-        ))
+          ("https://furbo.org/feed/"                                          ))))
 
 ;; IRC
 (setq my-credentials-file "~/.emacs.d/.private.el")
@@ -405,9 +405,13 @@
              :nickserv-password my-nickserv-password
              :channels (:after-auth "#lisp" "#emacs" "#freebsd" "#haskell"
                                     "#clojure" "#illumos" "##c++"))
-            ("OFTC"
+            ("Rizon"
+             :host "irc.rizon.net"
              :nick "phlm"
-             :channels ("#kernelnewbies"))))
+             :port 9999
+             :use-tls t
+             :nickserv-password my-nickserv-password
+             :channels (:after-auth "#dailyprog"))))
     (enable-circe-color-nicks)
     (setq circe-reduce-lurker-spam t)
     (setq circe-format-server-topic "*** Topic change by {userhost}: {topic-diff}")
@@ -423,7 +427,7 @@
        wrap-prefix "     "))))
 
 ;; -----------------------------------------------------------------------------
-;; Languages: C, C++, Rust, Racket, Scheme, Clojure, Latex
+;; Languages: C, C++, Rust, Go, Racket/Scheme, Clojure, Latex;
 ;; -----------------------------------------------------------------------------
 ;; C/C++
 ;; Use llvm style for C++
@@ -542,6 +546,28 @@
 
 (use-package realgud
   :defer t)
+
+;; Go
+(use-package go-mode
+:ensure t
+:init (add-hook 'go-mode-hook
+                  (lambda ()
+                    (setq gofmt-command "goimports")
+                    (add-hook 'before-save-hook 'gofmt-before-save)
+                    (setq truncate-lines t)
+                    (setq indent-tabs-mode t)
+                    (setq tab-width 4))))
+
+(use-package company-go
+  :ensure t)
+
+(add-hook 'go-mode-hook (lambda ()
+                          (set (make-local-variable 'company-backends) '(company-go))
+                          (company-mode)))
+
+(use-package go-eldoc
+:ensure t
+:init (add-hook 'go-mode-hook 'go-eldoc-setup))
 
 ;; LaTeX -- C-c C-c to compile LaTeX to pdf, and C-c C-c to open it in Skim
 ;;          C-c C-l to view compilation output
