@@ -61,7 +61,6 @@
 
 (setq c-default-style "gnu")
 (setq-default c-basic-offset 8)
-(setq-default     line-spacing 1)
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       dired-use-ls-dired nil
@@ -85,7 +84,7 @@
       make-backup-files nil
       eshell-cmpl-ignore-case t
       create-lockfiles nil
-      frame-title-format (list "emacs: %b -- %f")
+      frame-title-format (list "emacs - %b  %f")
       gc-cons-threshold (* 50 1000 1000)
       ns-use-mwheel-momentum t
       ns-use-mwheel-acceleration t
@@ -182,7 +181,7 @@
                              (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :font "Brutalist Mono-11")
+(set-face-attribute 'default nil :font "Iosevka Term-13")
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (setq org-html-validation-link nil)
@@ -213,7 +212,7 @@
     (setq shackle-rules
           '((compilation-mode :noselect t)
             ("*undo-tree*"    :noselect t :size 0.25 :align right)
-            ("*eshell*"           :select t :other t)
+            ("*eshell*" :select t :other t)
             ("*Shell Command Output*" :noselect t)
             (occur-mode :noselect t :align t)
             ("*Help*" :select t :inhibit-window-quit t :other t)
