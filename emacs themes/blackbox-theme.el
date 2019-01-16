@@ -1,38 +1,35 @@
-;;; blackbox-theme.el --- Black and lightgray theme with not so much syntax highlighting.
+;;; blackbox-theme.el --- Black and LightGray theme with not so much syntax highlighting.
 
-;; Author: Maxim Kim <habamax@gmail.com>
-;; Url: https://github.com/habamax/blackbox-theme
-;; Package-Version: 20170502.1850
-;; Package-Requires: ((emacs "24"))
+;; Author: Filip Miletic <miletic.phil@gmail.com>
 
 ;;; Commentary:
 
 ;; Black and LightGray theme with limited syntax highlighting focusing on:
 ;; 1. keywords -- a bit of standout (just white)
-;; 2. strings -- clearly visible, to be sure quotes are closed (greenish)
-;; 3. comments -- should standout of other source code (kind of cyanish).
+;; 2. strings -- clearly visible, to be sure quotes are closed (cyan3)
+;; 3. comments -- should standout of other source code (green3).
 
 ;;; Code:
 
-(deftheme blackbox "Have you set up optical filters for you space suit? I have...")
+(deftheme blackbox "Have you set up optical filters for you space suit?")
 
 (let
-    ((blackbox-fg "#cdcdcd")
+    ((blackbox-fg "#b2b2b2")
      (blackbox-bg "#101010")
-     (blackbox-bg-modeline-active "#2f4f4f")
-     (blackbox-bg-modeline-inactive "#202020")
+     (blackbox-bg-modeline-active "#1f2f5f")
+     (blackbox-bg-modeline-inactive "#20202f")
      (blackbox-box-modeline-active "#3f5f5f")
      (blackbox-box-modeline-inactive "#303030")
 	 ;; keyword f5f8fa
      (blackbox-keyword "#ffffff")
      ;; str 63eb63, 00dbb1
-	 (blackbox-str "#23D0CA")
+	 (blackbox-str "#23d0ca")
 	 ;; comment  63eb63
      (blackbox-comment "#00df69")
      (blackbox-special "#ffa500")
      (blackbox-gray "#777777")
      (blackbox-fg-dim "#777777")
-     (blackbox-bg-dim "#141414")
+     (blackbox-bg-dim "#141416")
      (blackbox-fg-dim-2 "#506060")
      (blackbox-fg-todo "#bdabab")
      (blackbox-bg-todo "#ff0055")
@@ -43,8 +40,8 @@
      (blackbox-bg-hl-parens "#e242ac")
      (blackbox-bg-alt "#1E282D")
      (blackbox-fg-modeline-hl "#ffff00")
-     (blackbox-bg-whitespace "#1a1a1f")
-     (blackbox-fg-whitespace "#242431")
+     (blackbox-bg-whitespace "#202020")
+     (blackbox-fg-whitespace "#555555")
      (blackbox-fg-search "#fff68f")
      (blackbox-bg-search "#606020")
      (blackbox-fg-lazysearch "#40e0d0")
@@ -70,18 +67,18 @@
    ;; `(header-line ((t (:foreground ,blackbox-keyword :background "#6b5e46" :box (:line-width 1 :color "#8d7a56" :style none)))))
    `(header-line ((t (:foreground ,blackbox-keyword :background "#404040"))))
    `(hl-line ((t (:background "#141416"))))
-   
+   '(highlight-numbers-number ((t (:foreground "#EB77EC"))))
    `(isearch ((t (:background ,blackbox-bg-search :foreground ,blackbox-fg-search :weight bold :underline (:color ,blackbox-fg-search)))))
    `(lazy-highlight ((t (:background ,blackbox-bg-lazysearch :foreground ,blackbox-fg-lazysearch :weight bold :underline (:color ,blackbox-fg-lazysearch)))))
    ;; match?
    `(isearch-fail ((t (:background ,blackbox-bg-search-fail :foreground ,blackbox-fg-search-fail :weight bold :underline (:color ,blackbox-fg-search-fail)))))
-
+   
 
    ;; frame UI
-   `(mode-line ((t (:background "#303030" :foreground ,blackbox-keyword :box (:line-width 3 :color "#303030")))))
-   `(mode-line-inactive ((t (:background ,blackbox-bg-dim :foreground ,blackbox-gray :box (:line-width 3 :color ,blackbox-bg-dim)))))
+   `(mode-line ((t (:background "#333333" :foreground "#ffffff"))))
+   `(mode-line-inactive ((t (:background "#181818" :foreground ,blackbox-gray))))
    `(mode-line-buffer-id ((t (:foreground ,blackbox-comment))))
-   `(mode-line-highlight ((nil (:foreground ,blackbox-fg-modeline-hl :box (:line-width 3 :color ,blackbox-fg)))))
+   `(mode-line-highlight ((nil (:foreground ,blackbox-fg-modeline-hl))))
    `(vertical-border ((nil (:foreground ,blackbox-box-modeline-inactive))))
    `(fringe ((nil (:background ,blackbox-bg-dim))))
 
@@ -100,13 +97,14 @@
    '(font-lock-function-name-face ((t nil)))
    '(font-lock-variable-name-face ((t nil)))
    '(font-lock-constant-face ((t nil)))
+   
    ;; review this later.
    `(font-lock-regexp-grouping-backslash ((t (:foreground ,blackbox-str :weight bold))))
    `(font-lock-regexp-grouping-construct ((t (:foreground ,blackbox-str :weight bold :slant italic))))
 
 
    ;; parenthesis and pairs
-   `(show-paren-match ((t :background "yellow" :foreground "black")))
+   `(show-paren-match ((t :background "#FFD603" :foreground "black")))
    `(sp-show-pair-match-face ((t (:background ,blackbox-bg-hl-parens))))
 
 
@@ -140,9 +138,6 @@
 
    ;; erc
    '(erc-current-nick-face ((t (:foreground "#ffffff"))))
-   ;; if erc-nick-default-face has foreground setup then it could not be
-   ;; overriden by erc-my-nick-face
-   ;; '(erc-nick-default-face ((t (:foreground "#779977"))))
    '(erc-my-nick-face ((t (:foreground "#cc5555"))))
    '(erc-input-face ((t (:foreground "#8dbdbd"))))
    '(erc-timestamp-face ((t (:foreground "Wheat"))))
@@ -253,9 +248,8 @@
 
    ;; CSS
    '(css-selector ((t (:inherit font-lock-keyword-face))))
-   ;; '(css-property ((t (:inherit font-lock-keyword-face))))
 
-
+   
    ;; XML
    `(nxml-element-local-name ((t (:foreground ,blackbox-fg-dim))))
    `(nxml-tag-delimiter ((t (:foreground ,blackbox-fg-dim))))
@@ -288,22 +282,14 @@
 
    ;; asciidoctor-mode
    `(asciidoctor-header-delimiter-face ((t (:foreground ,blackbox-fg-dim))))
-
    `(asciidoctor-header-face-1 ((t (:foreground ,blackbox-title :weight bold :height 1.3))))
    `(asciidoctor-header-face-2 ((t (:foreground ,blackbox-heading :weight bold :height 1.3))))
    `(asciidoctor-header-face-3 ((t (:foreground ,blackbox-heading :weight bold :height 1.2))))
    `(asciidoctor-header-face-4 ((t (:foreground ,blackbox-heading :weight bold :height 1.1))))
    `(asciidoctor-header-face-5 ((t (:foreground ,blackbox-heading :slant italic :height 1.1))))
    `(asciidoctor-header-face-6 ((t (:foreground ,blackbox-heading :slant italic :height 1.1))))
-
    `(asciidoctor-option-face ((t (:foreground ,blackbox-fg-dim))))
    `(asciidoctor-option-markup-face ((t (:foreground ,blackbox-fg-dim))))
-
-
-   `(bongo-comment ((t (:foreground ,blackbox-fg-dim))))
-   `(bongo-elapsed-track-part ((t (:background ,blackbox-bg-alt))))
-   `(bongo-currently-playing-track ((t (:slant italic))))
-
    )
   )
 
