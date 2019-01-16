@@ -1119,11 +1119,13 @@
 		<integer>1</integer>
 	</dict>
 	<key>NSWindow Frame NSFontPanel</key>
-	<string>900 33 445 77 0 0 1440 877 </string>
+	<string>2774 229 445 77 1440 196 1920 1057 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>490 447 918 423 0 0 1440 877 </string>
+	<string>517 368 928 394 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>56 0 1378 877 0 0 1440 877 </string>
+	<string>235 40 710 809 0 0 1440 877 </string>
+	<key>NSWindow Frame iTerm Window 1</key>
+	<string>176 10 885 867 0 0 1440 877 </string>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
@@ -1780,7 +1782,7 @@
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>SFMono-Regular 13</string>
+			<string>NotoSansMono-Medium 12</string>
 			<key>Option Key Sends</key>
 			<integer>2</integer>
 			<key>Prompt Before Closing 2</key>
@@ -1845,7 +1847,7 @@
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Thin Strokes</key>
-			<integer>0</integer>
+			<integer>3</integer>
 			<key>Transparency</key>
 			<real>0.0</real>
 			<key>Unlimited Scrollback</key>
