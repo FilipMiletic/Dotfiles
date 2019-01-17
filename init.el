@@ -88,7 +88,7 @@
       gc-cons-threshold (* 50 1000 1000)
       ns-use-mwheel-momentum t
       ns-use-mwheel-acceleration t
-      ns-use-thin-smoothing t
+      ns-use-thin-smoothing nil
       ns-antialias-text t
       shell-file-name "/bin/bash"
       blink-cursor-blinks 7)
@@ -109,6 +109,7 @@
   (when newline-and-indent
     (indent-according-to-mode)))
 
+(global-set-key (kbd "C-x C-b") 'ivy-switch-buffer)
 (global-set-key (kbd "M-o") 'open-previous-line)
 (global-set-key (kbd "C-x C-u") 'undo-tree-mode)
 (defvar newline-and-indent t)
@@ -140,7 +141,7 @@
 
 (defun fm/rename-this-file-and-buffer (new-name)
   "Renames both current buffer and file it has open with NEW-NAME."
-  (interactive "sNew name: ")
+  (interactive "New name: ")
   (let ((name (buffer-name))
         (filename (buffer-file-name)))
     (unless filename
@@ -181,7 +182,7 @@
                              (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :font "Iosevka Term-13")
+(set-face-attribute 'default nil :font "Noto Sans Mono-12:weight=Medium")
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (setq org-html-validation-link nil)
@@ -193,7 +194,7 @@
 ;; Light is Acme inspired, dark theme is my minimalistic 8bit retro theme with
 ;; rainbow parens cause Lispsss (blackbox)))).
 ;; Use Acme it in case of bright environments, else use blackbox.
-
+;;
 ;; (use-package acme-theme
 ;;   :init (setq acme-theme-gray-rainbow-delimiters nil
 ;;               acme-theme-more-syntax-hl t))
@@ -365,26 +366,14 @@
   (setq-default elfeed-search-filter "@1-week-ago +unread")
   (setq elfeed-feeds
         '(("https://nullprogram.com/feed/"                       systems emacs)
-          ("https://utcc.utoronto.ca/~cks/space/blog/?atom"               unix)
           ("https://eli.thegreenplace.net/feeds/all.atom.xml"                 )
-          ("https://joelonsoftware.com/feed/"                                 )
           ("http://bit-player.org/feed"                                       )
-          ("http://feeds.feedburner.com/HighScalability"                      )
           ("https://blog.codinghorror.com/rss/"                               )
-          ("https://martinfowler.com/feed.atom"                          agile)
           ("https://www.tedunangst.com/flak/rss"                              )
-          ("https://muratbuffalo.blogspot.com/feeds/posts/default" distributed)
-          ("http://blog.cognitect.com/blog?format=rss"                 clojure)
           ("http://www.righto.com/feeds/posts/default"                hardware)
-          ("http://lambda-the-ultimate.org/rss.xml"                 functional)
-          ("http://willcrichton.net/notes/"                                   )
-          ("https://danlebrero.com/feed.rss"                       programming)
           ("http://tonsky.me/blog/atom.xml"                            clojure)
-          ("http://www.scheme.dk/planet/atom.xml"                       scheme)
-          ("https://existentialtype.wordpress.com/feed/"            functional)
-          ("https://byorgey.wordpress.com/feed/"                    functional)
-          ("http://lambda-the-ultimate.org/rss.xml"                 functional)
-          ("https://furbo.org/feed/"                                          ))))
+          ("https://furbo.org/feed/"                                          )
+          ("https://ferd.ca/feed.rss"))))
 
 ;; IRC
 (setq my-credentials-file "~/.emacs.d/.private.el")
@@ -529,13 +518,13 @@
   :config (add-hook 'rust-mode-hook
                     (lambda ()
                       (local-set-key (kbd "C-c <tab>") #'rust-format-buffer))))
+(setq company-tooltip-align-annotations t)
 
 (use-package cargo
   :defer t
   :config (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package racer
-  :defer t
   :config
   (progn
     (setq racer-cmd "~/.cargo/bin/racer")
