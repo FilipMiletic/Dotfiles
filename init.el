@@ -72,9 +72,9 @@
       inhibit-startup-message t
       mouse-wheel-scroll-amount '(1 ((shift) .1))
       mouse-wheel-progressive-speed nil
-      scroll-step 1
-      scroll-conservatively 100000
-      scroll-margin 8
+      scroll-step 0
+      scroll-conservatively 1000
+      scroll-margin 0
       fringes-outside-margins 1
       ns-pop-up-frames nil
       make-backup-files nil
@@ -391,8 +391,8 @@
           '(("Freenode"
              :nick "phlm"
              :nickserv-password my-nickserv-password
-             :channels (:after-auth "#lisp" "#emacs" "#freebsd" "#haskell"
-                                    "#clojure" "#illumos" "##c++"))
+             :channels (:after-auth "#lisp" "#emacs" "#haskell" "#clojure"
+                                    "#freebsd" "#illumos" "#nixos" "#gentoo"))
             ("Rizon"
              :host "irc.rizon.net"
              :nick "phlm"
