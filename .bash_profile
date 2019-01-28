@@ -33,9 +33,9 @@ function git_prompt() {
 
     echo -n "@ "
 
-    if [[ $(git status 2> /dev/null | tail -n1) = *"nothing to commit"* ]]; then
+    if [[ $(git status >/dev/null 2>&1 | tail -n1) = *"nothing to commit"* ]]; then
       echo -n "$COLOR_GIT_CLEAN$branch_name$COLOR_RESET"
-    elif [[ $(git status 2> /dev/null | head -n5) = *"Changes to be committed"* ]]; then
+    elif [[ $(git status >/dev/null 2>&1 | head -n5) = *"Changes to be committed"* ]]; then
       echo -n "$COLOR_GIT_STAGED$branch_name$COLOR_RESET"
     else
       echo -n "$COLOR_GIT_MODIFIED$branch_name*$COLOR_RESET"
@@ -45,16 +45,19 @@ function git_prompt() {
   fi
 }
 
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
 
 if [[ -z "$SSH_CLIENT" ]]; then
     # local connection, change prompt
-   export PS1="\[\e[1;32m\]\w\[\e[m\] $(git_prompt)\\e[1;37m\]\$ \e[0m\]"
+   export PS1="\[\e[1;32m\]\w\[\e[m\] $(parse_git_branch)\\e[1;37m\]\$ \e[0m\]"
 else
     # ssh connection, print hostname and os version
     echo "Welcome to $(scutil --get ComputerName) ($(sw_vers -productVersion))"
 fi
  
 function prompt() {
-   export PS1="\[\e[1;32m\]\w\[\e[m\] $(git_prompt)\\e[1;37m\]\$ \e[0m\]"
+   export PS1="\[\e[1;32m\]\w\[\e[m\]\e[1;34m\]$(parse_git_branch) \\e[1;37m\]\$ \e[0m\]"
 }
 PROMPT_COMMAND=prompt
