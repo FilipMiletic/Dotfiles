@@ -23,9 +23,9 @@
 	 ;; keyword f5f8fa
      (blackbox-keyword "#ffffff")
      ;; str 63eb63, 00dbb1
-	 (blackbox-str "#00ecec")
+	 (blackbox-str "#00d6af")
 	 ;; comment  63eb63
-     (blackbox-comment "#00fc3c")
+     (blackbox-comment "#00df69")
      (blackbox-special "#ffa500")
      (blackbox-gray "#777777")
      (blackbox-fg-dim "#777777")
@@ -67,7 +67,7 @@
    ;; `(header-line ((t (:foreground ,blackbox-keyword :background "#6b5e46" :box (:line-width 1 :color "#8d7a56" :style none)))))
    `(header-line ((t (:foreground ,blackbox-keyword :background "#404040"))))
    `(hl-line ((t (:background "#141416"))))
-   '(highlight-numbers-number ((t (:foreground "#EC00BA"))))
+   '(highlight-numbers-number ((t (:foreground "#ff2d65"))))
    `(isearch ((t (:background ,blackbox-bg-search :foreground ,blackbox-fg-search :weight bold :underline (:color ,blackbox-fg-search)))))
    `(lazy-highlight ((t (:background ,blackbox-bg-lazysearch :foreground ,blackbox-fg-lazysearch :weight bold :underline (:color ,blackbox-fg-lazysearch)))))
    ;; match?
