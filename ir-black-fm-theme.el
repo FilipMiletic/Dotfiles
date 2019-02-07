@@ -40,7 +40,11 @@
 
 (let ((*background-color*   "#000000")
       (*brown*              "#E64")
+<<<<<<< HEAD
       (*comments*           "#888888")
+=======
+      (*comments*           "#7C7C7C")
+>>>>>>> 603cd9349f385933753a07411151bcb5e9c8285d
       (*constant*           "#99CC99")
       (*current-line*       "#151515")
       (*cursor-block*       "#FFFFFFF")
@@ -63,8 +67,12 @@
       (*regexp-alternate*      "#FF0")
       (*regexp-alternate-2* "#B18A3D")
       (*search-selection*   "#2F2F00")
+<<<<<<< HEAD
       ;;      (*string*             "#A8FF60")
       (*string*             "#64e264")
+=======
+      (*string*             "#A8FF60")
+>>>>>>> 603cd9349f385933753a07411151bcb5e9c8285d
       (*string-inner*       "#00A0A0")
       (*variable*           "#C6C5FE")
       (*visual-selection*   "#FF6C60")
