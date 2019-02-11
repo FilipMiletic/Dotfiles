@@ -40,25 +40,23 @@
 
 (let ((*background-color*   "#000000")
       (*brown*              "#E64")
-<<<<<<< HEAD
       (*comments*           "#888888")
-=======
-      (*comments*           "#7C7C7C")
->>>>>>> 603cd9349f385933753a07411151bcb5e9c8285d
       (*constant*           "#99CC99")
       (*current-line*       "#151515")
       (*cursor-block*       "#FFFFFFF")
       (*cursor-underscore*  "#888888")
-      (*keywords*           "#96CBFE")
+      (*keywords*           "#5f87af")
       (*light-purple*       "#FFCCFF")
       (*line-number-fg*     "#666666")
       (*line-number-bg*     "#121212")
-      (*method-declaration* "#FFD2A7")
+      (*method-declaration* "#FFbf00")
       (*mode-line-bg*       "#202020")
       (*mode-line-fg*       "#CCCCCC")
       (*normal*             "#F0F0f0")
       (*number*             "#FF73FD")
-      (*operators*          "#FFFFB6")
+      ;;      (*operators*          "#8891cd")
+      (*operators*          "#d700af")
+      (*types*              "#00dbb1")
       (*cyan*               "#96CBFE")
       (*red*                "#FF6C60")
       (*yellow*             "#99cc99")
@@ -67,12 +65,8 @@
       (*regexp-alternate*      "#FF0")
       (*regexp-alternate-2* "#B18A3D")
       (*search-selection*   "#2F2F00")
-<<<<<<< HEAD
       ;;      (*string*             "#A8FF60")
       (*string*             "#64e264")
-=======
-      (*string*             "#A8FF60")
->>>>>>> 603cd9349f385933753a07411151bcb5e9c8285d
       (*string-inner*       "#00A0A0")
       (*variable*           "#C6C5FE")
       (*visual-selection*   "#FF6C60")
@@ -110,7 +104,7 @@
    `(font-lock-regexp-grouping-backslash ((t (:foreground, *regexp*))))
    `(font-lock-regexp-grouping-construct ((t (:foreground, *regexp*))))
    `(font-lock-string-face ((t (:foreground, *string*))))
-   `(font-lock-type-face ((t (:foreground, *operators*))))
+   `(font-lock-type-face ((t (:foreground, *types*))))
    `(font-lock-variable-name-face ((t (:foreground, *variable*))))
    `(font-lock-warning-face ((t (:foreground, *red*))))
    `(font-lock-operator-face ((t (:foreground, "#eb77ec"))))
