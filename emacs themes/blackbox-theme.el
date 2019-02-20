@@ -6,47 +6,47 @@
 
 ;; Black and LightGray theme with limited syntax highlighting focusing on:
 ;; 1. keywords -- a bit of standout (just white)
-;; 2. strings -- clearly visible, to be sure quotes are closed (cyan3)
-;; 3. comments -- should standout of other source code (green3).
+;; 2. cyan:: strings -- clearly visible, to be sure quotes are closed (#3dcccc)
+;; 3. green::comments -- should standout of other source code (#01ff70).
 
 ;;; Code:
 
 (deftheme blackbox "Have you set up optical filters for you space suit?")
 
 (let
-    ((blackbox-fg "#b2b2b2")
-     (blackbox-bg "#101010")
+    ((blackbox-fg "#cccccc")
+     (blackbox-bg "#050505")
      (blackbox-bg-modeline-active "#1f2f5f")
      (blackbox-bg-modeline-inactive "#20202f")
      (blackbox-box-modeline-active "#3f5f5f")
      (blackbox-box-modeline-inactive "#303030")
-	 ;; keyword f5f8fa
+	 ;; keyword #f5f8fa
      (blackbox-keyword "#ffffff")
-     ;; str 63eb63, 00dbb1
-	 (blackbox-str "#00d6af")
-	 ;; comment  63eb63
-     (blackbox-comment "#00df69")
+     ;; str #63eb63, #00dbb1
+	 (blackbox-str "#00ffff")
+	 ;; comment  #00ff3e
+     (blackbox-comment "#00DF69")
      (blackbox-special "#ffa500")
-     (blackbox-gray "#777777")
-     (blackbox-fg-dim "#777777")
-     (blackbox-bg-dim "#141416")
+     (blackbox-gray "#555555")
+     (blackbox-fg-dim "#555555")
+     (blackbox-bg-dim "#0a0a0f")
      (blackbox-fg-dim-2 "#506060")
      (blackbox-fg-todo "#bdabab")
      (blackbox-bg-todo "#ff0055")
      (blackbox-fg-done "#abbdab")
      (blackbox-bg-done "#777777")
-     (blackbox-title "#f0f07f")
+     (blackbox-title "#FFDC00")
      (blackbox-heading "#ffffff")
-     (blackbox-bg-hl-parens "#e242ac")
+     (blackbox-bg-hl-parens "#F012BE")
      (blackbox-bg-alt "#1E282D")
-     (blackbox-fg-modeline-hl "#ffff00")
-     (blackbox-bg-whitespace "#202020")
+     (blackbox-fg-modeline-hl "#FFDC00")
+     (blackbox-bg-whitespace "#161616")
      (blackbox-fg-whitespace "#555555")
-     (blackbox-fg-search "#fff68f")
+     (blackbox-fg-search "#FFDC00")
      (blackbox-bg-search "#606020")
      (blackbox-fg-lazysearch "#40e0d0")
-     (blackbox-bg-lazysearch "#206060")
-     (blackbox-fg-search-fail "#da70d6")
+     (blackbox-bg-lazysearch "#3d9970")
+     (blackbox-fg-search-fail "#F012BE")
      (blackbox-bg-search-fail "#603060")
      (blackbox-bg-highlight "#203040")
      (blackbox-fg-url "#90a0bd")
@@ -75,8 +75,8 @@
    
 
    ;; frame UI
-   `(mode-line ((t (:background "#333333" :foreground "#ffffff"))))
-   `(mode-line-inactive ((t (:background "#181818" :foreground ,blackbox-gray))))
+   `(mode-line ((t (:background "#202020" :foreground "#ffffff"))))
+   `(mode-line-inactive ((t (:background "#151515" :foreground ,blackbox-gray))))
    `(mode-line-buffer-id ((t (:foreground ,blackbox-comment))))
    `(mode-line-highlight ((nil (:foreground ,blackbox-fg-modeline-hl))))
    `(vertical-border ((nil (:foreground ,blackbox-box-modeline-inactive))))
@@ -90,13 +90,15 @@
    ;;`(font-lock-comment-face ((((class color) (background dark)) (:foreground "green"))))
    ;;`(font-lock-string-face ((((class color) (background dark)) (:foreground "cyan"))))
 
-   `(font-lock-keyword-face ((t (:foreground ,blackbox-keyword))))
+   `(font-lock-keyword-face ((t (:foreground ,blackbox-keyword :weight bold))))
    ;; syntax font-lock I DON'T care about
    '(font-lock-builtin-face ((t nil)))
-   `(font-lock-type-face ((t nil)))
-   '(font-lock-function-name-face ((t nil)))
+   ;; d800ab
+   ;;   `(font-lock-type-face ((t (:foreground "#ef00bd"))))
+   '(font-lock-type-face ((t (:weight bold))))
+   `(font-lock-function-name-face ((t nil)))
    '(font-lock-variable-name-face ((t nil)))
-   '(font-lock-constant-face ((t nil)))
+   `(font-lock-constant-face ((t nil)))
    
    ;; review this later.
    `(font-lock-regexp-grouping-backslash ((t (:foreground ,blackbox-str :weight bold))))
@@ -266,6 +268,7 @@
    `(whitespace-newline ((t (:foreground ,blackbox-fg-whitespace))))
    `(whitespace-indentation ((t (:foreground ,blackbox-fg-whitespace :background ,blackbox-bg-whitespace))))
    `(whitespace-line ((nil (:background ,blackbox-bg-whitespace))))
+   `(whitespace-tab ((t (:background ,blackbox-bg-whitespace :foreground ,blackbox-fg-whitespace))))
 
 
    ;; rainbow-delimiters
