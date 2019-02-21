@@ -44,7 +44,8 @@
               require-final-newline t)
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(add-to-list 'load-path "~/.emacs.d/custom")
+(add-to-list 'load-path "~/.emacs.d/lisp")
+
 (setq use-package-always-ensure t)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
@@ -61,7 +62,10 @@
 
 (setq c-default-style "gnu")
 (setq-default c-basic-offset 8)
-(setq mac-option-modifier nil
+
+(setq mouse-autoselect-window nil
+      focus-follows-mouse nil
+      mac-option-modifier nil
       mac-command-modifier 'meta
       dired-use-ls-dired nil
       load-prefer-newer t
@@ -72,9 +76,9 @@
       inhibit-startup-message t
       mouse-wheel-scroll-amount '(1 ((shift) .1))
       mouse-wheel-progressive-speed nil
-      scroll-step 0
-      scroll-conservatively 1000
-      scroll-margin 0
+      scroll-step 1
+      scroll-conservatively 100000
+      scroll-margin 10
       fringes-outside-margins 1
       ns-pop-up-frames nil
       make-backup-files nil
@@ -88,7 +92,6 @@
       gc-cons-threshold (* 50 1000 1000)
       ns-use-mwheel-momentum t
       ns-use-mwheel-acceleration t
-      ns-use-thin-smoothing nil
       ns-antialias-text t
       shell-file-name "/bin/bash"
       blink-cursor-blinks 7)
@@ -168,7 +171,7 @@
   :config
   (add-hook 'eshell-mode-hook
             (lambda ()
-              (load "~/.emacs.d/custom/eshell-customizations.el"))))
+              (load "~/.emacs.d/lisp/eshell-customizations.el"))))
 
 (use-package org
   :mode (("\\.org\\'" . org-mode))
@@ -182,7 +185,7 @@
                              (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :font "Noto Sans Mono-12:weight=Medium")
+(set-face-attribute 'default nil :font "Noto Sans Mono-12")
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (setq org-html-validation-link nil)
@@ -194,12 +197,17 @@
 ;; Light is Acme inspired, dark theme is my minimalistic 8bit retro theme with
 ;; rainbow parens cause Lispsss (blackbox)))).
 ;; Use Acme it in case of bright environments, else use blackbox.
-;;
-;; (use-package acme-theme
-;;   :init (setq acme-theme-gray-rainbow-delimiters nil
-;;               acme-theme-more-syntax-hl t))
+(setq acme-theme-more-syntax-hl t)
+(defadvice load-theme (before clear-previous-themes activate)
+  "Clear existing theme settings instead of layering them."
+  (mapc #'disable-theme custom-enabled-themes))
 
-(load-theme 'blackbox t)
+(use-package circadian
+  :ensure t
+  :config
+  (setq circadian-themes '(("8:00" . acme)
+                           ("19:30" . blackbox)))
+  (circadian-setup))
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
@@ -277,6 +285,8 @@
   :diminish company-mode
   :init
   (add-hook 'after-init-hook 'global-company-mode)
+  (add-hook 'after-init-hook (lambda ()
+                               (company-mode -1)))
   :config
   (setq company-auto-complete nil
         company-idle-delay .3
@@ -383,6 +393,7 @@
     (insert-file-contents-literally my-credentials-file)
     (plist-get (read (buffer-string)) :nickserv-password)))
 
+;; TODO: Replace Circe with weechat
 (use-package circe
   :defer t
   :config
@@ -490,8 +501,9 @@
 (use-package cider
   :defer t
   :commands (cider cider-connect cider-jack-in)
-  :mode (("\\.clj\\'" . clojure-mode)
-         ("\\.edn\\'" . clojure-mode))
+  :mode (("\\.clj\\'"  . clojure-mode)
+         ("\\.edn\\'"  . clojure-mode)
+         ("\\.cljx\\'" . clojure-mode))
   :config
   (setq cider-auto-select-error-buffer t
         cider-repl-pop-to-buffer-on-connect nil
@@ -502,7 +514,8 @@
         cider-show-error-buffer t
         cider-inject-dependencies-at-jack-in t
         nrepl-hide-special-buffers t
-        nrepl-popup-stacktraces nil)
+        nrepl-popup-stacktraces nil
+        cljr-inject-dependencies-at-jack-in nil)
   (add-hook 'cider-mode-hook #'eldoc-mode)
   (add-hook 'cider-mode-hook #'company-mode)
   (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
@@ -532,30 +545,52 @@
     (add-hook 'rust-mode-hook #'racer-mode)
     (add-hook 'racer-mode-hook #'company-mode)))
 
-(use-package realgud
-  :defer t)
+;; Ruby
+(use-package ruby-mode
+  :ensure t
+  :mode "\\.rb\\'"
+  :mode "Rakefile\\'"
+  :mode "Gemfile\\'"
+  :mode "Berksfile\\'"
+  :mode "Vagrantfile\\'"
+  :interpreter "ruby"
+  :init
+  (setq ruby-indent-level 2
+        ruby-indent-tabs-mode nil)
+  :bind
+  (([(meta down)] . ruby-forward-sexp)
+   ([(meta up)]   . ruby-backward-sexp)
+   (("C-c C-e"    . ruby-send-region))))
 
-;; Go
-(use-package go-mode
-:ensure t
-:init (add-hook 'go-mode-hook
-                  (lambda ()
-                    (setq gofmt-command "goimports")
-                    (add-hook 'before-save-hook 'gofmt-before-save)
-                    (setq truncate-lines t)
-                    (setq indent-tabs-mode t)
-                    (setq tab-width 4))))
+(use-package inf-ruby
+  :ensure t
+  :init
+  (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode))
 
-(use-package company-go
-  :ensure t)
+(use-package robe
+  :ensure t
+  :bind ("C-M-." . robe-jump)
+  :init (add-hook 'ruby-mode-hook 'robe-mode)
+  :config (push 'company-robe company-backends))
 
-(add-hook 'go-mode-hook (lambda ()
-                          (set (make-local-variable 'company-backends) '(company-go))
-                          (company-mode)))
+(use-package rubocop
+  :ensure t
+  :init
+  (add-hook 'ruby-mode-hook 'rubocop-mode)
+  :diminish rubocop-mode)
 
-(use-package go-eldoc
-:ensure t
-:init (add-hook 'go-mode-hook 'go-eldoc-setup))
+
+(use-package elpy
+  :commands (elpy-enable)
+  :defer t
+  :config
+  (progn
+    (setq elpy-rpc-backend "jedi"
+          elpy-rpc-project-specific 't
+          elpy-rpc-python-command "python3"
+          jedi:complete-on-dot t)
+    (elpy-enable)))
+
 
 ;; LaTeX -- C-c C-c to compile LaTeX to pdf, and C-c C-c to open it in Skim
 ;;          C-c C-l to view compilation output

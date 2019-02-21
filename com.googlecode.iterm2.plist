@@ -1134,11 +1134,13 @@
 		<integer>1</integer>
 	</dict>
 	<key>NSWindow Frame NSColorPanel</key>
-	<string>1223 185 224 232 0 0 1920 1057 </string>
+	<string>1216 149 224 232 0 0 1440 877 </string>
+	<key>NSWindow Frame NSFontPanel</key>
+	<string>995 110 445 103 0 0 1440 877 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>750 631 928 394 0 0 1920 1057 </string>
+	<string>457 463 928 394 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>443 70 1010 987 0 0 1920 1057 </string>
+	<string>45 23 885 854 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
 	<string>593 4 1010 1053 0 0 1920 1057 </string>
 	<key>New Bookmarks</key>
@@ -1259,11 +1261,11 @@
 				<key>Alpha Component</key>
 				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.41176471110000001</real>
+				<real>0.4117647111415863</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.87450981139999995</real>
+				<real>0.87450981140136719</real>
 				<key>Red Component</key>
 				<real>0.0</real>
 			</dict>
@@ -1365,13 +1367,13 @@
 				<key>Alpha Component</key>
 				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.019607843137254902</real>
+				<real>0.023529411764705882</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.019607843137254902</real>
+				<real>0.023529411764705882</real>
 				<key>Red Component</key>
-				<real>0.019607843137254902</real>
+				<real>0.023529411764705882</real>
 			</dict>
 			<key>Background Image Location</key>
 			<string></string>
@@ -1471,13 +1473,13 @@
 				<key>Alpha Component</key>
 				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.80000000000000004</real>
+				<real>0.84313725490196079</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.80000000000000004</real>
+				<real>0.84313725490196079</real>
 				<key>Red Component</key>
-				<real>0.80000000000000004</real>
+				<real>0.84313725490196079</real>
 			</dict>
 			<key>Guid</key>
 			<string>E2463D6B-462A-4B69-ADEF-EDEA74BE9F54</string>
@@ -1801,7 +1803,7 @@
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>BrutalistMono 13</string>
+			<string>SFMono-Regular 12</string>
 			<key>Option Key Sends</key>
 			<integer>2</integer>
 			<key>Prompt Before Closing 2</key>
