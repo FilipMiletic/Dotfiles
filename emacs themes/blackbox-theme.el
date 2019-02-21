@@ -14,19 +14,19 @@
 (deftheme blackbox "Have you set up optical filters for you space suit?")
 
 (let
-    ((blackbox-fg "#cccccc")
-     (blackbox-bg "#050505")
+    ((blackbox-fg "#bbbbbb")
+     (blackbox-bg "#060606")
      (blackbox-bg-modeline-active "#1f2f5f")
      (blackbox-bg-modeline-inactive "#20202f")
      (blackbox-box-modeline-active "#3f5f5f")
      (blackbox-box-modeline-inactive "#303030")
 	 ;; keyword #f5f8fa
-     (blackbox-keyword "#ffffff")
+     (blackbox-keyword "#f0f0f0")
      ;; str #63eb63, #00dbb1
 	 (blackbox-str "#00ffff")
 	 ;; comment  #00ff3e
-     (blackbox-comment "#00DF69")
-     (blackbox-special "#ffa500")
+     (blackbox-comment "#00FF30")
+     (blackbox-special "#d700af")
      (blackbox-gray "#555555")
      (blackbox-fg-dim "#555555")
      (blackbox-bg-dim "#0a0a0f")
@@ -59,7 +59,7 @@
    ;; standard faces
    `(default ((t (:background ,blackbox-bg :foreground ,blackbox-fg))))
    '(cursor ((nil (:background "#ff2d65"))))
-   `(region ((t (:background "#839191" :foreground ,blackbox-bg))))
+   `(region ((t (:background "#30303f" :foreground ,blackbox-fg-done))))
    `(highlight ((nil (:background ,blackbox-bg-highlight))))
    '(bold ((t (:weight bold))))
    '(minibuffer-prompt ((t (:foreground "#63EB63" :weight bold))))
@@ -67,7 +67,7 @@
    ;; `(header-line ((t (:foreground ,blackbox-keyword :background "#6b5e46" :box (:line-width 1 :color "#8d7a56" :style none)))))
    `(header-line ((t (:foreground ,blackbox-keyword :background "#404040"))))
    `(hl-line ((t (:background "#141416"))))
-   '(highlight-numbers-number ((t (:foreground "#ff2d65"))))
+   `(highlight-numbers-number ((t (:foreground ,blackbox-special))))
    `(isearch ((t (:background ,blackbox-bg-search :foreground ,blackbox-fg-search :weight bold :underline (:color ,blackbox-fg-search)))))
    `(lazy-highlight ((t (:background ,blackbox-bg-lazysearch :foreground ,blackbox-fg-lazysearch :weight bold :underline (:color ,blackbox-fg-lazysearch)))))
    ;; match?
@@ -90,12 +90,10 @@
    ;;`(font-lock-comment-face ((((class color) (background dark)) (:foreground "green"))))
    ;;`(font-lock-string-face ((((class color) (background dark)) (:foreground "cyan"))))
 
-   `(font-lock-keyword-face ((t (:foreground ,blackbox-keyword :weight bold))))
+   `(font-lock-keyword-face ((t (:foreground ,blackbox-keyword))))
    ;; syntax font-lock I DON'T care about
    '(font-lock-builtin-face ((t nil)))
-   ;; d800ab
-   ;;   `(font-lock-type-face ((t (:foreground "#ef00bd"))))
-   '(font-lock-type-face ((t (:weight bold))))
+   `(font-lock-type-face ((t (:foreground nil))))
    `(font-lock-function-name-face ((t nil)))
    '(font-lock-variable-name-face ((t nil)))
    `(font-lock-constant-face ((t nil)))
