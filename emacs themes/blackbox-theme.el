@@ -14,19 +14,21 @@
 (deftheme blackbox "Have you set up optical filters for you space suit?")
 
 (let
-    ((blackbox-fg "#bbbbbb")
-     (blackbox-bg "#060606")
+    ((blackbox-fg "#cccccc")
+     (blackbox-bg "#0a0d0f")
      (blackbox-bg-modeline-active "#1f2f5f")
      (blackbox-bg-modeline-inactive "#20202f")
      (blackbox-box-modeline-active "#3f5f5f")
      (blackbox-box-modeline-inactive "#303030")
-	 ;; keyword #f5f8fa
-     (blackbox-keyword "#f0f0f0")
-     ;; str #63eb63, #00dbb1
-	 (blackbox-str "#00ffff")
-	 ;; comment  #00ff3e
-     (blackbox-comment "#00FF30")
-     (blackbox-special "#d700af")
+
+     (blackbox-keyword "#ffffff")
+     ;; string usual color 00fdff
+	 (blackbox-str "#37ddd7")
+     ;; comment usual color 00df69
+     (blackbox-comment "#00df69")
+     (blackbox-special "#D31895")
+
+     ;; ----------------------
      (blackbox-gray "#555555")
      (blackbox-fg-dim "#555555")
      (blackbox-bg-dim "#0a0a0f")
@@ -77,7 +79,7 @@
    ;; frame UI
    `(mode-line ((t (:background "#202020" :foreground "#ffffff"))))
    `(mode-line-inactive ((t (:background "#151515" :foreground ,blackbox-gray))))
-   `(mode-line-buffer-id ((t (:foreground ,blackbox-comment))))
+   `(mode-line-buffer-id ((t (:foreground "#16cec8"))))
    `(mode-line-highlight ((nil (:foreground ,blackbox-fg-modeline-hl))))
    `(vertical-border ((nil (:foreground ,blackbox-box-modeline-inactive))))
    `(fringe ((nil (:background ,blackbox-bg-dim))))
@@ -87,14 +89,11 @@
    ;; Classical colors all the way. 90s child after all...
    `(font-lock-string-face ((t (:foreground ,blackbox-str))))
    `(font-lock-comment-face ((t (:foreground ,blackbox-comment))))
-   ;;`(font-lock-comment-face ((((class color) (background dark)) (:foreground "green"))))
-   ;;`(font-lock-string-face ((((class color) (background dark)) (:foreground "cyan"))))
-
    `(font-lock-keyword-face ((t (:foreground ,blackbox-keyword))))
    ;; syntax font-lock I DON'T care about
    '(font-lock-builtin-face ((t nil)))
-   `(font-lock-type-face ((t (:foreground nil))))
-   `(font-lock-function-name-face ((t nil)))
+   `(font-lock-type-face ((t nil)))
+   `(font-lock-function-name-face ((t (:foreground "#988fFF"))))
    '(font-lock-variable-name-face ((t nil)))
    `(font-lock-constant-face ((t nil)))
    

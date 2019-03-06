@@ -49,7 +49,7 @@
 (setq use-package-always-ensure t)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
-(transient-mark-mode t)
+(transient-mark-mode 0)
 (pixel-scroll-mode   1)
 (tool-bar-mode       0)
 (unless (display-graphic-p)
@@ -185,29 +185,23 @@
                              (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :font "Noto Sans Mono-12")
+(set-face-attribute 'default nil :font "Inconsolata-14")
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (setq org-html-validation-link nil)
+(global-visible-mark-mode)
+(use-package visible-mark
+  :config (setq visible-mark-max 1))
 
 ;; -----------------------------------------------------------------------------
 ;; -- Packages
 ;; -----------------------------------------------------------------------------
-;;
-;; Light is Acme inspired, dark theme is my minimalistic 8bit retro theme with
-;; rainbow parens cause Lispsss (blackbox)))).
-;; Use Acme it in case of bright environments, else use blackbox.
-(setq acme-theme-more-syntax-hl t)
+;; Themes:
 (defadvice load-theme (before clear-previous-themes activate)
   "Clear existing theme settings instead of layering them."
   (mapc #'disable-theme custom-enabled-themes))
 
-(use-package circadian
-  :ensure t
-  :config
-  (setq circadian-themes '(("8:00" . acme)
-                           ("19:30" . blackbox)))
-  (circadian-setup))
+(load-theme 'blackbox t)
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
@@ -290,10 +284,12 @@
   :config
   (setq company-auto-complete nil
         company-idle-delay .3
+        company-show-numbers t
         company-echo-delay 0
         company-tooltip-flip-when-above t
         company-minimum-prefix-length 2
         company-tooltip-limit 12))
+
 
 (use-package ivy
   :init (add-hook 'after-init-hook #'ivy-mode)
@@ -484,9 +480,11 @@
 
 (use-package company-lsp
   :after (ccls company lsp-mode)
-  :config (push 'company-lsp company-backends)
+  :config
+  (push 'company-lsp company-backends)
   (setq company-transformers nil company-lsp-async t
         company-lsp-cache-candidates nil))
+
 
 ;; Racket/Scheme
 (use-package geiser
@@ -496,6 +494,7 @@
   (progn
     (setq geiser-active-implementations '(racket))
     (setq geiser-default-implementation 'racket)))
+
 
 ;; Clojure
 (use-package cider
@@ -525,6 +524,7 @@
 (use-package clj-refactor
   :defer t)
 
+
 ;; Rust
 (use-package rust-mode
   :defer t
@@ -544,6 +544,7 @@
     (setq racer-rust-src-path "/Users/phil/Developer/other/rust/src")
     (add-hook 'rust-mode-hook #'racer-mode)
     (add-hook 'racer-mode-hook #'company-mode)))
+
 
 ;; Ruby
 (use-package ruby-mode
@@ -580,16 +581,16 @@
   :diminish rubocop-mode)
 
 
+;; Python
 (use-package elpy
-  :commands (elpy-enable)
   :defer t
   :config
   (progn
     (setq elpy-rpc-backend "jedi"
           elpy-rpc-project-specific 't
           elpy-rpc-python-command "python3"
-          jedi:complete-on-dot t)
-    (elpy-enable)))
+          jedi:complete-on-dot t))
+  (elpy-enable))
 
 
 ;; LaTeX -- C-c C-c to compile LaTeX to pdf, and C-c C-c to open it in Skim
