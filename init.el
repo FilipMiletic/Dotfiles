@@ -54,7 +54,7 @@
 (tool-bar-mode       0)
 (unless (display-graphic-p)
   (menu-bar-mode -1))
-(scroll-bar-mode     0)
+;;(scroll-bar-mode     0)
 (show-paren-mode     1)
 (line-number-mode    1)
 (column-number-mode  1)
@@ -185,14 +185,14 @@
                              (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :font "Inconsolata-14")
+(set-face-attribute 'default nil :font "Roboto Mono-12")
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (setq org-html-validation-link nil)
 (global-visible-mark-mode)
 (use-package visible-mark
   :config (setq visible-mark-max 1))
-
+(setq-default line-spacing 1)
 ;; -----------------------------------------------------------------------------
 ;; -- Packages
 ;; -----------------------------------------------------------------------------
@@ -200,8 +200,16 @@
 (defadvice load-theme (before clear-previous-themes activate)
   "Clear existing theme settings instead of layering them."
   (mapc #'disable-theme custom-enabled-themes))
+(setq atom-dark-theme-force-faces-for-mode nil)
 
+;; blackbox /wo syntax
+;; ir-black /w  syntax
+;; quick switch with F1 and F2
 (load-theme 'blackbox t)
+(global-set-key (kbd "<f1>") (lambda () (interactive)
+                               (load-theme 'blackbox t)))
+(global-set-key (kbd "<f2>") (lambda () (interactive)
+                               (load-theme 'ir-black t)))
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
@@ -220,8 +228,7 @@
             (occur-mode :noselect t :align t)
             ("*Help*" :select t :inhibit-window-quit t :other t)
             ("*Messages*" :noselect t :inhibit-window-quit t :other t)
-            (magit-status-mode :select t :inhibit-window-quit t :same t)
-            (magit-log-mode :select t :inhibit-window-quit t :same t)))
+            ("\\`\\*magit.*?\\*\\'" :regexp t :align t :size 0.4)))
     (shackle-mode 1)))
 
 (use-package paredit
@@ -254,6 +261,7 @@
                lisp-mode-hook
                eval-expression-minibuffer-setup-hook))
     (add-hook m #'rainbow-delimiters-mode)))
+
 
 (use-package exec-path-from-shell
   :init (exec-path-from-shell-initialize)
@@ -380,46 +388,6 @@
           ("http://tonsky.me/blog/atom.xml"                            clojure)
           ("https://furbo.org/feed/"                                          )
           ("https://ferd.ca/feed.rss"))))
-
-;; IRC
-(setq my-credentials-file "~/.emacs.d/.private.el")
-(defun my-nickserv-password (server)
-  "IRC SERVER authentication."
-  (with-temp-buffer
-    (insert-file-contents-literally my-credentials-file)
-    (plist-get (read (buffer-string)) :nickserv-password)))
-
-;; TODO: Replace Circe with weechat
-(use-package circe
-  :defer t
-  :config
-  (progn
-    (setq circe-network-options
-          '(("Freenode"
-             :nick "phlm"
-             :nickserv-password my-nickserv-password
-             :channels (:after-auth "#lisp" "#emacs" "#haskell" "#clojure"
-                                    "#freebsd" "#illumos" "#nixos" "#gentoo"))
-            ("Rizon"
-             :host "irc.rizon.net"
-             :nick "phlm"
-             :port 9999
-             :use-tls t
-             :nickserv-password my-nickserv-password
-             :channels (:after-auth "#dailyprog"))))
-    (enable-circe-color-nicks)
-    (setq circe-reduce-lurker-spam t)
-    (setq circe-format-server-topic "*** Topic change by {userhost}: {topic-diff}")
-    (setq circe-format-say "{nick:-12s} {body}")
-    (setq lui-time-stamp-position 'right-margin
-          lui-fill-type nil)
-    (add-hook 'lui-mode-hook 'my-lui-setup)
-    (defun my-lui-setup ()
-      (setq
-       fringes-outside-margins t
-       right-margin-width 8
-       word-wrap t
-       wrap-prefix "     "))))
 
 ;; -----------------------------------------------------------------------------
 ;; Languages: C, C++, Rust, Go, Racket/Scheme, Clojure, Latex;
@@ -622,6 +590,6 @@
 ;; byte-compile-warnings: (not free-vars noruntime)
 ;; fill-column: 80
 ;; End:
-
+(server-start)
 (provide 'init)
 ;;; init ends here
