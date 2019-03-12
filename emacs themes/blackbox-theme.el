@@ -14,18 +14,18 @@
 (deftheme blackbox "Have you set up optical filters for you space suit?")
 
 (let
-    ((blackbox-fg "#cccccc")
-     (blackbox-bg "#0a0d0f")
+    ((blackbox-fg "#dadada")
+     (blackbox-bg "#080808")
      (blackbox-bg-modeline-active "#1f2f5f")
      (blackbox-bg-modeline-inactive "#20202f")
      (blackbox-box-modeline-active "#3f5f5f")
      (blackbox-box-modeline-inactive "#303030")
 
-     (blackbox-keyword "#ffffff")
+     (blackbox-keyword "#fff")
      ;; string usual color 00fdff
 	 (blackbox-str "#37ddd7")
      ;; comment usual color 00df69
-     (blackbox-comment "#00df69")
+     (blackbox-comment "#00f86f")
      (blackbox-special "#D31895")
 
      ;; ----------------------

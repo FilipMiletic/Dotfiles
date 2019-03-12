@@ -1138,9 +1138,9 @@
 	<key>NSWindow Frame NSColorPanel</key>
 	<string>1093 78 224 232 0 0 1920 1057 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>824 602 928 394 0 0 1920 1057 </string>
+	<string>472 414 918 423 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>526 25 1368 1019 0 0 1920 1057 </string>
+	<string>45 0 885 877 0 0 1440 877 </string>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
@@ -1805,7 +1805,7 @@
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>RobotoMono-Regular 12</string>
+			<string>NotoSansMono-Regular 12</string>
 			<key>Option Key Sends</key>
 			<integer>2</integer>
 			<key>Prompt Before Closing 2</key>
@@ -3364,7 +3364,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2019-03-10T12:30:53Z</date>
+	<date>2019-03-11T12:30:54Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>ShowBookmarkName</key>
