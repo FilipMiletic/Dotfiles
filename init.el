@@ -21,6 +21,12 @@
 ;; -----------------------------------------------------------------------------
 (defalias 'display-startup-echo-area-message #'ignore)
 (defalias 'yes-or-no-p 'y-or-n-p)
+(set-language-environment "UTF-8")
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (add-hook 'text-mode-hook
@@ -43,8 +49,12 @@
               cursor-in-non-selected-windows 'hollow
               require-final-newline t)
 
+(defvar site-lisp-path "~/.emacs.d/")
+(defvar custom-conf-lisp-path (concat site-lisp-path "custom/"))
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/lisp")
+(add-to-list 'load-path custom-conf-lisp-path)
+(add-to-list 'load-path (concat custom-conf-lisp-path "langs/"))
 
 (setq use-package-always-ensure t)
 (setq custom-file "~/.emacs.d/custom.el")
@@ -54,7 +64,7 @@
 (tool-bar-mode       0)
 (unless (display-graphic-p)
   (menu-bar-mode -1))
-;;(scroll-bar-mode     0)
+(scroll-bar-mode     0)
 (show-paren-mode     1)
 (line-number-mode    1)
 (column-number-mode  1)
@@ -105,12 +115,12 @@
             (highlight-regexp "TODO" (quote hi-red-b))))
 
 (defun open-previous-line (arg)
-  "Open a new line above current one ARG."
-  (interactive "p")
-  (beginning-of-line)
-  (open-line arg)
-  (when newline-and-indent
-    (indent-according-to-mode)))
+"Open a new line above current one ARG."
+(interactive "p")
+(beginning-of-line)
+(open-line arg)
+(when newline-and-indent
+  (indent-according-to-mode)))
 
 (global-set-key (kbd "C-x C-b") 'ivy-switch-buffer)
 (global-set-key (kbd "M-o") 'open-previous-line)
@@ -185,7 +195,8 @@
                              (visual-line-mode)))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-(set-face-attribute 'default nil :font "Roboto Mono-12")
+;;:antialias=subpixel:rgba=rgb
+(set-face-font 'default "SF Mono-12")
 (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (setq org-html-validation-link nil)
@@ -193,6 +204,16 @@
 (use-package visible-mark
   :config (setq visible-mark-max 1))
 (setq-default line-spacing 1)
+
+;; Mode-line config
+(require 'mode-line-conf)
+(defun my-scroll-hook(_)
+  "Increase gc-threshold before scroll and set it back after."
+  (setq gc-cons-threshold most-positive-fixnum)
+  (run-with-idle-timer 3 nil (lambda () (setq gc-cons-threshold (* 8 1024 1024)))))
+
+(advice-add 'scroll-up-line :before 'my-scroll-hook)
+(advice-add 'scroll-down-line :before 'my-scroll-hook)
 ;; -----------------------------------------------------------------------------
 ;; -- Packages
 ;; -----------------------------------------------------------------------------
@@ -202,14 +223,14 @@
   (mapc #'disable-theme custom-enabled-themes))
 (setq atom-dark-theme-force-faces-for-mode nil)
 
-;; blackbox /wo syntax
-;; ir-black /w  syntax
-;; quick switch with F1 and F2
-(load-theme 'blackbox t)
+;; blackbox      || ir-black      :: dark themes
+;; organic-green || hemera        :: light themes
+(load-theme 'ir-black t)
 (global-set-key (kbd "<f1>") (lambda () (interactive)
-                               (load-theme 'blackbox t)))
-(global-set-key (kbd "<f2>") (lambda () (interactive)
                                (load-theme 'ir-black t)))
+
+(global-set-key (kbd "<f2>") (lambda () (interactive)
+                               (load-theme 'organic-green t)))
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
@@ -417,7 +438,7 @@
               (when (derived-mode-p 'c-mode 'c++-mode)
                 (ggtags-mode 1)))))
 
-(setq ccls-executable "/usr/local/Cellar/ccls/0.20180924/bin/ccls")
+(setq ccls-executable "/usr/local/Cellar/ccls/0.20181225.8/bin/ccls")
 
 (use-package ccls
   :commands (lsp)
@@ -590,6 +611,7 @@
 ;; byte-compile-warnings: (not free-vars noruntime)
 ;; fill-column: 80
 ;; End:
-(server-start)
+
 (provide 'init)
 ;;; init ends here
+(put 'dired-find-alternate-file 'disabled nil)
