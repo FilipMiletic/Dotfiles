@@ -1,9 +1,10 @@
 # My dotfiles
 Tightly integrated terminal workflow consisting of:
 * Emacs[1]
-* zsh
+* Vim
+* bash
 * Tmux
 * FZF and Ripgrep
 
-[1] It has started to devour everything.
+[1] It started to devour everything.
 

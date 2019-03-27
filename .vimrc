@@ -8,6 +8,8 @@ Plug 'majutsushi/tagbar'
 call plug#end()
 
 syntax on
+set autochdir
+
 set tabstop=4
 set shiftwidth=4
 set expandtab
@@ -31,14 +33,15 @@ set hlsearch
 set incsearch
 set number
 set ignorecase
+set t_Co=16
 set statusline=%<%f\ [%{&ft}]\%=\ [%p%%:\ %l,%v/%L]
 set background=dark
-set t_Co=16 " using default colorscheme with Terminal.app
-
 let mapleader=","
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
 
+
+nnoremap <leader>z :cd %:h<CR>
 nnoremap <C-\> :vsp<CR>
 nnoremap <leader><leader> <C-W>w
 nnoremap <C-j> <C-W>j
@@ -91,7 +94,7 @@ let g:gutentags_exclude_project_root = ['~/', '/usr/local']
 
 set rtp+=/usr/local/opt/fzf
 
-let g:fzf_layout = { 'up': '~30%' }
+let g:fzf_layout = { 'right': '~50%' }
 let g:fzf_history_dir = '~/.vim/fzf-history'
 let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
 
@@ -124,7 +127,7 @@ nnoremap <silent> <Leader><Enter> :call fzf#run({
 
 " Colorscheme settings -- use default
 hi ColorColumn ctermbg=233
-hi StatusLine ctermfg=234 ctermbg=255
+hi StatusLine ctermfg=233 ctermbg=255
 hi StatusLineNC ctermfg=233 ctermbg=242
 hi VertSplit ctermbg=233 ctermfg=233
-hi LineNr ctermfg=235
+hi LineNr ctermfg=233
