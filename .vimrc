@@ -8,8 +8,6 @@ Plug 'majutsushi/tagbar'
 call plug#end()
 
 syntax on
-set autochdir
-
 set tabstop=4
 set shiftwidth=4
 set expandtab
@@ -33,13 +31,12 @@ set hlsearch
 set incsearch
 set number
 set ignorecase
-set t_Co=16
 set statusline=%<%f\ [%{&ft}]\%=\ [%p%%:\ %l,%v/%L]
 set background=dark
 let mapleader=","
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
-
+set t_Co=16
 
 nnoremap <leader>z :cd %:h<CR>
 nnoremap <C-\> :vsp<CR>
@@ -130,4 +127,4 @@ hi ColorColumn ctermbg=233
 hi StatusLine ctermfg=233 ctermbg=255
 hi StatusLineNC ctermfg=233 ctermbg=242
 hi VertSplit ctermbg=233 ctermfg=233
-hi LineNr ctermfg=233
+hi LineNr ctermfg=236
