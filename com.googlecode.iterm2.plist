@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AllowClipboardAccess</key>
+	<true/>
 	<key>AppleAntiAliasingThreshold</key>
 	<integer>1</integer>
 	<key>AppleScrollAnimationEnabled</key>
@@ -10,6 +12,8 @@
 	<integer>1</integer>
 	<key>AppleWindowTabbingMode</key>
 	<string>manual</string>
+	<key>CheckTestRelease</key>
+	<true/>
 	<key>Custom Color Presets</key>
 	<dict>
 		<key>iceberg</key>
@@ -322,10 +326,17 @@
 	</data>
 	<key>NSTableView Supports v2 KeyBingingTable</key>
 	<true/>
+	<key>NSToolbar Configuration com.apple.NSColorPanel</key>
+	<dict>
+		<key>TB Is Shown</key>
+		<integer>1</integer>
+	</dict>
 	<key>NSWindow Frame NSFontPanel</key>
 	<string>950 33 445 77 0 0 1440 877 </string>
+	<key>NSWindow Frame SUUpdateAlert</key>
+	<string>435 363 620 392 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>51 0 970 877 0 0 1440 877 </string>
+	<string>51 0 1389 877 0 0 1440 877 </string>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
@@ -973,13 +984,13 @@
 						<key>Alpha Component</key>
 						<real>1</real>
 						<key>Blue Component</key>
-						<real>0.023529412224888802</real>
+						<real>0.031372550874948502</real>
 						<key>Color Space</key>
 						<string>sRGB</string>
 						<key>Green Component</key>
-						<real>0.023529412224888802</real>
+						<real>0.031372550874948502</real>
 						<key>Red Component</key>
-						<real>0.023529412224888802</real>
+						<real>0.031372550874948502</real>
 					</dict>
 					<key>default text color</key>
 					<dict>
@@ -995,109 +1006,23 @@
 						<real>0.723388671875</real>
 					</dict>
 					<key>font</key>
-					<string>DroidSansMono 12</string>
-					<key>separator color</key>
+					<string>Menlo-Regular 11</string>
+					<key>separator color 2</key>
 					<dict>
 						<key>Alpha Component</key>
-						<real>0.25</real>
+						<real>1</real>
 						<key>Blue Component</key>
-						<real>0.0</real>
+						<real>0.04449462890625</real>
 						<key>Color Space</key>
 						<string>sRGB</string>
 						<key>Green Component</key>
-						<real>0.0</real>
+						<real>0.04449462890625</real>
 						<key>Red Component</key>
-						<real>0.0</real>
+						<real>0.04449462890625</real>
 					</dict>
 				</dict>
 				<key>components</key>
 				<array>
-					<dict>
-						<key>class</key>
-						<string>iTermStatusBarHostnameComponent</string>
-						<key>configuration</key>
-						<dict>
-							<key>knobs</key>
-							<dict>
-								<key>base: compression resistance</key>
-								<real>1</real>
-								<key>base: priority</key>
-								<real>1</real>
-								<key>shared background color</key>
-								<dict>
-									<key>Alpha Component</key>
-									<real>1</real>
-									<key>Blue Component</key>
-									<real>0.023529412224888802</real>
-									<key>Color Space</key>
-									<string>sRGB</string>
-									<key>Green Component</key>
-									<real>0.023529412224888802</real>
-									<key>Red Component</key>
-									<real>0.023529412224888802</real>
-								</dict>
-								<key>shared text color</key>
-								<dict>
-									<key>Alpha Component</key>
-									<real>1</real>
-									<key>Blue Component</key>
-									<real>0.61850810050964355</real>
-									<key>Color Space</key>
-									<string>sRGB</string>
-									<key>Green Component</key>
-									<real>0.0254364013671875</real>
-									<key>Red Component</key>
-									<real>1</real>
-								</dict>
-							</dict>
-							<key>layout advanced configuration dictionary value</key>
-							<dict>
-								<key>algorithm</key>
-								<integer>0</integer>
-								<key>background color</key>
-								<dict>
-									<key>Alpha Component</key>
-									<real>1</real>
-									<key>Blue Component</key>
-									<real>0.023529412224888802</real>
-									<key>Color Space</key>
-									<string>sRGB</string>
-									<key>Green Component</key>
-									<real>0.023529412224888802</real>
-									<key>Red Component</key>
-									<real>0.023529412224888802</real>
-								</dict>
-								<key>default text color</key>
-								<dict>
-									<key>Alpha Component</key>
-									<real>1</real>
-									<key>Blue Component</key>
-									<real>0.723388671875</real>
-									<key>Color Space</key>
-									<string>sRGB</string>
-									<key>Green Component</key>
-									<real>0.723388671875</real>
-									<key>Red Component</key>
-									<real>0.723388671875</real>
-								</dict>
-								<key>font</key>
-								<string>DroidSansMono 12</string>
-								<key>separator color</key>
-								<dict>
-									<key>Alpha Component</key>
-									<real>0.25</real>
-									<key>Blue Component</key>
-									<real>0.0</real>
-									<key>Color Space</key>
-									<string>sRGB</string>
-									<key>Green Component</key>
-									<real>0.0</real>
-									<key>Red Component</key>
-									<real>0.0</real>
-								</dict>
-							</dict>
-						</dict>
-					</dict>
 					<dict>
 						<key>class</key>
 						<string>iTermStatusBarGitComponent</string>
@@ -1106,15 +1031,15 @@
 							<key>knobs</key>
 							<dict>
 								<key>base: compression resistance</key>
-								<real>1</real>
-								<key>base: priority</key>
 								<real>2</real>
+								<key>base: priority</key>
+								<real>5</real>
 								<key>iTermStatusBarGitComponentPollingIntervalKey</key>
 								<real>1</real>
 								<key>maxwidth</key>
-								<real>3</real>
+								<real>5</real>
 								<key>minwidth</key>
-								<real>2</real>
+								<real>4</real>
 								<key>shared background color</key>
 								<dict>
 									<key>Alpha Component</key>
@@ -1133,13 +1058,13 @@
 									<key>Alpha Component</key>
 									<real>1</real>
 									<key>Blue Component</key>
-									<real>1</real>
+									<real>0.58992528915405273</real>
 									<key>Color Space</key>
 									<string>sRGB</string>
 									<key>Green Component</key>
-									<real>0.3171539306640625</real>
+									<real>0.1403961181640625</real>
 									<key>Red Component</key>
-									<real>0.64719897508621216</real>
+									<real>1</real>
 								</dict>
 							</dict>
 							<key>layout advanced configuration dictionary value</key>
@@ -1151,13 +1076,13 @@
 									<key>Alpha Component</key>
 									<real>1</real>
 									<key>Blue Component</key>
-									<real>0.023529412224888802</real>
+									<real>0.031372550874948502</real>
 									<key>Color Space</key>
 									<string>sRGB</string>
 									<key>Green Component</key>
-									<real>0.023529412224888802</real>
+									<real>0.031372550874948502</real>
 									<key>Red Component</key>
-									<real>0.023529412224888802</real>
+									<real>0.031372550874948502</real>
 								</dict>
 								<key>default text color</key>
 								<dict>
@@ -1173,19 +1098,19 @@
 									<real>0.723388671875</real>
 								</dict>
 								<key>font</key>
-								<string>DroidSansMono 12</string>
-								<key>separator color</key>
+								<string>Menlo-Regular 11</string>
+								<key>separator color 2</key>
 								<dict>
 									<key>Alpha Component</key>
-									<real>0.25</real>
+									<real>1</real>
 									<key>Blue Component</key>
-									<real>0.0</real>
+									<real>0.04449462890625</real>
 									<key>Color Space</key>
 									<string>sRGB</string>
 									<key>Green Component</key>
-									<real>0.0</real>
+									<real>0.04449462890625</real>
 									<key>Red Component</key>
-									<real>0.0</real>
+									<real>0.04449462890625</real>
 								</dict>
 							</dict>
 						</dict>
@@ -1221,13 +1146,13 @@
 									<key>Alpha Component</key>
 									<real>1</real>
 									<key>Blue Component</key>
-									<real>0.66949057579040527</real>
+									<real>0.276947021484375</real>
 									<key>Color Space</key>
 									<string>sRGB</string>
 									<key>Green Component</key>
-									<real>0.66949057579040527</real>
+									<real>0.276947021484375</real>
 									<key>Red Component</key>
-									<real>0.671478271484375</real>
+									<real>0.276947021484375</real>
 								</dict>
 							</dict>
 							<key>layout advanced configuration dictionary value</key>
@@ -1239,13 +1164,13 @@
 									<key>Alpha Component</key>
 									<real>1</real>
 									<key>Blue Component</key>
-									<real>0.023529412224888802</real>
+									<real>0.031372550874948502</real>
 									<key>Color Space</key>
 									<string>sRGB</string>
 									<key>Green Component</key>
-									<real>0.023529412224888802</real>
+									<real>0.031372550874948502</real>
 									<key>Red Component</key>
-									<real>0.023529412224888802</real>
+									<real>0.031372550874948502</real>
 								</dict>
 								<key>default text color</key>
 								<dict>
@@ -1261,19 +1186,19 @@
 									<real>0.723388671875</real>
 								</dict>
 								<key>font</key>
-								<string>DroidSansMono 12</string>
-								<key>separator color</key>
+								<string>Menlo-Regular 11</string>
+								<key>separator color 2</key>
 								<dict>
 									<key>Alpha Component</key>
-									<real>0.25</real>
+									<real>1</real>
 									<key>Blue Component</key>
-									<real>0.0</real>
+									<real>0.04449462890625</real>
 									<key>Color Space</key>
 									<string>sRGB</string>
 									<key>Green Component</key>
-									<real>0.0</real>
+									<real>0.04449462890625</real>
 									<key>Red Component</key>
-									<real>0.0</real>
+									<real>0.04449462890625</real>
 								</dict>
 							</dict>
 						</dict>
@@ -1322,7 +1247,7 @@
 	<key>NoSyncInstallationId</key>
 	<string>66432671-1872-4926-8834-B0D3CF6AF39F</string>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>33</integer>
+	<integer>37</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
@@ -1946,21 +1871,25 @@
 	<key>SUFeedAlternateAppNameKey</key>
 	<string>iTerm</string>
 	<key>SUFeedURL</key>
-	<string>https://iterm2.com/appcasts/final_new.xml?shard=55</string>
+	<string>https://iterm2.com/appcasts/testing_new.xml?shard=55</string>
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2019-04-02T09:48:59Z</date>
+	<date>2019-04-02T20:47:06Z</date>
 	<key>SUSendProfileInfo</key>
+	<false/>
+	<key>SUUpdateRelaunchingMarker</key>
 	<false/>
 	<key>ShowPaneTitles</key>
 	<false/>
 	<key>SplitPaneDimmingAmount</key>
 	<real>0.10000000000000001</real>
+	<key>StatusBarPosition</key>
+	<integer>1</integer>
 	<key>WindowNumber</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.3.0beta1</string>
+	<string>3.3.0beta2</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>0</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
