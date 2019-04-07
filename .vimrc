@@ -1,10 +1,11 @@
 call plug#begin('~/.vim/plugged')
-" -- FZF & Rg
+" -- FZF, rip-grep and fd
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 " -- tags
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
+Plug 'tikhomirov/vim-glsl'
 call plug#end()
 
 syntax on
@@ -36,7 +37,7 @@ set background=dark
 let mapleader=","
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
-set t_Co=16
+" set t_Co=16 " Just use the old school 16bit colorscheme
 
 nnoremap <leader>z :cd %:h<CR>
 nnoremap <C-\> :vsp<CR>

@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # Paths
-export PATH="/usr/local/opt/llvm/bin:$PATH"
+export PATH="/usr/local/opt/ruby/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
-export GOPATH="$HOME/.go"
-export PATH="$PATH:$GOPATH/bin"
+export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+export PATH="/usr/local/opt/llvm/bin:$PATH"
+
 ###
+# export LSCOLORS="exfxcxdxbxegedabagacad"
 export LSCOLORS="exfxcxdxbxegedabagacad"
 force_color_prompt=yes
 PROMPT_DIRTRIM=5
-
-if [ -f /usr/local/share/bash-completion/bash_completion ]; then
-	. /usr/local/share/bash-completion/bash_completion
-fi
+export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
 # Use 
 # # Local disabling (current repository)
@@ -22,11 +22,16 @@ fi
 export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_PS1_SHOWDIRTYSTATE=1
 
+vim_fzf() {
+	vim "$(fzf)"
+}
+bind -x '"\C-t": vim_fzf'
+
 # Aliases
 alias ls='ls -GH'
-alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
-alias gcc='gcc-8'
-alias g++='g++-8'
+alias python='python3'
+alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
+alias ctags="`brew --prefix`/bin/ctags"
 
 COLOR_GIT_CLEAN='\[\033[1;34m\]'
 COLOR_GIT_MODIFIED='\[\033[0;33m\]'
@@ -46,7 +51,19 @@ else
 fi
 
 function prompt() {
-	export PS1="\[\e[1;32m\]\w\[\e[m\]\[\e[1;34m\]$(parse_git_branch) \[\e[1;37m\]\$ \[\e[0m\]"
+	export PS1="\[\e[1;32m\]\w\[\e[m\]\[\e[1;35m\]$(parse_git_branch) \[\e[1;37m\]\$ \[\e[0m\]"
 }
 
-PROMPT_COMMAND=prompt
+# PROMPT_COMMAND=prompt
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} prompt history -n"
+
+
+export CC=clang
+export CXX=clang++
+export LD=ld.lld
+export AR=llvm-ar
+export RANLIB=llvm-ranlib
+# Use `fd` as backend for FZF, and rg instead of grep
+export FZF_DEFAULT_COMMAND='fd --type file --color=always'
+export FZF_DEFAULT_OPTS="--ansi"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
