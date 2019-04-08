@@ -1,10 +1,8 @@
 # My dotfiles
+
 Tightly integrated terminal workflow consisting of:
-* Emacs[1]
-* Vim
-* bash
+* Emacs [used mostly for Clojure]
+* Vim [for most of editing in terminal, default macOS; seems like the fastest]
+* bash [default shell, brew version]
 * Tmux
-* FZF and Ripgrep
-
-[1] It started to devour everything.
-
+* FZF, Ripgrep, Fd [my basic utils for coding in terminal and vim]
