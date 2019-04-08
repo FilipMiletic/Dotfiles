@@ -5,7 +5,9 @@ Plug 'junegunn/fzf.vim'
 " -- tags
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
+" -- langs
 Plug 'tikhomirov/vim-glsl'
+Plug 'rust-lang/rust.vim'
 call plug#end()
 
 syntax on
@@ -32,6 +34,7 @@ set hlsearch
 set incsearch
 set number
 set ignorecase
+set t_md=
 set statusline=%<%f\ [%{&ft}]\%=\ [%p%%:\ %l,%v/%L]
 set background=dark
 let mapleader=","
@@ -129,3 +132,4 @@ hi StatusLine ctermfg=233 ctermbg=255
 hi StatusLineNC ctermfg=233 ctermbg=242
 hi VertSplit ctermbg=233 ctermfg=233
 hi LineNr ctermfg=236
+hi Statement ctermfg=36 cterm=NONE

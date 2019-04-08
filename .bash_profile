@@ -4,7 +4,6 @@
 export PATH="/usr/local/opt/ruby/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
-export PATH="/usr/local/opt/llvm/bin:$PATH"
 
 ###
 # export LSCOLORS="exfxcxdxbxegedabagacad"
@@ -38,31 +37,17 @@ COLOR_GIT_MODIFIED='\[\033[0;33m\]'
 COLOR_GIT_STAGED='\[\033[0;35m\]'
 COLOR_RESET='\[\033[0m\]'
 
-parse_git_branch() {
-     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-}
-
-if [[ -z "$SSH_CLIENT" ]]; then
-    # local connection, change prompt
-	export PS1="\[\e[1;32m\]\w\[\e[m\] $(parse_git_branch)\\e[1;37m\]\$ \e[0m\]"
-else
-    # ssh connection, print hostname and os version
-    echo "Welcome to $(scutil --get ComputerName) ($(sw_vers -productVersion))"
-fi
+# parse_git_branch() {
+#      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+# }
 
 function prompt() {
-	export PS1="\[\e[1;32m\]\w\[\e[m\]\[\e[1;35m\]$(parse_git_branch) \[\e[1;37m\]\$ \[\e[0m\]"
+	export PS1="\[\e[1;32m\]\w\[\e[m\]\[\e[1;35m\] \[\e[1;37m\]\$ \[\e[0m\]"
 }
 
-# PROMPT_COMMAND=prompt
-export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} prompt history -n"
+export PROMPT_COMMAND=prompt
+export PROMPT_COMMAND="$PROMPT_COMMAND;update_terminal_cwd;"
 
-
-export CC=clang
-export CXX=clang++
-export LD=ld.lld
-export AR=llvm-ar
-export RANLIB=llvm-ranlib
 # Use `fd` as backend for FZF, and rg instead of grep
 export FZF_DEFAULT_COMMAND='fd --type file --color=always'
 export FZF_DEFAULT_OPTS="--ansi"
