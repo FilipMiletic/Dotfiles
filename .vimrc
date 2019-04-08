@@ -133,3 +133,4 @@ hi StatusLineNC ctermfg=233 ctermbg=242
 hi VertSplit ctermbg=233 ctermfg=233
 hi LineNr ctermfg=236
 hi Statement ctermfg=36 cterm=NONE
+hi Comment ctermfg=11
