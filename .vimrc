@@ -1,13 +1,14 @@
 call plug#begin('~/.vim/plugged')
-" -- FZF, rip-grep and fd
+" -- FZF interface for rip-grep and fd
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 " -- tags
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
-" -- langs
+" -- syntaxes
 Plug 'tikhomirov/vim-glsl'
 Plug 'rust-lang/rust.vim'
+Plug 'chrisbra/Colorizer'
 call plug#end()
 
 syntax on
@@ -22,6 +23,7 @@ set timeoutlen=1000 ttimeoutlen=0
 set laststatus=2
 set wrap
 set linebreak
+set backspace=indent,eol,start
 set nowritebackup
 set nobackup
 set mouse=a
@@ -35,12 +37,11 @@ set incsearch
 set number
 set ignorecase
 set t_md=
-set statusline=%<%f\ [%{&ft}]\%=\ [%p%%:\ %l,%v/%L]
+set statusline=%<%f\ [%{&ft}]\%=\ [%p%%:\ %l:%v/%L]
 set background=dark
 let mapleader=","
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
-" set t_Co=16 " Just use the old school 16bit colorscheme
 
 nnoremap <leader>z :cd %:h<CR>
 nnoremap <C-\> :vsp<CR>
@@ -55,10 +56,12 @@ noremap <leader>W :w !sudo tee %<CR>
 set lcs=tab:›\ ,trail:·,eol:¬,nbsp:_
 set fcs=fold:-
 nnoremap <silent> <leader>c :set nolist!<CR>
+
+" Yank till the end of line with Y
 nnoremap Y y$
+
 " Clear last search (,qs)
 map <silent> <leader>qs <Esc>:noh<CR>
-
 inoremap <expr> <CR>   pumvisible() ? "\<C-y>" : "\<CR>"
 inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
 inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
@@ -80,11 +83,11 @@ function! StripWhitespace () "
 endfunction
 noremap <leader>ss :call StripWhitespace ()<CR>
 
-" Better vertical moving
+" Better vertical navigation
 nnoremap <expr> j v:count ? 'j' : 'gj'
 nnoremap <expr> k v:count ? 'k' : 'gk'
 
-" Buffer navigation (,,) (gb) (gB) (,ls)
+" Buffer buffer navigation (,.) (gb) (gB) (,ls)
 map <Leader>. <C-^>
 map <Leader>ls :buffers<CR>
 map gb :bnext<CR>
@@ -95,42 +98,27 @@ let g:gutentags_exclude_project_root = ['~/', '/usr/local']
 
 set rtp+=/usr/local/opt/fzf
 
-let g:fzf_layout = { 'right': '~50%' }
+let g:fzf_layout = { 'down': '~30%' }
 let g:fzf_history_dir = '~/.vim/fzf-history'
 let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
 
-nnoremap <leader>rg :Rg -i
+" FZF keybindings
+nnoremap <C-r> :Rg<CR>
 nnoremap <C-p> :Files<CR>
 nnoremap <C-g> :GFiles?<CR>
 nnoremap <C-b> :Buffers<CR>
 nnoremap <C-t> :Tags<CR>
 
+" Bigger fzf window
 nnoremap <silent> <leader>v :call fzf#run({
 \   'right': winwidth('.') / 2,
 \   'sink':  'vertical botright split' })<CR>
 
-function! s:buflist()
-  redir => ls
-  silent ls
-  redir END
-  return split(ls, '\n')
-endfunction
-function! s:bufopen(e)
-  execute 'buffer' matchstr(a:e, '^[ 0-9]*')
-endfunction
-
-nnoremap <silent> <Leader><Enter> :call fzf#run({
-\   'source':  reverse(<sid>buflist()),
-\   'sink':    function('<sid>bufopen'),
-\   'options': '+m',
-\   'down':    len(<sid>buflist()) + 5
-\ })<CR>
-
-" Colorscheme settings -- use default
+" Colorscheme settings -- use default colorscheme / old school colors
+set bg=dark
+set t_Co=256
 hi ColorColumn ctermbg=233
-hi StatusLine ctermfg=233 ctermbg=255
-hi StatusLineNC ctermfg=233 ctermbg=242
+hi StatusLine ctermfg=249 ctermbg=234 cterm=none
+hi StatusLineNC ctermfg=240 ctermbg=233 cterm=none
 hi VertSplit ctermbg=233 ctermfg=233
-hi LineNr ctermfg=236
-hi Statement ctermfg=36 cterm=NONE
-hi Comment ctermfg=11
+hi LineNr ctermfg=237
