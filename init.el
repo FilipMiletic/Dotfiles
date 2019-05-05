@@ -2,14 +2,17 @@
 ;;; Commentary:
 (require 'package)
 ;;; Code:
-(setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
 (package-initialize)
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(when (not package-archive-contents)
+  (package-refresh-contents))
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+(require 'tls)
+(push "/usr/local/etc/openssl/cert.pem" gnutls-trustfiles)
+(with-eval-after-load 'tls
+    (push "/usr/local/etc/openssl/cert.pem" gnutls-trustfiles))
+(setq tls-checktrust 'ask)
 
 (eval-when-compile
   (require 'use-package))
@@ -27,11 +30,6 @@
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 
-
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
-(add-hook 'text-mode-hook
-          '(lambda() (set-fill-column 80)))
-
 ;; MacOS dock behaviour
 (defadvice handle-delete-frame (around my-handle-delete-frame-advice activate)
   "Hide Emacs instead of closing the last frame."
@@ -40,38 +38,32 @@
     (if (> numfrs 1)
         ad-do-it
       (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
-
-(setq-default indent-tabs-mode nil
-              indent-line-function 4
-              tab-width 4
-              fill-column 80
-              cursor-type 'box
-              cursor-in-non-selected-windows 'hollow
-              require-final-newline t)
-
 (defvar site-lisp-path "~/.emacs.d/")
 (defvar custom-conf-lisp-path (concat site-lisp-path "custom/"))
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path custom-conf-lisp-path)
 (add-to-list 'load-path (concat custom-conf-lisp-path "langs/"))
-
-(setq use-package-always-ensure t)
+;;(setq use-package-always-ensure t)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
-(transient-mark-mode 0)
-(pixel-scroll-mode   1)
+;; -----------------------------------------------------------------------------
+(transient-mark-mode 1)
 (tool-bar-mode       0)
-(unless (display-graphic-p)
-  (menu-bar-mode -1))
 (scroll-bar-mode     0)
 (show-paren-mode     1)
 (line-number-mode    1)
 (column-number-mode  1)
 (blink-cursor-mode   1)
 
-(setq c-default-style "gnu")
-(setq-default c-basic-offset 8)
+(setq-default indent-tabs-mode nil
+              indent-line-function 2
+              tab-width 2
+              fill-column 80
+              cursor-type 'box
+              cursor-in-non-selected-windows 'hollow
+              require-final-newline t
+              default-directory "/Users/phlm/")
 
 (setq mouse-autoselect-window nil
       focus-follows-mouse nil
@@ -102,12 +94,13 @@
       gc-cons-threshold (* 50 1000 1000)
       ns-use-mwheel-momentum t
       ns-use-mwheel-acceleration t
+      ns-use-thin-smoothing t
       ns-antialias-text t
       shell-file-name "/bin/bash"
       blink-cursor-blinks 7)
 
 ;; -----------------------------------------------------------------------------
-;; Custom functions and customisations of builtin packages
+;; Custom functions and customizations of builtin packages
 ;; -----------------------------------------------------------------------------
 (add-hook 'hi-lock-mode-hook
           (lambda nil
@@ -135,9 +128,7 @@
 (setq initial-frame-alist
       '((width . 120)
         (height . 53)))
-(setq org-hide-emphasis-markers t)
 
-(setq eshell-scroll-to-bottom-on-output nil)
 (defun eshell/clear ()
   "Clear eshell buffer."
   (let ((inhibit-read-only t))
@@ -174,39 +165,15 @@
       (let ((prefix-arg arg))
         (call-interactively #'eshell))
       (current-buffer))
-    '((side . bottom)))))
-
-(use-package eshell
-  :defer t
-  :config
-  (add-hook 'eshell-mode-hook
-            (lambda ()
-              (load "~/.emacs.d/lisp/eshell-customizations.el"))))
-
-(use-package org
-  :mode (("\\.org\\'" . org-mode))
-  :defer t
-  :config
-  (setq org-agenda-files (quote ("~/Documents/org/plan.org"))
-        org-todo-keywords
-        '((sequence "TODO" "HOLD" "DONE"))))
-
-(add-hook 'org-mode-hook #'(lambda ()
-                             (visual-line-mode)))
+    '((side . right)))))
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-;;:antialias=subpixel:rgba=rgb
-(set-face-font 'default "SF Mono-12")
-(add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
-(add-hook 'org-mode-hook 'auto-fill-mode)
-(setq org-html-validation-link nil)
-(global-visible-mark-mode)
-(use-package visible-mark
-  :config (setq visible-mark-max 1))
-(setq-default line-spacing 1)
 
-;; Mode-line config
-(require 'mode-line-conf)
+(setq-default line-spacing 1)
+(set-face-font 'default "Monaco-11")
+
+;; Like is this really necessary or is it just placebo?
+;; -- what the fuck is wrong with me?!
 (defun my-scroll-hook(_)
   "Increase gc-threshold before scroll and set it back after."
   (setq gc-cons-threshold most-positive-fixnum)
@@ -214,43 +181,24 @@
 
 (advice-add 'scroll-up-line :before 'my-scroll-hook)
 (advice-add 'scroll-down-line :before 'my-scroll-hook)
+
 ;; -----------------------------------------------------------------------------
 ;; -- Packages
-;; -----------------------------------------------------------------------------
-;; Themes:
+;; got so used to my own theme that I just can't use others, Emacs highlights so
+;; much shit that it's unbearable; people coded without syntax for half a century
 (defadvice load-theme (before clear-previous-themes activate)
   "Clear existing theme settings instead of layering them."
   (mapc #'disable-theme custom-enabled-themes))
-(setq atom-dark-theme-force-faces-for-mode nil)
 
-;; blackbox      || ir-black      :: dark themes
-;; organic-green || hemera        :: light themes
-(load-theme 'ir-black t)
-(global-set-key (kbd "<f1>") (lambda () (interactive)
-                               (load-theme 'ir-black t)))
+;; jai and organic-green as contrasting themes, ir-black-24 as default one
+(load-theme 'ir-black-24 t)
 
-(global-set-key (kbd "<f2>") (lambda () (interactive)
-                               (load-theme 'organic-green t)))
 
+;; -----------------------------------------------------------------------------
+;; Making Emacs comfy desu.
+;; -----------------------------------------------------------------------------
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
-
-(use-package shackle
-  :config
-  (progn
-    (setq shackle-default-alignment 'below)
-    (setq shackle-default-size 0.4)
-    (setq shackle-select-reused-windows nil)
-    (setq shackle-rules
-          '((compilation-mode :noselect t)
-            ("*undo-tree*"    :noselect t :size 0.25 :align right)
-            ("*eshell*" :select t :other t)
-            ("*Shell Command Output*" :noselect t)
-            (occur-mode :noselect t :align t)
-            ("*Help*" :select t :inhibit-window-quit t :other t)
-            ("*Messages*" :noselect t :inhibit-window-quit t :other t)
-            ("\\`\\*magit.*?\\*\\'" :regexp t :align t :size 0.4)))
-    (shackle-mode 1)))
 
 (use-package paredit
   :diminish paredit-mode
@@ -291,7 +239,7 @@
 
 (use-package which-key
   :defer 1
-  :diminish
+  :diminish which-key-mode
   :config (which-key-mode))
 
 (use-package hl-todo
@@ -322,6 +270,7 @@
 
 (use-package ivy
   :init (add-hook 'after-init-hook #'ivy-mode)
+  :diminish (ivy-mode)
   :config
   (setq ivy-height 15
         ivy-wrap t
@@ -362,14 +311,19 @@
 (use-package flycheck
   :init (global-flycheck-mode))
 
+
 ;; -----------------------------------------------------------------------------
-;; IRC, RSS, git, navigation and snippets, and shackle for minibuffers
+;; Git, project organisation and snippets
 ;; -----------------------------------------------------------------------------
-;; Git and project organisation
 (use-package magit
   :defer t
   :bind (("C-x g" . magit-status)
          ("C-c g" . magit-file-log)))
+
+(defun fm/projectile-proj-find (dir)
+  "Function that will tell project.el to find a project DIR via Projectile."
+  (let ((root (projectile-project-root dir)))
+    (and root (cons 'transient root))))
 
 (use-package projectile
   :config
@@ -377,7 +331,6 @@
         projectile-enable-caching t
         projectile-find-dir-includes-top-level t))
 
-;; Snippets
 (use-package yasnippet
   :disabled t
   :defer t
@@ -391,34 +344,15 @@
   :init (bind-key "C-x o" 'ace-window)
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
-;; RSS
-(use-package elfeed
-  :defer t
-  :bind ("C-c w" . elfeed)
-  :init (setf url-queue-timeout 30)
-  :config
-  (push "-k" elfeed-curl-extra-arguments)
-  (setq-default elfeed-search-filter "@1-week-ago +unread")
-  (setq elfeed-feeds
-        '(("https://nullprogram.com/feed/"                       systems emacs)
-          ("https://eli.thegreenplace.net/feeds/all.atom.xml"                 )
-          ("http://bit-player.org/feed"                                       )
-          ("https://blog.codinghorror.com/rss/"                               )
-          ("https://www.tedunangst.com/flak/rss"                              )
-          ("http://www.righto.com/feeds/posts/default"                hardware)
-          ("http://tonsky.me/blog/atom.xml"                            clojure)
-          ("https://furbo.org/feed/"                                          )
-          ("https://ferd.ca/feed.rss"))))
 
 ;; -----------------------------------------------------------------------------
-;; Languages: C, C++, Rust, Go, Racket/Scheme, Clojure, Latex;
+;; Languages: C, C++, Rust, Clojure, Latex(basiclatex)
 ;; -----------------------------------------------------------------------------
-;; C/C++
-;; Use llvm style for C++
-;; For C use default GNU 8 spaces tab
+;; C/C++ -- just add tag system. No completion, it causes more harm than good in
+;; cpp, especialy in larger codebases.
+
 (c-add-style "llvm.org"
              '("gnu"
-               (fill-column . 80)
                (c++-indent-level . 2)
                (c-basic-offset . 2)
                (indent-tabs-mode . nil)
@@ -438,60 +372,55 @@
               (when (derived-mode-p 'c-mode 'c++-mode)
                 (ggtags-mode 1)))))
 
-(setq ccls-executable "/usr/local/Cellar/ccls/0.20181225.8/bin/ccls")
-
-(use-package ccls
-  :commands (lsp)
-  :config (setq company-transformers nil
-                company-lsp-async t
-                company-lsp-cache-candidates nil))
-(add-hook 'c++-mode-hook  (lambda () (require 'ccls) (lsp)))
-(add-hook 'c-mode-hook    (lambda () (require 'ccls) (lsp)))
-(add-hook 'cuda-mode-hook (lambda () (require 'ccls) (lsp)))
-
 (use-package counsel-gtags
   :defer t)
-
 (use-package counsel-projectile
   :defer t)
-
 (setq clang-format-style-option "llvm")
 (use-package clang-format
   :commands (clang-format-region)
   :config (setq clang-format-style-option "llvm"))
 
-(use-package xcscope
-  :init (cscope-setup))
+;; Using clangd and eglot(LSP for Emacs) for completion
+(defvar fm-clangd (executable-find "clangd")
+  "Clangd executable path.")
+(setq fm-clangd "/usr/local/opt/llvm/bin/clangd")
 
-(use-package lsp-mode
-  :commands lsp
-  :config (require 'lsp-clients))
+(use-package eglot
+    :ensure t
+    :config
+    (require 'eglot))
 
-(use-package company-lsp
-  :after (ccls company lsp-mode)
-  :config
-  (push 'company-lsp company-backends)
-  (setq company-transformers nil company-lsp-async t
-        company-lsp-cache-candidates nil))
+(defun fm/cpp-eglot-enable ()
+  "Enable variables and hooks for eglot cpp when digging into C++ project."
+  (interactive)
+
+  (setq company-backends
+        (cons 'company-capf
+              (remove 'company-capf company-backends)))
+  (projectile-mode t)
+  (with-eval-after-load 'project
+    (add-to-list 'project-find-functions
+                 'fm/projectile-proj-find))
+  (add-to-list 'eglot-server-programs `((c++-mode) ,fm-clangd))
+  (add-hook 'c++-mode-hook 'eglot-ensure))
+
+(defun fm/cpp-eglot-disable ()
+  "Disable hook for eglot."
+  (interactive)
+  (remove-hook 'c++-mode-hook 'eglot-ensure))
 
 
-;; Racket/Scheme
-(use-package geiser
-  :defer t
-  :bind (:map scheme-mode-map ("C-c C-c" . geiser-eval-last-sexp))
-  :config
-  (progn
-    (setq geiser-active-implementations '(racket))
-    (setq geiser-default-implementation 'racket)))
-
-
-;; Clojure
+;; Clojure  --------------------------------------------------------------------
+;; cider is the main environment, with clj-refactor for auto import
+;; and refactoring, Emacs is the way to go when I work /w some Lisp or Clojure
 (use-package cider
   :defer t
   :commands (cider cider-connect cider-jack-in)
   :mode (("\\.clj\\'"  . clojure-mode)
          ("\\.edn\\'"  . clojure-mode)
-         ("\\.cljx\\'" . clojure-mode))
+         ("\\.cljx\\'" . clojure-mode)
+         ("\\.cljc\\'" . clojure-mode))
   :config
   (setq cider-auto-select-error-buffer t
         cider-repl-pop-to-buffer-on-connect nil
@@ -514,7 +443,8 @@
   :defer t)
 
 
-;; Rust
+;; Rust  -----------------------------------------------------------------------
+;; rustfmt working C-c C-f; racer working for completion and navigation (rls?);
 (use-package rust-mode
   :defer t
   :config (add-hook 'rust-mode-hook
@@ -530,82 +460,18 @@
   :config
   (progn
     (setq racer-cmd "~/.cargo/bin/racer")
-    (setq racer-rust-src-path "/Users/phil/Developer/other/rust/src")
+    (setq racer-rust-src-path "/Users/phlm/.rustup/toolchains/nightly-x86_64-apple-darwin/lib/rustlib/src/rust/src")
     (add-hook 'rust-mode-hook #'racer-mode)
     (add-hook 'racer-mode-hook #'company-mode)))
 
 
-;; Ruby
-(use-package ruby-mode
-  :ensure t
-  :mode "\\.rb\\'"
-  :mode "Rakefile\\'"
-  :mode "Gemfile\\'"
-  :mode "Berksfile\\'"
-  :mode "Vagrantfile\\'"
-  :interpreter "ruby"
-  :init
-  (setq ruby-indent-level 2
-        ruby-indent-tabs-mode nil)
-  :bind
-  (([(meta down)] . ruby-forward-sexp)
-   ([(meta up)]   . ruby-backward-sexp)
-   (("C-c C-e"    . ruby-send-region))))
-
-(use-package inf-ruby
-  :ensure t
-  :init
-  (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode))
-
-(use-package robe
-  :ensure t
-  :bind ("C-M-." . robe-jump)
-  :init (add-hook 'ruby-mode-hook 'robe-mode)
-  :config (push 'company-robe company-backends))
-
-(use-package rubocop
-  :ensure t
-  :init
-  (add-hook 'ruby-mode-hook 'rubocop-mode)
-  :diminish rubocop-mode)
-
-
-;; Python
-(use-package elpy
-  :defer t
-  :config
-  (progn
-    (setq elpy-rpc-backend "jedi"
-          elpy-rpc-project-specific 't
-          elpy-rpc-python-command "python3"
-          jedi:complete-on-dot t))
-  (elpy-enable))
-
-
-;; LaTeX -- C-c C-c to compile LaTeX to pdf, and C-c C-c to open it in Skim
-;;          C-c C-l to view compilation output
-(setq TeX-PDF-mode t)
-(use-package auctex-latexmk
+;; CUDA; OpenCL; GLSL
+(use-package opencl-mode
   :defer t)
-
-(add-hook 'LaTeX-mode-hook
-          (lambda ()
-            (push
-             '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
-               :help "Run latexmk on file")
-             TeX-command-list)))
-(add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
-
-(setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
-(setq TeX-view-program-list
-      '(("PDF Viewer"
-         "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
-
-(custom-set-variables
- '(TeX-source-correlate-method 'synctex)
- '(TeX-source-correlate-mode t)
- '(TeX-source-correlate-start-server t))
-
+(use-package cuda-mode
+  :defer t)
+(use-package glsl-mode
+  :defer t)
 ;; -----------------------------------------------------------------------------
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)

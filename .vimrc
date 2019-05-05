@@ -6,10 +6,9 @@ Plug 'junegunn/fzf.vim'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
 " -- syntaxes
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
 Plug 'tikhomirov/vim-glsl'
 Plug 'rust-lang/rust.vim'
-Plug 'robertmeta/nofrils'
 call plug#end()
 
 syntax on
@@ -119,5 +118,6 @@ nnoremap <silent> <leader>v :call fzf#run({
 
 " I like my vim as plain as possible in Terminal.app
 set bg=dark
-colo plain-dark
+set termguicolors
+colo grb24bit
 hi ALEWarning ctermbg=Magenta
