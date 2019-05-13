@@ -12,8 +12,6 @@ Plug 'rust-lang/rust.vim'
 call plug#end()
 
 syntax on
-" set term=xterm-256color
-set cole=0
 set encoding=utf8
 set shell=/bin/bash
 set shiftwidth=2
@@ -117,7 +115,10 @@ nnoremap <silent> <leader>v :call fzf#run({
 \   'sink':  'vertical botright split' })<CR>
 
 " I like my vim as plain as possible in Terminal.app
-set bg=dark
-set termguicolors
-colo grb24bit
-hi ALEWarning ctermbg=Magenta
+colo default
+set background=dark
+hi ColorColumn ctermbg=233
+hi StatusLine ctermfg=249 ctermbg=234 cterm=none
+hi StatusLineNC ctermfg=240 ctermbg=233 cterm=none
+hi VertSplit ctermbg=233 ctermfg=233
+hi LineNr ctermfg=235
