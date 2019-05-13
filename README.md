@@ -2,7 +2,7 @@
 
 Tightly integrated terminal workflow consisting of:
 * Emacs [used mostly for Clojure]
-* Vim [for most of editing in terminal, default macOS; seems like the fastest]
+* Vim [for editing in terminal/iTerm]
 * bash [default shell, brew version]
-* Tmux
-* FZF, Ripgrep, Fd [my basic utils for coding in terminal and vim]
+* Tmux & Mosh
+* FZF, Ripgrep, Fd [my basic utils for code navigation in terminal and vim]
