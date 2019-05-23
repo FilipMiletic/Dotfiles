@@ -94,12 +94,12 @@
       gc-cons-threshold (* 50 1000 1000)
       ns-use-mwheel-momentum t
       ns-use-mwheel-acceleration t
-      ns-use-thin-smoothing t
+      ns-use-thin-smoothing nil
       ns-antialias-text t
       shell-file-name "/bin/bash"
       blink-cursor-blinks 7)
 
-;; -----------------------------------------------------------------------------
+;; ----------------------------------------------------------------------------
 ;; Custom functions and customizations of builtin packages
 ;; -----------------------------------------------------------------------------
 (add-hook 'hi-lock-mode-hook
@@ -127,7 +127,7 @@
 
 (setq initial-frame-alist
       '((width . 120)
-        (height . 53)))
+        (height . 65)))
 
 (defun eshell/clear ()
   "Clear eshell buffer."
@@ -169,8 +169,8 @@
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
-(setq-default line-spacing 1)
-(set-face-font 'default "Monaco-11")
+(setq-default line-spacing 2)
+(set-face-font 'default "Fira Code-15")
 
 ;; Like is this really necessary or is it just placebo?
 ;; -- what the fuck is wrong with me?!
@@ -190,8 +190,8 @@
   "Clear existing theme settings instead of layering them."
   (mapc #'disable-theme custom-enabled-themes))
 
-;; jai and organic-green as contrasting themes, ir-black-24 as default one
-(load-theme 'ir-black-24 t)
+;; quartz; dark-laptop; nofrils; iodine; JUST NEED IT TO BE HIGH CONTRAST!
+(load-theme 'dark-laptop t)
 
 
 ;; -----------------------------------------------------------------------------
@@ -282,6 +282,10 @@
                                 (t . ivy--regex-plus)))
   (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
   (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done))
+;; Making presets of buffers and panes, simple stack configuration
+;; works really, really good, saves state as `virtual` buffer
+(global-set-key (kbd "C-c v") 'ivy-push-view)
+(global-set-key (kbd "C-c V") 'ivy-pop-view)
 
 (use-package ivy-rich
   :after ivy
@@ -290,8 +294,8 @@
                 ivy-rich-path-style 'abbrev))
 
 (use-package swiper
-  :bind (("C-s"         . swiper)
-         ("C-r"         . swiper)
+  :bind (("C-s"     . swiper)
+         ("C-r"     . swiper)
          ("C-c u"   . swiper-all)
          ("C-c C-r" . ivy-resume)
          ("C-c C-o" . ivy-occur))
@@ -420,7 +424,8 @@
   :mode (("\\.clj\\'"  . clojure-mode)
          ("\\.edn\\'"  . clojure-mode)
          ("\\.cljx\\'" . clojure-mode)
-         ("\\.cljc\\'" . clojure-mode))
+       ;;  ("\\.cljc\\'" . clojure-mode)
+         )
   :config
   (setq cider-auto-select-error-buffer t
         cider-repl-pop-to-buffer-on-connect nil
@@ -464,7 +469,6 @@
     (add-hook 'rust-mode-hook #'racer-mode)
     (add-hook 'racer-mode-hook #'company-mode)))
 
-
 ;; CUDA; OpenCL; GLSL
 (use-package opencl-mode
   :defer t)
@@ -472,6 +476,16 @@
   :defer t)
 (use-package glsl-mode
   :defer t)
+
+;; R & Julia -- statistics
+(use-package ess
+  :defer t
+  :config (setq ess-style 'RStudio)
+  :mode ("\\.jl\\'" . ess-julia-mode))
+(use-package polymode
+  :defer t)
+(use-package poly-markdown
+  :ensure t)
 ;; -----------------------------------------------------------------------------
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
