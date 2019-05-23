@@ -1,17 +1,12 @@
 call plug#begin('~/.vim/plugged')
-" -- FZF interface for rip-grep and fd
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
-" -- tags
-Plug 'ludovicchabant/vim-gutentags'
-Plug 'majutsushi/tagbar'
-" -- syntaxes
-" Plug 'w0rp/ale'
 Plug 'tikhomirov/vim-glsl'
-Plug 'rust-lang/rust.vim'
 call plug#end()
 
 syntax on
+set linebreak
+set wrap
 set encoding=utf8
 set shell=/bin/bash
 set shiftwidth=2
@@ -33,17 +28,22 @@ set splitright
 set ruler
 set showmatch
 set nofoldenable
-set nohlsearch
+set hlsearch
 set incsearch
-set number
+set nonumber
 set ignorecase
 set smartcase
 set smarttab
-set statusline=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
+set statusline=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%)
+set nocursorline
+set synmaxcol=128
+syntax sync minlines=256
+set nolazyredraw
 let mapleader=","
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
-
+nnoremap <expr> j v:count ? 'j' : 'gj'
+nnoremap <expr> k v:count ? 'k' : 'gk'
 nnoremap <leader>z :cd %:h<CR>
 nnoremap <C-\> :vsp<CR>
 nnoremap <leader><leader> <C-W>w
@@ -52,73 +52,43 @@ nnoremap <C-k> <C-W>k
 nnoremap <C-h> <C-W>h
 nnoremap <C-l> <C-W>l
 nnoremap <leader>W :w !sudo tee %<CR>
-nnoremap <leader>[ :bp<CR>
-nnoremap <leader>] :bn<CR>
-
 " Show hidden characters
 set lcs=tab:›\ ,trail:·,eol:¬,nbsp:_
 set fcs=fold:-
 nnoremap <silent> <leader>c :set nolist!<CR>
-
+map Q <Nop>
 " Yank till the end of line with Y
 nnoremap Y y$
-
 " Clear last search (,qs)
 map <silent> <leader>qs <Esc>:noh<CR>
-inoremap <expr> <CR>   pumvisible() ? "\<C-y>" : "\<CR>"
-inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
-inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
-
 " Paste from universal clipboard, instead of going to insert mode
 map <leader>p :.!pbpaste<CR>
+" Reindent buffer
 map <leader>q gg=G<CR>
-
 " Search and replace word under cursor (,*)
 nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
 vnoremap <leader>* "hy:%s/\V<C-r>h//<left>
-
 " Strip trailing whitespace (,ss)
 function! StripWhitespace () "
-	let save_cursor = getpos(".")
-	let old_query = getreg('/')
-	:%s/\s\+$//e
-	call setpos('.', save_cursor)
-	call setreg('/', old_query)
+  let save_cursor = getpos(".")
+  let old_query = getreg('/')
+  :%s/\s\+$//e
+  call setpos('.', save_cursor)
+  call setreg('/', old_query)
 endfunction
 noremap <leader>ss :call StripWhitespace ()<CR>
-
-" Better vertical navigation
-nnoremap <expr> j v:count ? 'j' : 'gj'
-nnoremap <expr> k v:count ? 'k' : 'gk'
-map <Leader>. <C-^>
-map <Leader>ls :buffers<CR>
-
-let g:gutentags_cache_dir = '~/.vim/tags/'
-let g:gutentags_exclude_project_root = ['~/', '/usr/local']
-
+" FZF stuff
 set rtp+=/usr/local/opt/fzf
-
 let g:fzf_layout = { 'down': '~60%' }
 let g:fzf_history_dir = '~/.vim/fzf-history'
 let g:fzf_buffers_jump = 1 " Jump to existing buffer if available
-
-" FZF keybindings
 nnoremap <C-r> :Rg<CR>
 nnoremap <C-p> :Files<CR>
 nnoremap <C-g> :GFiles?<CR>
-nnoremap <C-b> :Buffers<CR>
-nnoremap <C-t> :Tags<CR>
-
-" Open file in split view
 nnoremap <silent> <leader>v :call fzf#run({
-\   'right': winwidth('.') / 2,
-\   'sink':  'vertical botright split' })<CR>
-
+      \   'right': winwidth('.') / 2,
+      \   'sink':  'vertical botright split' })<CR>
 " I like my vim as plain as possible in Terminal.app
-colo default
+set t_Co=256
 set background=dark
-hi ColorColumn ctermbg=233
-hi StatusLine ctermfg=249 ctermbg=234 cterm=none
-hi StatusLineNC ctermfg=240 ctermbg=233 cterm=none
-hi VertSplit ctermbg=233 ctermfg=233
-hi LineNr ctermfg=235
+colorscheme phl
