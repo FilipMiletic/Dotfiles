@@ -44,7 +44,7 @@
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path custom-conf-lisp-path)
 (add-to-list 'load-path (concat custom-conf-lisp-path "langs/"))
-;;(setq use-package-always-ensure t)
+(setq use-package-always-ensure t)
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 ;; -----------------------------------------------------------------------------
@@ -169,8 +169,8 @@
 
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
-(setq-default line-spacing 2)
-(set-face-font 'default "Fira Code-15")
+;;(setq-default line-spacing 2)
+(set-face-font 'default "Brutalist Mono-13")
 
 ;; Like is this really necessary or is it just placebo?
 ;; -- what the fuck is wrong with me?!
@@ -190,8 +190,8 @@
   "Clear existing theme settings instead of layering them."
   (mapc #'disable-theme custom-enabled-themes))
 
-;; quartz; dark-laptop; nofrils; iodine; JUST NEED IT TO BE HIGH CONTRAST!
-(load-theme 'dark-laptop t)
+;; quartz; dark-laptop; naysayer
+(load-theme 'naysayer t)
 
 
 ;; -----------------------------------------------------------------------------
@@ -293,6 +293,8 @@
   :config (setq ivy-virtual-abbreviate 'full
                 ivy-rich-path-style 'abbrev))
 
+;; Have different height for find-file and M-x menus
+
 (use-package swiper
   :bind (("C-s"     . swiper)
          ("C-r"     . swiper)
@@ -315,7 +317,13 @@
 (use-package flycheck
   :init (global-flycheck-mode))
 
-
+(add-to-list 'ivy-height-alist
+             (cons 'counsel-find-file
+                   (lambda (_caller)
+                     15))
+             (cons 'counsel-M-x
+                   (lambda (_caller)
+                     4)))
 ;; -----------------------------------------------------------------------------
 ;; Git, project organisation and snippets
 ;; -----------------------------------------------------------------------------
@@ -380,7 +388,9 @@
   :defer t)
 (use-package counsel-projectile
   :defer t)
+
 (setq clang-format-style-option "llvm")
+
 (use-package clang-format
   :commands (clang-format-region)
   :config (setq clang-format-style-option "llvm"))
@@ -446,7 +456,6 @@
 
 (use-package clj-refactor
   :defer t)
-
 
 ;; Rust  -----------------------------------------------------------------------
 ;; rustfmt working C-c C-f; racer working for completion and navigation (rls?);
